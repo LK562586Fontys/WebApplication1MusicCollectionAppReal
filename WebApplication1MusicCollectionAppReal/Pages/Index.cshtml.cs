@@ -11,7 +11,7 @@ namespace WebApplication1MusicCollectionAppReal.Pages
         {
             _logger = logger;
         }
-
+        public string TestResult { get; set; }
         public void OnGet()
         {
 

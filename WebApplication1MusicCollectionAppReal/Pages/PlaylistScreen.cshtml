@@ -1,0 +1,17 @@
+﻿@page
+@model WebApplication1MusicCollectionAppReal.Pages.PlaylistScreen
+@{
+	ViewData["Title"] = "Playlist Screen thingamabob";
+}
+<h1>@ViewData["Title"]</h1>
+
+<p>Use this page to detail your site's pLAYLIST SCREEN</p>
+<form method="post">
+    <input asp-for="NewName" placeholder="Enter new PlaylistName" />
+    <button type="submit" asp-page-handler="ChangePlaylistName">Change PlaylistName</button>
+</form>
+<form method="post" enctype="multipart/form-data" asp-page-handler="ChangePlaylistPhoto">
+    <label for="NewPhoto">Choose an image:</label>
+    <input type="file" id="NewPhoto" name="NewPhoto" accept=".jpg,.jpeg,.png" required />
+    <button type="submit">Upload</button>
+</form>

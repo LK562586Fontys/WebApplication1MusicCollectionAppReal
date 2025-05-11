@@ -1,4 +1,4 @@
-﻿namespace WebApplication1MusicCollectionAppReal
+﻿namespace LogicLayer
 {
     public class Genre
     {

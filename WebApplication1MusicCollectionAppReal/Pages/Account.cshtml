@@ -1,0 +1,30 @@
+﻿@page
+@model WebApplication1MusicCollectionAppReal.Pages.Account
+@{
+	ViewData["Title"] = "Account Screen";
+}
+<h1>@ViewData["Title"]</h1>
+
+<p>Use this page to detail your site's SCREEN</p>
+<h2>Create Playlist</h2>
+
+<form method="post">
+    <button type="submit">Create Playlist</button>
+</form>
+
+@if (Model.Message != null)
+{
+    <p>@Model.Message</p>
+}
+<form method="post">
+    <input asp-for="NewUsername" placeholder="Enter new username" />
+    <button type="submit" asp-page-handler="ChangeUsername">Change Username</button>
+</form>
+<form method="post">
+    <input asp-for="NewPassword" placeholder="Enter new password" />
+    <button type="submit" asp-page-handler="ChangePassword">Change Password</button>
+</form>
+<form method="post">
+    <input asp-for="NewEmail" placeholder="Enter new e-mail" />
+    <button type="submit" asp-page-handler="ChangeEmail">Change Email</button>
+</form>
