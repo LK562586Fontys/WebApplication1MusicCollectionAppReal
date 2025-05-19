@@ -7,6 +7,13 @@
 
 <p>Use this page to detail your site's SCREEN</p>
 
-<form method="post">
+<form method="post" asp-page-handler="AddSongToPlaylist">
     <button type="submit">Add Song to a Playlist</button>
+</form>
+<form method="post" asp-page-handler="RemoveSongFromPlaylist">
+	<button type="submit">Remove Song to a Playlist</button>
+</form>
+<form method="post" asp-page-handler="UpdateWeight">
+	<button type="submit" name="Weight" value="+1">+</button>
+	<button type="submit" name="Weight" value="-1">-</button>
 </form>

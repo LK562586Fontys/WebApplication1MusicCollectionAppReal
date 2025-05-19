@@ -32,16 +32,48 @@ namespace DataAccessLayer
                 }
             }
         }
+        public void RemoveSongFromPlaylist(int playlistID, int songID) 
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                string query = "DELETE FROM [Playlist_Song] WHERE playlist_ID = @PlaylistID AND song_ID = @SongID";
+
+                using (var command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@PlaylistID", playlistID);
+                    command.Parameters.AddWithValue("@SongID", songID);
+
+                    connection.Open();
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+        public void ChangeSongWeight(int songID, int weight) 
+        {
+			using (SqlConnection connection = new SqlConnection(_connectionString))
+			{
+				string query = "UPDATE Song SET weight = weight + @Weight WHERE ID = @SongID";
+
+				using (SqlCommand command = new SqlCommand(query, connection))
+				{
+					command.Parameters.AddWithValue("@Weight", weight);
+					command.Parameters.AddWithValue("@SongID", songID);
+
+					connection.Open();
+					command.ExecuteNonQuery();
+				}
+			}
+		}
         public List<SongDataModel> GetSongList(int playlistID) 
         {
             List<SongDataModel> result = new List<SongDataModel>();
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                string query = "SELECT * FROM [Playlist_Song] INNER JOIN Playlist_Song ON Playlist.ID =      WHERE playlist_ID = @playlist_ID";
-                SqlCommand cmd = new SqlCommand(query, connection);
-                cmd.Parameters.AddWithValue("@playlist_ID", playlistID);
+                string query = " SELECT * FROM Playlist_Song INNER JOIN Song ON Song.ID = Playlist_Song.song_ID WHERE Playlist_Song.playlist_ID = @playlist_ID";
+                SqlCommand command = new SqlCommand(query, connection);
+                command.Parameters.AddWithValue("@playlist_ID", playlistID);
                 connection.Open();
-                SqlDataReader reader = cmd.ExecuteReader();
+                SqlDataReader reader = command.ExecuteReader();
 
                 while (reader.Read())
                 {
@@ -50,11 +82,39 @@ namespace DataAccessLayer
                         ID = (int)reader["ID"],
                         name = reader["Name"].ToString(),
                         weight = (int)reader["Weight"],
-                        dateReleased = (DateTime)reader["DateReleased"]
+                        dateReleased = (DateTime)reader["DateReleased"],
+                        artistID = (int)reader["artistID"],
+                        albumID = (int)reader["albumID"],
                     });
                 }
             }
             return result;
         }
+        public List<SongDataModel> GetAllSongs() 
+        {
+            List<SongDataModel> result = new List<SongDataModel>();
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                string query = " SELECT * FROM Song";
+                SqlCommand command = new SqlCommand(query, connection);
+                connection.Open();
+                SqlDataReader reader = command.ExecuteReader();
+            }
+            return result;
+        }
+        public List<SongDataModel> GetSpecificSong(int songID)
+        {
+            List<SongDataModel> result = new List<SongDataModel>();
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                string query = " SELECT * FROM Song WHERE ID = @SongID";
+                SqlCommand command = new SqlCommand(query, connection);
+                command.Parameters.AddWithValue("@SongID", songID);
+                connection.Open();
+                SqlDataReader reader = command.ExecuteReader();
+            }
+            return result;
+        }
+
     }
 }

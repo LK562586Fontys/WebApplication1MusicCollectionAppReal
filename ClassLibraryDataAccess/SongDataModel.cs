@@ -12,5 +12,7 @@ namespace DataAccessLayer
         public string name;
         public int weight;
         public DateTime dateReleased;
+        public int artistID;
+        public int albumID;
     }
 }

@@ -8,31 +8,34 @@ namespace LogicLayer
         public string Name { get; set; }
         public DateTime DateAdded { get; set; }
         public byte[] Photo { get; set; }
-        public List<Song> PlaylistSongs { get; set; }
+        public List<Song> PlaylistSongs { get; private set; } = new List<Song>();
         public User Creator { get; set; }
-        private SongRepository rep = new SongRepository("Server=mssqlstud.fhict.local;Database=dbi562586_i562586;User Id=dbi562586_i562586;Password=Wpb3grVisq;TrustServerCertificate=True;");
-        PlaylistRepository db = new PlaylistRepository("Server=mssqlstud.fhict.local;Database=dbi562586_i562586;User Id=dbi562586_i562586;Password=Wpb3grVisq;TrustServerCertificate=True;");
+        private UserRepository userRepository = new UserRepository("Server=mssqlstud.fhict.local;Database=dbi562586_i562586;User Id=dbi562586_i562586;Password=Wpb3grVisq;TrustServerCertificate=True;");
+        private SongRepository songRepository = new SongRepository("Server=mssqlstud.fhict.local;Database=dbi562586_i562586;User Id=dbi562586_i562586;Password=Wpb3grVisq;TrustServerCertificate=True;");
+        PlaylistRepository playlistRepository = new PlaylistRepository("Server=mssqlstud.fhict.local;Database=dbi562586_i562586;User Id=dbi562586_i562586;Password=Wpb3grVisq;TrustServerCertificate=True;");
         public void ChangePlaylistPicture(byte[] newPhoto)
         {
-            Photo = newPhoto; // Update the property if needed
-            db.UpdatePlaylistPhoto(ID, newPhoto);
+            Photo = newPhoto;
+            playlistRepository.UpdatePlaylistPhoto(ID, newPhoto);
         }
 
         public void ChangePlaylistName(string newName)
         {
             Name = newName;
-            db.UpdatePlaylistName(ID, newName);
+            playlistRepository.UpdatePlaylistName(ID, newName);
         }
 
-        public void AddSong(int songid) //Must
+        public void AddSong(int songid)
         {
-            
-            rep.AddSongToPlaylist(ID, songid);
+            songRepository.AddSongToPlaylist(ID, songid);
+            UpdatePlaylistList(this.ID);
+
         }
 
-        private void RemoveSong()
+        public void RemoveSong(int songid)
         {
-            //Add a song to this playlist
+            songRepository.RemoveSongFromPlaylist(ID, songid);
+            UpdatePlaylistList(this.ID);
         }
 
         private void SortSong()
@@ -44,9 +47,13 @@ namespace LogicLayer
         {
             //Shuffle songs in this playlist
         }
-        public List<Song> LoadSongs() 
+		public void DeletePlaylist(int playlistID)
+		{
+			playlistRepository.DeletePlaylist(playlistID);
+		}
+		public List<Song> LoadSongs() 
         {
-            var songdata = rep.GetSongList(ID);
+            var songdata = songRepository.GetSongList(this.ID);
             List<Song> songs = new List<Song>();
             foreach (var item in songdata)
             {
@@ -61,6 +68,25 @@ namespace LogicLayer
             this.PlaylistSongs = songs;
             return songs;
 
+        }
+        public void UpdatePlaylistList(int playlistId) 
+        {
+            var dataModels = songRepository.GetSongList(playlistId);
+
+            var artistIds = dataModels.Select(dm => dm.artistID).Distinct().ToList();
+            var albumIds = dataModels.Select(dm => dm.albumID).Distinct().ToList();
+
+            var userDataModels = userRepository.GetUsersByIds(artistIds);
+            var playlistDataModels = playlistRepository.GetPlaylistsByIds(albumIds);
+
+            var users = userDataModels.Select(UserMapper.FromDataModel).ToList();
+            var playlists = playlistDataModels
+            .Select(dm => PlaylistMapper.FromDataModel(dm, users))
+            .ToList();
+
+            PlaylistSongs = dataModels
+                .Select(dm => SongMapper.FromDataModel(dm, users, playlists))
+                .ToList();
         }
     }
 }

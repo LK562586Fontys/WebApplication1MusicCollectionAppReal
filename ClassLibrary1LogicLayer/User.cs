@@ -8,11 +8,11 @@ namespace LogicLayer
         public string Name { get; set; }
         public string EmailAddress { get; set; }
         public string PasswordHash { get; set; }
-        public string ProfilePhoto { get; set; }
+        public byte[] ProfilePhoto { get; set; }
         public DateTime joinDate { get; set; }
         public List<Playlist> userPlaylist { get; set; } = new();
-        private UserRepository rep = new UserRepository("Server=mssqlstud.fhict.local;Database=dbi562586_i562586;User Id=dbi562586_i562586;Password=Wpb3grVisq;TrustServerCertificate=True;");
-        private PlaylistRepository db = new PlaylistRepository("Server=mssqlstud.fhict.local;Database=dbi562586_i562586;User Id=dbi562586_i562586;Password=Wpb3grVisq;TrustServerCertificate=True;");
+        private UserRepository userRepository = new UserRepository("Server=mssqlstud.fhict.local;Database=dbi562586_i562586;User Id=dbi562586_i562586;Password=Wpb3grVisq;TrustServerCertificate=True;");
+        private PlaylistRepository playlistRepository = new PlaylistRepository("Server=mssqlstud.fhict.local;Database=dbi562586_i562586;User Id=dbi562586_i562586;Password=Wpb3grVisq;TrustServerCertificate=True;");
 
         public User Register(string name, string emailAddress, string passwordHash)
         {
@@ -22,53 +22,49 @@ namespace LogicLayer
         public void ChangeUsername(string newName)
         {
             Name = newName;
-            rep.UpdateUsername(ID, newName);
+            userRepository.UpdateUsername(ID, newName);
         }
 
         public void ChangeEmailAddress(string newEmail)
         {
             EmailAddress = newEmail;
-            rep.UpdateEmail(ID, newEmail);
+            userRepository.UpdateEmail(ID, newEmail);
         }
 
         public void ChangePassword(string newPassword)
         {
             PasswordHash = newPassword;
-            rep.UpdatePassword(ID, newPassword);
+            userRepository.UpdatePassword(ID, newPassword);
         }
 
-        private void ChangeProfilePhoto(string newPhoto)
+        public void ChangeProfilePhoto(byte[] newPhoto)
         {
-            //change your Profile Photo
+            ProfilePhoto = newPhoto;
+            userRepository.UpdateProfilePhoto(ID, newPhoto);
         }
 
-        public void AddPlaylist() //Must
+        public void AddPlaylist(DateTime CurrentDate)
         {
             string generatedName = $"Playlist #{userPlaylist.Count + 1}";
-            DateTime now = DateTime.Now;
             var newPlaylist = new Playlist
             {
                 Name = generatedName,
-                DateAdded = now,
+                DateAdded = CurrentDate,
                 Creator = this
             };
             userPlaylist.Add(newPlaylist);
-            PlaylistRepository db = new PlaylistRepository("Server=mssqlstud.fhict.local;Database=dbi562586_i562586;User Id=dbi562586_i562586;Password=Wpb3grVisq;TrustServerCertificate=True;");
-            db.InsertPlaylist(generatedName, now, this.ID);
+            playlistRepository.InsertPlaylist(generatedName, CurrentDate, this.ID);
         }
 
-        private void DeletePlaylist(Playlist oldPlaylist)
+        public void DeleteAccount(int userID)
         {
-            //Delete a playlist
+            userRepository.DeleteAccount(this.ID);
+            
         }
 
-        private void DeleteAccount()
-        {
-            //Delete your account
-        }
         public List<Playlist> LoadPlaylists()
         {
-            var dataModels = db.LoadPlaylists(this.ID);
+            var dataModels = playlistRepository.LoadPlaylists(this.ID);
             List<Playlist> playlists = new List<Playlist>();
             foreach (var item in dataModels)
             {

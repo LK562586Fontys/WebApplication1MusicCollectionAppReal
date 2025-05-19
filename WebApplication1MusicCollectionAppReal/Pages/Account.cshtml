@@ -9,7 +9,7 @@
 <h2>Create Playlist</h2>
 
 <form method="post">
-    <button type="submit">Create Playlist</button>
+    <button type="submit" asp-page-handler="AddPlaylist">Create Playlist</button>
 </form>
 
 @if (Model.Message != null)
@@ -27,4 +27,12 @@
 <form method="post">
     <input asp-for="NewEmail" placeholder="Enter new e-mail" />
     <button type="submit" asp-page-handler="ChangeEmail">Change Email</button>
+</form>
+<form method="post" enctype="multipart/form-data" asp-page-handler="ChangeProfilePhoto">
+    <label for="NewPhoto">Choose an image:</label>
+    <input type="file" id="NewPhoto" name="NewPhoto" accept=".jpg,.jpeg,.png, .webp" required />
+    <button type="submit">Upload</button>
+</form>
+<form method="post">
+    <button type="submit" asp-page-handler="DeleteAccount">Delete Account</button>
 </form>

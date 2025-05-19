@@ -1,6 +1,8 @@
 ﻿using Microsoft.Data.SqlClient;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,49 +19,107 @@ namespace DataAccessLayer
         }
         public void UpdateUsername(int userId, string newUsername)
         {
-            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 string query = "UPDATE [User] SET userName = @userName WHERE ID = @ID";
-                using (SqlCommand cmd = new SqlCommand(query, conn))
+                using (SqlCommand command = new SqlCommand(query, connection))
                 {
-                    cmd.Parameters.AddWithValue("@userName", newUsername);
-                    cmd.Parameters.AddWithValue("@ID", userId);
+                    command.Parameters.AddWithValue("@userName", newUsername);
+                    command.Parameters.AddWithValue("@ID", userId);
 
-                    conn.Open();
-                    cmd.ExecuteNonQuery();
+                    connection.Open();
+                    command.ExecuteNonQuery();
                 }
             }
         }
         public void UpdatePassword(int userId, string newPassword)
         {
-            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 string query = "UPDATE [User] SET passwordHash = @passwordHash WHERE ID = @ID";
-                using (SqlCommand cmd = new SqlCommand(query, conn))
+                using (SqlCommand command = new SqlCommand(query, connection))
                 {
-                    cmd.Parameters.AddWithValue("@passwordHash", newPassword);
-                    cmd.Parameters.AddWithValue("@ID", userId);
+                    command.Parameters.AddWithValue("@passwordHash", newPassword);
+                    command.Parameters.AddWithValue("@ID", userId);
 
-                    conn.Open();
-                    cmd.ExecuteNonQuery();
+                    connection.Open();
+                    command.ExecuteNonQuery();
                 }
             }
         }
         public void UpdateEmail(int userId, string newEmail)
         {
-            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 string query = "UPDATE [User] SET emailAddress = @emailAddress WHERE ID = @ID";
-                using (SqlCommand cmd = new SqlCommand(query, conn))
+                using (SqlCommand command = new SqlCommand(query, connection))
                 {
-                    cmd.Parameters.AddWithValue("@emailAddress", newEmail);
-                    cmd.Parameters.AddWithValue("@ID", userId);
+                    command.Parameters.AddWithValue("@emailAddress", newEmail);
+                    command.Parameters.AddWithValue("@ID", userId);
 
-                    conn.Open();
-                    cmd.ExecuteNonQuery();
+                    connection.Open();
+                    command.ExecuteNonQuery();
                 }
             }
         }
+        public void UpdateProfilePhoto(int userId, byte[] newPhoto)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                string query = "UPDATE [User] SET profilePicture = @picture WHERE ID = @ID";
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.Add("@picture", SqlDbType.VarBinary).Value = newPhoto;
+                    command.Parameters.Add("@ID", SqlDbType.Int).Value = userId;
 
+                    connection.Open();
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+        public void DeleteAccount(int userID)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                string query = @"UPDATE [Playlist] SET creator = NULL WHERE creator = @ID;
+DELETE FROM [User] WHERE ID = @ID;";
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@ID", userID);
+
+                    connection.Open();
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+        public List<UserDataModel> GetUsersByIds(List<int> userIds)
+        {
+            var users = new List<UserDataModel>();
+
+            if (userIds == null || userIds.Count == 0)
+                return users;
+
+            string ids = string.Join(",", userIds);
+
+            string query = $"SELECT * FROM [User] WHERE ID IN ({ids})";
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            using (SqlCommand command = new SqlCommand(query, connection))
+            {
+                connection.Open();
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        users.Add(new UserDataModel
+                        {
+                            ID = (int)reader["ID"],
+                            userName = reader["userName"].ToString()
+                        });
+                    }
+                }
+            }
+
+            return users;
+        }
     }
 }

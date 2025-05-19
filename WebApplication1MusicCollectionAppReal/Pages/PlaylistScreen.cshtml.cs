@@ -7,7 +7,7 @@ namespace WebApplication1MusicCollectionAppReal.Pages
     public class PlaylistScreen : PageModel
     {
         public static User CurrentUser { get; set; } = new LogicLayer.User { ID = 5 };
-        public static LogicLayer.Playlist CurrentPlaylist { get; set; } = new LogicLayer.Playlist { ID = 6 };
+        public static LogicLayer.Playlist CurrentPlaylist { get; set; } = new LogicLayer.Playlist { ID = 5 };
         [BindProperty]
         public string NewName { get; set; }
         [BindProperty]
@@ -34,6 +34,11 @@ namespace WebApplication1MusicCollectionAppReal.Pages
             await NewPhoto.CopyToAsync(memoryStream);
             byte[] imageBytes = memoryStream.ToArray();
             CurrentPlaylist.ChangePlaylistPicture(imageBytes);
+            return RedirectToPage();
+        }
+        public IActionResult OnPostDeletePlaylist() 
+        {
+            CurrentPlaylist.DeletePlaylist(CurrentPlaylist.ID);
             return RedirectToPage();
         }
     }

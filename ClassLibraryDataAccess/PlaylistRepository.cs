@@ -25,53 +25,69 @@ namespace DataAccessLayer
 			INSERT INTO Playlist (name, dateAdded, Creator)
 			VALUES (@name, @date, @creatorId)";
 
-            using SqlCommand insertCmd = new SqlCommand(insertQuery, connection);
-            insertCmd.Parameters.AddWithValue("@name", name);
-            insertCmd.Parameters.AddWithValue("@date", dateAdded);
-            insertCmd.Parameters.AddWithValue("@creatorId", creator);
+            using SqlCommand command = new SqlCommand(insertQuery, connection);
+            command.Parameters.AddWithValue("@name", name);
+            command.Parameters.AddWithValue("@date", dateAdded);
+            command.Parameters.AddWithValue("@creatorId", creator);
 
-            insertCmd.ExecuteNonQuery();
+            connection.Open();
+            command.ExecuteNonQuery();
         }
         public void UpdatePlaylistName(int playlistId, string newName)
         {
-            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 string query = "UPDATE [Playlist] SET name = @name WHERE ID = @ID";
-                using (SqlCommand cmd = new SqlCommand(query, conn))
+                using (SqlCommand command = new SqlCommand(query, connection))
                 {
-                    cmd.Parameters.AddWithValue("@name", newName);
-                    cmd.Parameters.AddWithValue("@ID", playlistId);
+                    command.Parameters.AddWithValue("@name", newName);
+                    command.Parameters.AddWithValue("@ID", playlistId);
 
-                    conn.Open();
-                    cmd.ExecuteNonQuery();
+                    connection.Open();
+                    command.ExecuteNonQuery();
                 }
             }
         }
-        public void UpdatePlaylistPhoto(int playlistId, byte[] newPhoto)
+		public void DeletePlaylist(int playlistID)
+		{
+			using (SqlConnection connection = new SqlConnection(_connectionString))
+			{
+				string query = @"DELETE FROM [Playlist_Song] WHERE playlist_ID = @ID;
+DELETE FROM [Playlist] WHERE ID = @ID";
+				using (SqlCommand command = new SqlCommand(query, connection))
+				{
+					command.Parameters.AddWithValue("@ID", playlistID);
+
+					connection.Open();
+					command.ExecuteNonQuery();
+				}
+			}
+		}
+		public void UpdatePlaylistPhoto(int playlistId, byte[] newPhoto)
         {
-            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 string query = "UPDATE [Playlist] SET picture = @picture WHERE ID = @ID";
-                using (SqlCommand cmd = new SqlCommand(query, conn))
+                using (SqlCommand command = new SqlCommand(query, connection))
                 {
-                    cmd.Parameters.Add("@picture", SqlDbType.VarBinary).Value = newPhoto;
-                    cmd.Parameters.Add("@ID", SqlDbType.Int).Value = playlistId;
+                    command.Parameters.Add("@picture", SqlDbType.VarBinary).Value = newPhoto;
+                    command.Parameters.Add("@ID", SqlDbType.Int).Value = playlistId;
 
-                    conn.Open();
-                    cmd.ExecuteNonQuery();
+                    connection.Open();
+                    command.ExecuteNonQuery();
                 }
             }
         }
         public List<PlaylistDataModel> LoadPlaylists(int userId)
         {
-            List<PlaylistDataModel> result = new List<PlaylistDataModel>();
-            using (SqlConnection conn = new SqlConnection(_connectionString))
+            List<PlaylistDataModel> result = new();
+            using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 string query = "SELECT * FROM Playlist WHERE Creator = @userId";
-                SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@userId", userId);
-                conn.Open();
-                SqlDataReader reader = cmd.ExecuteReader();
+                SqlCommand command = new SqlCommand(query, connection);
+                command.Parameters.AddWithValue("@userId", userId);
+                connection.Open();
+                SqlDataReader reader = command.ExecuteReader();
 
                 while (reader.Read())
                 {
@@ -79,11 +95,41 @@ namespace DataAccessLayer
                     {
                         ID = (int)reader["ID"],
                         Name = reader["Name"].ToString(),
-                        DateAdded = (DateTime)reader["DateAdded"]
+                        DateAdded = (DateTime)reader["DateAdded"],
+                        Photo = (byte[])reader["Photo"]
                     });
                 }
             }
             return result;
+        }
+        public List<PlaylistDataModel> GetPlaylistsByIds(List<int> playlistIds)
+        {
+            var playlists = new List<PlaylistDataModel>();
+
+            if (playlistIds == null || playlistIds.Count == 0)
+                return playlists;
+
+            string ids = string.Join(",", playlistIds);
+
+            string query = $"SELECT * FROM [Playlist] WHERE ID IN ({ids})";
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            using (SqlCommand command = new SqlCommand(query, connection))
+            {
+                connection.Open();
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        playlists.Add(new PlaylistDataModel
+                        {
+                            ID = (int)reader["ID"],
+                            Name = reader["Name"].ToString()
+                        });
+                    }
+                }
+            }
+
+            return playlists;
         }
     }
 }

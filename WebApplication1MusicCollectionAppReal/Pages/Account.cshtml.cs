@@ -6,10 +6,10 @@ namespace WebApplication1MusicCollectionAppReal.Pages
 {
     public class Account : PageModel
     {
-        public static User CurrentUser { get; set; } = new User { ID = 5, Name = "TestUser" };
+        public static User CurrentUser { get; set; } = new User { ID = 11, Name = "TestUser" };
 		public List<LogicLayer.Playlist> CreatedPlaylists => CurrentUser.userPlaylist;
-
-		public string? Message { get; set; }
+        public IFormFile NewPhoto { get; set; }
+        public string? Message { get; set; }
 
         [BindProperty]
         public string NewUsername { get; set; }
@@ -29,10 +29,12 @@ namespace WebApplication1MusicCollectionAppReal.Pages
             Playlists = CurrentUser.LoadPlaylists();
         }
 
-        public void OnPost()
+        public IActionResult OnPostAddPlaylist()
         {
-            CurrentUser.AddPlaylist();
+            DateTime CurrentDate = DateTime.Now;
+            CurrentUser.AddPlaylist(CurrentDate);
             Message = "Playlist created!";
+            return RedirectToPage();
         }
 
         public IActionResult OnPostChangeUsername()
@@ -50,6 +52,20 @@ namespace WebApplication1MusicCollectionAppReal.Pages
         public IActionResult OnPostChangeEmail()
         {
             CurrentUser.ChangeEmailAddress(NewEmail);
+            return RedirectToPage();
+        }
+
+        public IActionResult OnPostDeleteAccount()
+        {
+            CurrentUser.DeleteAccount(CurrentUser.ID);
+            return RedirectToPage();
+        }
+        public async Task<IActionResult> OnPostChangeProfilePhoto()
+        {
+            using var memoryStream = new MemoryStream();
+            await NewPhoto.CopyToAsync(memoryStream);
+            byte[] imageBytes = memoryStream.ToArray();
+            CurrentUser.ChangeProfilePhoto(imageBytes);
             return RedirectToPage();
         }
     }

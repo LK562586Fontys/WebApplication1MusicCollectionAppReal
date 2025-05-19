@@ -1,3 +1,4 @@
+using LogicLayer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -9,12 +10,28 @@ namespace WebApplication1MusicCollectionAppReal.Pages
         public static LogicLayer.Playlist CurrentPlaylist { get; set; } = new LogicLayer.Playlist { ID = 6 };
         public void OnGet()
         {
+            CurrentSong.GetSpecificSong(CurrentSong.ID);
         }
 
-        public void OnPost() 
+        public IActionResult OnPostAddSongToPlaylist() 
         {
             CurrentPlaylist.AddSong(CurrentSong.ID);
+            return RedirectToPage();
         }
-
+		public IActionResult OnPostUpdateWeight(int Weight)
+		{
+			CurrentSong.ChangeSongWeight(CurrentSong.ID, Weight);
+			return RedirectToPage();
+		}
+        public async Task<IActionResult> OnPostSortBy() 
+        {
+            //i cba to write this rn bruh
+            return RedirectToPage();
+        }
+        public IActionResult OnPostRemoveSongFromPlaylist()
+        {
+            CurrentPlaylist.RemoveSong(CurrentSong.ID);
+            return RedirectToPage();
+        }
     }
 }
