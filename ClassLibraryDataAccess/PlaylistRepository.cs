@@ -18,20 +18,21 @@ namespace DataAccessLayer
         }
         public void InsertPlaylist(string name, DateTime dateAdded, int creator)
         {
-            using SqlConnection connection = new SqlConnection(_connectionString);
-            connection.Open();
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                string insertQuery = @"
+			    INSERT INTO Playlist (name, dateAdded, Creator)
+			    VALUES (@name, @date, @creatorId)";
+                using (SqlCommand command = new SqlCommand(insertQuery, connection))
+                {
+                    command.Parameters.AddWithValue("@name", name);
+                    command.Parameters.AddWithValue("@date", dateAdded);
+                    command.Parameters.AddWithValue("@creatorId", creator);
 
-            string insertQuery = @"
-			INSERT INTO Playlist (name, dateAdded, Creator)
-			VALUES (@name, @date, @creatorId)";
-
-            using SqlCommand command = new SqlCommand(insertQuery, connection);
-            command.Parameters.AddWithValue("@name", name);
-            command.Parameters.AddWithValue("@date", dateAdded);
-            command.Parameters.AddWithValue("@creatorId", creator);
-
-            connection.Open();
-            command.ExecuteNonQuery();
+                    connection.Open();
+                    command.ExecuteNonQuery();
+                }
+            }
         }
         public void UpdatePlaylistName(int playlistId, string newName)
         {
