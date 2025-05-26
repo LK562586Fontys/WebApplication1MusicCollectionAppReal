@@ -16,16 +16,17 @@
     <button type="submit">Upload</button>
 </form>
 <form method="post" asp-page-handler="SortingBy">
-	<button type="submit" name="artist" value="ASC">Artist ↑</button>
-	<button type="submit" name="artist" value="DESC">Artist ↓</button>
-	<button type="submit" name="album" value="ASC">Album ↑</button>
-	<button type="submit" name="album" value="DESC">Album ↓</button>
-	<button type="submit" name="dateadded" value="ASC">Date Added ↑</button>
-	<button type="submit" name="dateadded" value="DESC">Date Added ↓</button>
-	<button type="submit" name="song" value="ASC">Song ↑</button>
-	<button type="submit" name="song" value="DESC">Song ↓</button>
-	<button type="submit" name="length" value="ASC">Length ↑</button>
-	<button type="submit" name="length" value="DESC">Length ↓</button>
+    <button type="submit" name="sort" value="artist_ASC">Artist ↑</button>
+    <button type="submit" name="sort" value="artist_DESC">Artist ↓</button>
+    <button type="submit" name="sort" value="album_ASC">Album ↑</button>
+    <button type="submit" name="sort" value="album_DESC">Album ↓</button>
+    <button type="submit" name="sort" value="dateadded_ASC">Date Added ↑</button>
+    <button type="submit" name="sort" value="dateadded_DESC">Date Added ↓</button>
+    <button type="submit" name="sort" value="song_ASC">Song ↑</button>
+    <button type="submit" name="sort" value="song_DESC">Song ↓</button>
+    <button type="submit" name="sort" value="length_ASC">Length ↑</button>
+    <button type="submit" name="sort" value="length_DESC">Length ↓</button>
+    <button type="submit" name="sort" value="random_random">Randomise</button>
 </form>
 <form method="post">
 	<button type="submit" asp-page-handler="DeletePlaylist">Delete Playlist</button>

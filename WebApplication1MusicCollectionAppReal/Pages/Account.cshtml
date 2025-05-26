@@ -12,10 +12,7 @@
     <button type="submit" asp-page-handler="AddPlaylist">Create Playlist</button>
 </form>
 
-@if (Model.Message != null)
-{
-    <p>@Model.Message</p>
-}
+
 <form method="post">
     <input asp-for="NewUsername" placeholder="Enter new username" />
     <button type="submit" asp-page-handler="ChangeUsername">Change Username</button>
@@ -36,3 +33,41 @@
 <form method="post">
     <button type="submit" asp-page-handler="DeleteAccount">Delete Account</button>
 </form>
+@* 
+<h2>Your Information</h2>
+<h3>Name = @Model.CurrentUser.Name</h3>
+<h3>Email = @Model.CurrentUser.EmailAddress</h3>
+<h3>JoinDate = @Model.CurrentUser.joinDate.ToShortDateString()</h3>
+<h2>Your Playlists</h2> *@
+
+@if (Model.Playlists != null)
+{
+    <form method="post" asp-page-handler="Reorder">
+        <ul>
+            @for (int i = 0; i < Model.Playlists.Count; i++)
+            {
+                var playlist = Model.Playlists[i];
+                <li>
+                    <input type="hidden" name="playlistOrder" value="@playlist.ID" />
+                    <strong>@playlist.Name</strong> (Created: @playlist.DateAdded.ToShortDateString())
+
+                    @* Show "Move Up" if not first *@
+                    @if (i > 0)
+                    {
+                        <button type="submit" name="move" value="up_@i">↑</button>
+                    }
+
+                    @* Show "Move Down" if not last *@
+                    @if (i < Model.Playlists.Count - 1)
+                    {
+                        <button type="submit" name="move" value="down_@i">↓</button>
+                    }
+                </li>
+            }
+        </ul>
+    </form>
+}
+else
+{
+    <p>No playlists found.</p>
+}

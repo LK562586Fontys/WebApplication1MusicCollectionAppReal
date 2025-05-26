@@ -79,6 +79,25 @@ DELETE FROM [Playlist] WHERE ID = @ID";
                 }
             }
         }
+        public void SortSongs(int playlistID, string field, string value) 
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionString)) 
+            {
+                string query = $@"
+                SELECT Song.ID, Song.songTitle, Song.songDuration, Song.songGenre, Song.AlbumID, Song.ArtistID, Album.playlistName AS AlbumName, Artist.userName AS ArtistName FROM Playlist_Song
+                INNER JOIN Song ON Song.ID = Playlist_Song.song_ID
+                INNER JOIN Playlist AS Album ON Song.AlbumID = Album.ID
+                INNER JOIN [User] AS Artist ON Song.ArtistID = Artist.ID
+                WHERE Playlist_Song.playlist_ID = @playlist_ID
+                ORDER BY {field} {value}";
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("playlist_ID", playlistID);
+                    connection.Open();
+                    SqlDataReader reader = command.ExecuteReader();
+                }
+            }
+        }
         public List<PlaylistDataModel> LoadPlaylists(int userId)
         {
             List<PlaylistDataModel> result = new();
@@ -95,9 +114,9 @@ DELETE FROM [Playlist] WHERE ID = @ID";
                     result.Add(new PlaylistDataModel
                     {
                         ID = (int)reader["ID"],
-                        Name = reader["Name"].ToString(),
-                        DateAdded = (DateTime)reader["DateAdded"],
-                        Photo = (byte[])reader["Photo"]
+                        Name = reader["name"].ToString(),
+                        DateAdded = (DateTime)reader["dateAdded"],
+                        Photo = reader["picture"] != DBNull.Value ? (byte[])reader["picture"] : null
                     });
                 }
             }

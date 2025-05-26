@@ -11,7 +11,7 @@ namespace DataAccessLayer
         public int ID;
         public string Name;
         public DateTime DateAdded;
-        public byte[] Photo;
-        public int Creator;
+        public byte[]? Photo;
+        public int? Creator;
     }
 }

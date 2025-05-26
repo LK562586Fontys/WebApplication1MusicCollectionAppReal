@@ -92,6 +92,29 @@ DELETE FROM [User] WHERE ID = @ID;";
                 }
             }
         }
+        public List<UserDataModel> GetSpecificUser(int userID)
+        {
+            List<UserDataModel> result = new List<UserDataModel>();
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                string query = " SELECT * FROM [User] WHERE ID = @UserID";
+                SqlCommand command = new SqlCommand(query, connection);
+                command.Parameters.AddWithValue("@UserID", userID);
+                connection.Open();
+                SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    var user = new UserDataModel
+                    {
+                        ID = Convert.ToInt32(reader["ID"]),
+                        userName = reader["Username"].ToString(),
+                    };
+
+                    result.Add(user);
+                }
+            }
+            return result;
+        }
         public List<UserDataModel> GetUsersByIds(List<int> userIds)
         {
             var users = new List<UserDataModel>();

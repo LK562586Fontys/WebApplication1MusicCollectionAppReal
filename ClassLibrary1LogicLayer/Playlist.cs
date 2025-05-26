@@ -1,4 +1,6 @@
 ﻿using DataAccessLayer;
+using System.Net.Http;
+using Newtonsoft.Json;
 
 namespace LogicLayer
 {
@@ -28,22 +30,20 @@ namespace LogicLayer
         public void AddSong(int songid)
         {
             songRepository.AddSongToPlaylist(ID, songid);
-            UpdatePlaylistList(this.ID);
 
         }
 
         public void RemoveSong(int songid)
         {
             songRepository.RemoveSongFromPlaylist(ID, songid);
-            UpdatePlaylistList(this.ID);
         }
 
-        private void SortSong()
+        public void SortSong(string field, string order)
         {
-            //Sort songs in this playlist
+            playlistRepository.SortSongs(this.ID, field, order);
         }
 
-        private void ShuffleSong()
+        public void ShuffleSong()
         {
             //Shuffle songs in this playlist
         }
@@ -69,9 +69,9 @@ namespace LogicLayer
             return songs;
 
         }
-        public void UpdatePlaylistList(int playlistId) 
+        public void UpdatePlaylistList(string field = null, string order = null, int? shuffleSeed = null)
         {
-            var dataModels = songRepository.GetSongList(playlistId);
+            var dataModels = songRepository.GetSongList(this.ID);
 
             var artistIds = dataModels.Select(dm => dm.artistID).Distinct().ToList();
             var albumIds = dataModels.Select(dm => dm.albumID).Distinct().ToList();
@@ -80,13 +80,32 @@ namespace LogicLayer
             var playlistDataModels = playlistRepository.GetPlaylistsByIds(albumIds);
 
             var users = userDataModels.Select(UserMapper.FromDataModel).ToList();
-            var playlists = playlistDataModels
-            .Select(dm => PlaylistMapper.FromDataModel(dm, users))
-            .ToList();
+            var playlists = playlistDataModels.Select(dm => PlaylistMapper.FromDataModel(dm, users)).ToList();
 
-            PlaylistSongs = dataModels
-                .Select(dm => SongMapper.FromDataModel(dm, users, playlists))
-                .ToList();
+            var songs = dataModels.Select(dm => SongMapper.FromDataModel(dm, users, playlists)).ToList();
+
+            PlaylistSongs = ApplySortingOrShuffle(songs, field, order, shuffleSeed);
+        }
+
+        private List<Song> ApplySortingOrShuffle(List<Song> songs, string field, string order, int? seed = null)
+        {
+            if (field?.ToLower() == "random" && seed.HasValue)
+            {
+                var rng = new Random(seed.Value);
+                return songs.OrderBy(_ => rng.Next()).ToList();
+            }
+
+            bool ascending = order?.ToLower() == "asc";
+
+            return field?.ToLower() switch
+            {
+                "name" => ascending ? songs.OrderBy(s => s.Name).ToList() : songs.OrderByDescending(s => s.Name).ToList(),
+                "weight" => ascending ? songs.OrderBy(s => s.Weight).ToList() : songs.OrderByDescending(s => s.Weight).ToList(),
+                "datereleased" => ascending ? songs.OrderBy(s => s.DateReleased).ToList() : songs.OrderByDescending(s => s.DateReleased).ToList(),
+                "artistname" => ascending ? songs.OrderBy(s => s.Artist?.Name).ToList() : songs.OrderByDescending(s => s.Artist?.Name).ToList(),
+                "albumname" => ascending ? songs.OrderBy(s => s.Album?.Name).ToList() : songs.OrderByDescending(s => s.Album?.Name).ToList(),
+                _ => songs
+            };
         }
     }
 }

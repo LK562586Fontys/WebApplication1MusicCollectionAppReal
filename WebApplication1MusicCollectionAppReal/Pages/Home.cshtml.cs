@@ -5,6 +5,7 @@ namespace WebApplication1MusicCollectionAppReal.Pages
 {
     public class Home : PageModel
     {
+
         public void OnGet()
         {
         }

@@ -7,7 +7,7 @@ namespace WebApplication1MusicCollectionAppReal.Pages
     public class PlaylistScreen : PageModel
     {
         public static User CurrentUser { get; set; } = new LogicLayer.User { ID = 5 };
-        public static LogicLayer.Playlist CurrentPlaylist { get; set; } = new LogicLayer.Playlist { ID = 5 };
+        public static LogicLayer.Playlist CurrentPlaylist { get; set; } = new LogicLayer.Playlist { ID = 6 };
         [BindProperty]
         public string NewName { get; set; }
         [BindProperty]
@@ -21,7 +21,10 @@ namespace WebApplication1MusicCollectionAppReal.Pages
 
         private void LoadPlaylistSongs()
         {
-            Songs = CurrentPlaylist.LoadSongs();
+            var sortField = HttpContext.Session.GetString("SortField");
+            var sortOrder = HttpContext.Session.GetString("SortOrder");
+
+            CurrentPlaylist.UpdatePlaylistList(sortField, sortOrder);
         }
         public IActionResult OnPostChangePlaylistName()
         {
@@ -39,6 +42,35 @@ namespace WebApplication1MusicCollectionAppReal.Pages
         public IActionResult OnPostDeletePlaylist() 
         {
             CurrentPlaylist.DeletePlaylist(CurrentPlaylist.ID);
+            return RedirectToPage();
+        }
+        public IActionResult OnPostSortingBy() 
+        {
+            var sort = Request.Form["sort"].ToString();
+
+            if (!string.IsNullOrEmpty(sort))
+            {
+                var parts = sort.Split('_');
+                if (parts.Length == 2)
+                {
+                    var sortField = parts[0];
+                    var sortOrder = parts[1];
+
+                    HttpContext.Session.SetString("SortField", sortField);
+                    HttpContext.Session.SetString("SortOrder", sortOrder);
+
+                    if (sortField == "random")
+                    {
+                        var seed = Guid.NewGuid().GetHashCode();
+                        HttpContext.Session.SetString("ShuffleSeed", seed.ToString());
+                    }
+                    else
+                    {
+                        HttpContext.Session.Remove("ShuffleSeed");
+                    }
+                }
+            }
+
             return RedirectToPage();
         }
     }
