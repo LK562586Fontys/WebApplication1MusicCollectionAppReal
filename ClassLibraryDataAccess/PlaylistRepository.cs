@@ -54,7 +54,7 @@ namespace DataAccessLayer
 			using (SqlConnection connection = new SqlConnection(_connectionString))
 			{
 				string query = @"DELETE FROM [Playlist_Song] WHERE playlist_ID = @ID;
-DELETE FROM [Playlist] WHERE ID = @ID";
+                DELETE FROM [Playlist] WHERE ID = @ID";
 				using (SqlCommand command = new SqlCommand(query, connection))
 				{
 					command.Parameters.AddWithValue("@ID", playlistID);
@@ -150,6 +150,28 @@ DELETE FROM [Playlist] WHERE ID = @ID";
             }
 
             return playlists;
+        }
+        public List<PlaylistDataModel> GetAllPlaylists()
+        {
+            List<PlaylistDataModel> result = new List<PlaylistDataModel>();
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                string query = " SELECT * FROM Playlist";
+                SqlCommand command = new SqlCommand(query, connection);
+                connection.Open();
+                SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    result.Add(new PlaylistDataModel
+                    {
+                        ID = (int)reader["ID"],
+                        Name = reader["name"].ToString(),
+                        Creator = (int)reader["creator"],
+                        DateAdded = (DateTime)reader["dateAdded"],
+                    });
+                }
+            }
+            return result;
         }
     }
 }

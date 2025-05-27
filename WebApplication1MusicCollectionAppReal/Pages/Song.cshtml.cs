@@ -23,11 +23,6 @@ namespace WebApplication1MusicCollectionAppReal.Pages
 			CurrentSong.ChangeSongWeight(CurrentSong.ID, Weight);
 			return RedirectToPage();
 		}
-        public async Task<IActionResult> OnPostSortBy() 
-        {
-            //i cba to write this rn bruh
-            return RedirectToPage();
-        }
         public IActionResult OnPostRemoveSongFromPlaylist()
         {
             CurrentPlaylist.RemoveSong(CurrentSong.ID);

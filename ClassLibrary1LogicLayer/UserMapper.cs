@@ -14,8 +14,10 @@ namespace LogicLayer
             return new User
             {
                 ID = dataModel.ID,
-                Name = dataModel.userName
-                // Add other fields if your logic model has more
+                Name = dataModel.userName,
+                EmailAddress = dataModel.email,
+                PasswordHash = dataModel.password,
+                
             };
         }
     }

@@ -82,7 +82,7 @@ namespace DataAccessLayer
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 string query = @"UPDATE [Playlist] SET creator = NULL WHERE creator = @ID;
-DELETE FROM [User] WHERE ID = @ID;";
+DELETE FROM [User] WHERE ID = @ID";
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@ID", userID);
@@ -143,6 +143,29 @@ DELETE FROM [User] WHERE ID = @ID;";
             }
 
             return users;
+        }
+        public List<UserDataModel> GetAllUsers()
+        {
+            List<UserDataModel> result = new List<UserDataModel>();
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                string query = " SELECT * FROM User";
+                SqlCommand command = new SqlCommand(query, connection);
+                connection.Open();
+                SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    result.Add(new UserDataModel
+                    {
+                        ID = (int)reader["ID"],
+                        userName = reader["Name"].ToString(),
+                        password = reader["passwordHash"].ToString(),
+                        email = reader["emailAddress"].ToString(),
+                        joinDate = (DateTime)reader["joinDate"],
+                    });
+                }
+            }
+            return result;
         }
     }
 }

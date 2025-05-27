@@ -6,3 +6,8 @@
 <h1>@ViewData["Title"]</h1>
 
 <p>Use this page to detail your site's SCREEN</p>
+
+<form method="get">
+    <input type="text" name="SearchTerm" value="@Request.Query["SearchTerm"]" placeholder="Search songs..." />
+    <button type="submit">Search</button>
+</form>

@@ -28,7 +28,7 @@ namespace UnitTesting
         public void TestChangePassword()
         {
             //Arrange
-            string newpassword = "MyNewUsername";
+            string newpassword = "MyNewPassword";
             //Act
             userObject.ChangePassword(newpassword);
             //Assert

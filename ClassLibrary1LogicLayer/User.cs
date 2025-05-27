@@ -73,24 +73,21 @@ namespace LogicLayer
                 Creator = this
             }).ToList();
 
-            // If cookie exists, apply custom order
             if (!string.IsNullOrEmpty(playlistOrderCookie))
             {
                 var idStrings = playlistOrderCookie.Split(',');
                 var orderedIds = idStrings.Select(idStr => int.TryParse(idStr, out int id) ? id : -1).Where(id => id != -1).ToList();
 
-                playlists = orderedIds
-                    .Select(id => playlists.FirstOrDefault(p => p.ID == id))
-                    .Where(p => p != null)
-                    .ToList();
+                playlists = orderedIds.Select(id => playlists.FirstOrDefault(p => p.ID == id))
+                    .Where(p => p != null).ToList();
 
                 var missing = dataModels.Where(dm => !orderedIds.Contains(dm.ID)).Select(item => new Playlist
-                                        {
-                                            ID = item.ID,
-                                            Name = item.Name,
-                                            DateAdded = item.DateAdded,
-                                            Creator = this
-                                        });
+                {
+                    ID = item.ID,
+                    Name = item.Name,
+                    DateAdded = item.DateAdded,
+                    Creator = this
+                });
 
                 playlists.AddRange(missing);
             }

@@ -99,6 +99,18 @@ namespace DataAccessLayer
                 SqlCommand command = new SqlCommand(query, connection);
                 connection.Open();
                 SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    result.Add(new SongDataModel
+                    {
+                        ID = (int)reader["ID"],
+                        name = reader["Name"].ToString(),
+                        weight = (int)reader["Weight"],
+                        dateReleased = (DateTime)reader["DateReleased"],
+                        artistID = (int)reader["artistID"],
+                        albumID = (int)reader["albumID"],
+                    });
+                }
             }
             return result;
         }
