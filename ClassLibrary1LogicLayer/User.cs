@@ -14,9 +14,8 @@ namespace LogicLayer
         private UserRepository userRepository = new UserRepository("Server=mssqlstud.fhict.local;Database=dbi562586_i562586;User Id=dbi562586_i562586;Password=Wpb3grVisq;TrustServerCertificate=True;");
         private PlaylistRepository playlistRepository = new PlaylistRepository("Server=mssqlstud.fhict.local;Database=dbi562586_i562586;User Id=dbi562586_i562586;Password=Wpb3grVisq;TrustServerCertificate=True;");
 
-        public User Register(string name, string emailAddress, string passwordHash)
+        public User() 
         {
-            return Register(name, emailAddress, passwordHash);
         }
 
         public void ChangeUsername(string newName)
@@ -99,5 +98,9 @@ namespace LogicLayer
         {
             userRepository.GetSpecificUser(userid);
         }
-    }
-}
+		public async Task<bool> VerifyLogin(string email, string password)
+		{
+			return await userRepository.VerifyLogin(email, password);
+		}
+	}
+} 

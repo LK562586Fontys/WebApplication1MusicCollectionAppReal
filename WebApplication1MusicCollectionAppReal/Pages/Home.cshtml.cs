@@ -6,14 +6,14 @@ namespace WebApplication1MusicCollectionAppReal.Pages
     public class Home : PageModel
     {
         public LogicLayer.Song AllSongs { get; set; } = new LogicLayer.Song();
-        public IList<Song> Songs { get; set; }
-        [BindProperty]
+        [BindProperty(SupportsGet = true)]
         public string SearchTerm { get; set; }
-        
 
-        public async Task OnGetAsync()
+        public List<LogicLayer.Song> Songs { get; set; }
+
+        public void OnGet()
         {
-            AllSongs.GetAllSongs();
+            Songs = AllSongs.SearchSongs(SearchTerm);
         }
     }
 }

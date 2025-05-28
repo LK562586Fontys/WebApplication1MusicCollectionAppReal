@@ -7,7 +7,6 @@ namespace LogicLayer
         public int ID { get; set; }
         public string Name { get; set; }
         public DateTime DateReleased { get; set; }
-        public int Duration { get; set; }
         public int Weight { get; set; }
         public List<Genre> GenreSong { get; set; }
         public List<Playlist> PlaylistSong { get; set; }
@@ -24,15 +23,39 @@ namespace LogicLayer
         public void ChangeSongWeight(int songID, int weight)
         {
             Weight = weight;
+            if (Weight < 10 || Weight > -10) { return; }
             songRepository.ChangeSongWeight(songID, weight);
-        }
-        public void GetAllSongs() 
-        {
-            songRepository.GetAllSongs();
         }
         public void GetSpecificSong(int songId)
         {
             songRepository.GetSpecificSong(songId);
+        }
+        public List<Song> SearchSongs(string searchTerm)
+        {
+            var songRepo = new SongRepository("Server=mssqlstud.fhict.local;Database=dbi562586_i562586;User Id=dbi562586_i562586;Password=Wpb3grVisq;TrustServerCertificate=True;");
+            var userRepo = new UserRepository("Server=mssqlstud.fhict.local;Database=dbi562586_i562586;User Id=dbi562586_i562586;Password=Wpb3grVisq;TrustServerCertificate=True;");
+            var playlistRepo = new PlaylistRepository("Server=mssqlstud.fhict.local;Database=dbi562586_i562586;User Id=dbi562586_i562586;Password=Wpb3grVisq;TrustServerCertificate=True;");
+
+            var userDataModels = userRepo.GetAllUsers();
+            var users = userDataModels
+                .Select(udm => UserMapper.FromDataModel(udm))
+                .ToList();
+
+            // Get all playlists and map them (requires users for creator)
+            var playlistDataModels = playlistRepo.GetAllPlaylists();
+            var playlists = playlistDataModels
+                .Select(pm => PlaylistMapper.FromDataModel(pm, users))
+                .ToList();
+
+            // Get filtered songs based on search term
+            var songDataModels = songRepo.SearchSongs(searchTerm);
+
+            // Map songs to logic layer
+            var allSongs = songDataModels
+                .Select(dm => SongMapper.FromDataModel(dm, users, playlists))
+                .ToList();
+
+            return allSongs;
         }
     }
 }

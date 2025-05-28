@@ -166,7 +166,7 @@ namespace DataAccessLayer
                     {
                         ID = (int)reader["ID"],
                         Name = reader["name"].ToString(),
-                        Creator = (int)reader["creator"],
+                        Creator = reader["creator"] != DBNull.Value ? (int?)reader["creator"] : null,
                         DateAdded = (DateTime)reader["dateAdded"],
                     });
                 }

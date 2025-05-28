@@ -1,9 +1,11 @@
 ﻿using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,7 +19,11 @@ namespace DataAccessLayer
         {
             _connectionString = connectionString;
         }
-        public void UpdateUsername(int userId, string newUsername)
+		public UserRepository(IConfiguration configuration)
+		{
+			_connectionString = configuration.GetConnectionString("DefaultConnection");
+		}
+		public void UpdateUsername(int userId, string newUsername)
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
@@ -149,7 +155,7 @@ DELETE FROM [User] WHERE ID = @ID";
             List<UserDataModel> result = new List<UserDataModel>();
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                string query = " SELECT * FROM User";
+                string query = " SELECT * FROM [User]";
                 SqlCommand command = new SqlCommand(query, connection);
                 connection.Open();
                 SqlDataReader reader = command.ExecuteReader();
@@ -158,7 +164,7 @@ DELETE FROM [User] WHERE ID = @ID";
                     result.Add(new UserDataModel
                     {
                         ID = (int)reader["ID"],
-                        userName = reader["Name"].ToString(),
+                        userName = reader["userName"].ToString(),
                         password = reader["passwordHash"].ToString(),
                         email = reader["emailAddress"].ToString(),
                         joinDate = (DateTime)reader["joinDate"],
@@ -167,5 +173,25 @@ DELETE FROM [User] WHERE ID = @ID";
             }
             return result;
         }
-    }
+		public async Task<bool> VerifyLogin(string emailAddress, string inputPassword)
+		{
+			using (SqlConnection connection = new SqlConnection(_connectionString))
+			{
+				var cmd = new SqlCommand("SELECT passwordHash FROM [user] WHERE emailAddress = @Email", connection);
+				cmd.Parameters.AddWithValue("@Email", emailAddress);
+
+				await connection.OpenAsync();
+				using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
+				{
+					if (await reader.ReadAsync())
+					{
+						var storedPassword = reader["password"].ToString();
+
+						return storedPassword == inputPassword;
+					}
+				}
+			}
+			return false;
+		}
+	}
 }

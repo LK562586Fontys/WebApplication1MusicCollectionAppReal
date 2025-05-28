@@ -90,13 +90,14 @@ namespace DataAccessLayer
             }
             return result;
         }
-        public List<SongDataModel> GetAllSongs() 
+        public List<SongDataModel> SearchSongs(string searchTerm) 
         {
             List<SongDataModel> result = new List<SongDataModel>();
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                string query = " SELECT * FROM Song";
+                string query = "SELECT * FROM Song WHERE name LIKE @Search";
                 SqlCommand command = new SqlCommand(query, connection);
+                command.Parameters.AddWithValue("@Search", "%" + searchTerm + "%");
                 connection.Open();
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
