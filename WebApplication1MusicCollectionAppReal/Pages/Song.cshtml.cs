@@ -8,8 +8,20 @@ namespace WebApplication1MusicCollectionAppReal.Pages
     {
         public static LogicLayer.Song CurrentSong { get; set; } = new LogicLayer.Song { ID = 6 };
         public static LogicLayer.Playlist CurrentPlaylist { get; set; } = new LogicLayer.Playlist { ID = 6 };
+        public User CurrentUser { get; set; }
         public void OnGet()
         {
+            int? userId = HttpContext.Session.GetInt32("UserID");
+
+            if (userId == null)
+            {
+                // Not logged in — redirect to login
+                Response.Redirect("/Login");
+                return;
+            }
+
+            // Set the current user
+            CurrentUser = new User { ID = userId.Value };
             CurrentSong.GetSpecificSong(CurrentSong.ID);
         }
 

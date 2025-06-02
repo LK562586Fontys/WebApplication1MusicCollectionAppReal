@@ -55,7 +55,7 @@ namespace WebApplication1MusicCollectionAppReal.Pages
         public IActionResult OnPostDeletePlaylist() 
         {
             CurrentPlaylist.DeletePlaylist(CurrentPlaylist.ID);
-            return RedirectToPage();
+            return RedirectToPage("/Account");
         }
         public IActionResult OnPostSortingBy() 
         {

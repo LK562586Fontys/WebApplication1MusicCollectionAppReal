@@ -76,10 +76,17 @@ namespace WebApplication1MusicCollectionAppReal.Pages
             return RedirectToPage();
         }
 
+        public IActionResult OnPostSignOut()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToPage("/Login"); 
+        }
+
         public IActionResult OnPostDeleteAccount()
         {
             CurrentUser.DeleteAccount(CurrentUser.ID);
-            return RedirectToPage();
+            HttpContext.Session.Clear();
+            return RedirectToPage("/Login");
         }
         public async Task<IActionResult> OnPostChangeProfilePhoto()
         {

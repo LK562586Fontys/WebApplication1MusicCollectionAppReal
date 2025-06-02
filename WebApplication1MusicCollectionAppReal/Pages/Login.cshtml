@@ -4,9 +4,14 @@
 	Layout = null;
 	ViewData["Title"] = "LoginScreen";
 }
-<h1>@ViewData["Title"]</h1>
+<body>
+	<link rel="stylesheet" href="~/css/LoginCSS.css" asp-append-version="true" />
+</body>
+<h1 class="titlescreen">Log in or your family dies</h1>
 <form method="post">
 	<input asp-for="EmailAddress" type="text" placeholder="Enter your e-mail address" class="input emailvalue" />
 	<input asp-for="Password" type="text" placeholder="Enter your password" class="input passwordvalue" />
 	<button type="submit" asp-page-handler="LogIn" class="button">Log in</button>
 </form>
+<h3 class="requiredfields email">This field is required</h3>
+<h3 class="requiredfields password">This field is required</h3>

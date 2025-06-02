@@ -1,0 +1,52 @@
+﻿body {
+    font-family: "Lato", sans-serif;
+}
+
+.button {
+    background-color: #9944dd;
+    position: absolute;
+    width: 200px;
+    height: 60px;
+    border: none;
+    color: #ffffff;
+    text-align: center;
+    font-size: 32px;
+    padding: 10px 25px;
+    border-radius: 999px;
+    left: 60%;
+    top: 80%;
+}
+
+.input {
+    position: absolute;
+    width: 50%;
+    height: 40px;
+    font-size: 24px;
+    color: #000000;
+    border: 2px #000000;
+    left: 25%
+}
+.emailvalue {
+    top: 40%;
+}
+.passwordvalue {
+    top: 55%;
+}
+.email {
+    top: 43%;
+}
+
+.password {
+    top: 58%;
+}
+.requiredfields {
+    position: absolute;
+    color: #000000;
+    left: 25%;
+}
+.titlescreen {
+    position: absolute;
+    color: #000000;
+    left: 25%;
+    top: 20%;
+}
