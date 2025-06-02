@@ -6,7 +6,7 @@ namespace WebApplication1MusicCollectionAppReal.Pages
 {
     public class Account : PageModel
     {
-        public static User CurrentUser { get; set; } = new User { ID = 7};
+        public static User CurrentUser { get; set; }
 		public List<LogicLayer.Playlist> CreatedPlaylists => CurrentUser.userPlaylist;
         public IFormFile NewPhoto { get; set; }
 
@@ -20,6 +20,17 @@ namespace WebApplication1MusicCollectionAppReal.Pages
 
         public void OnGet()
         {
+            int? userId = HttpContext.Session.GetInt32("UserID");
+
+            if (userId == null)
+            {
+                // Not logged in — redirect to login
+                Response.Redirect("/Login");
+                return;
+            }
+
+            // Set the current user
+            CurrentUser = new User { ID = userId.Value };
             LoadUserPlaylists();
             CurrentUser.GetSpecificUser(CurrentUser.ID);
         }

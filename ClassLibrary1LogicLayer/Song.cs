@@ -23,7 +23,7 @@ namespace LogicLayer
         public void ChangeSongWeight(int songID, int weight)
         {
             Weight = weight;
-            if (Weight < 10 || Weight > -10) { return; }
+            if (Weight > 10 || Weight < -10) { return; }
             songRepository.ChangeSongWeight(songID, weight);
         }
         public void GetSpecificSong(int songId)

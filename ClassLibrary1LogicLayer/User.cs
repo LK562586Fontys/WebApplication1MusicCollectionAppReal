@@ -98,9 +98,9 @@ namespace LogicLayer
         {
             userRepository.GetSpecificUser(userid);
         }
-		public async Task<bool> VerifyLogin(string email, string password)
+		public async Task<int?> VerifyLoginAndReturnUserId(string email, string password)
 		{
-			return await userRepository.VerifyLogin(email, password);
+			return await userRepository.VerifyLoginAndReturnUserId(email, password);
 		}
 	}
 } 

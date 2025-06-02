@@ -19,10 +19,10 @@ namespace DataAccessLayer
         {
             _connectionString = connectionString;
         }
-		public UserRepository(IConfiguration configuration)
-		{
-			_connectionString = configuration.GetConnectionString("DefaultConnection");
-		}
+		//public UserRepository(IConfiguration configuration)
+		//{
+		//	_connectionString = configuration.GetConnectionString("DefaultConnection");
+		//}
 		public void UpdateUsername(int userId, string newUsername)
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
@@ -45,7 +45,9 @@ namespace DataAccessLayer
                 string query = "UPDATE [User] SET passwordHash = @passwordHash WHERE ID = @ID";
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
-                    command.Parameters.AddWithValue("@passwordHash", newPassword);
+					string hashedPassword = BCrypt.Net.BCrypt.HashPassword(newPassword);
+
+					command.Parameters.AddWithValue("@passwordHash", hashedPassword);
                     command.Parameters.AddWithValue("@ID", userId);
 
                     connection.Open();
@@ -173,11 +175,11 @@ DELETE FROM [User] WHERE ID = @ID";
             }
             return result;
         }
-		public async Task<bool> VerifyLogin(string emailAddress, string inputPassword)
+		public async Task<int?> VerifyLoginAndReturnUserId(string emailAddress, string inputPassword)
 		{
 			using (SqlConnection connection = new SqlConnection(_connectionString))
 			{
-				var cmd = new SqlCommand("SELECT passwordHash FROM [user] WHERE emailAddress = @Email", connection);
+				var cmd = new SqlCommand("SELECT ID, passwordHash FROM [user] WHERE emailAddress = @Email", connection);
 				cmd.Parameters.AddWithValue("@Email", emailAddress);
 
 				await connection.OpenAsync();
@@ -185,13 +187,17 @@ DELETE FROM [User] WHERE ID = @ID";
 				{
 					if (await reader.ReadAsync())
 					{
-						var storedPassword = reader["password"].ToString();
+						var storedHash = reader["passwordHash"]?.ToString();
 
-						return storedPassword == inputPassword;
+						// Check if the hash is null or invalid before verifying
+						if (!string.IsNullOrEmpty(storedHash) && BCrypt.Net.BCrypt.Verify(inputPassword, storedHash))
+						{
+							return Convert.ToInt32(reader["ID"]);
+						}
 					}
 				}
 			}
-			return false;
+			return null;
 		}
 	}
 }

@@ -6,7 +6,7 @@ namespace WebApplication1MusicCollectionAppReal.Pages
 {
     public class PlaylistScreen : PageModel
     {
-        public static User CurrentUser { get; set; } = new LogicLayer.User { ID = 5 };
+        public static User CurrentUser { get; set; }
         public static LogicLayer.Playlist CurrentPlaylist { get; set; } = new LogicLayer.Playlist { ID = 6 };
         [BindProperty]
         public string NewName { get; set; }
@@ -16,7 +16,18 @@ namespace WebApplication1MusicCollectionAppReal.Pages
 
         public void OnGet()
         {
-            LoadPlaylistSongs();
+			int? userId = HttpContext.Session.GetInt32("UserID");
+
+			if (userId == null)
+			{
+				// Not logged in — redirect to login
+				Response.Redirect("/Login");
+				return;
+			}
+
+			// Set the current user
+			CurrentUser = new User { ID = userId.Value };
+			LoadPlaylistSongs();
         }
 
         private void LoadPlaylistSongs()
