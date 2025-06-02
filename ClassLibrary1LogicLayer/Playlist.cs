@@ -47,6 +47,14 @@ namespace LogicLayer
 		{
 			playlistRepository.DeletePlaylist(playlistID);
 		}
+        public void LoadSpecificPlaylist() 
+        {
+			var data = playlistRepository.GetPlaylistById(this.ID);
+			if (data == null) return;
+
+			this.Name = data.Name;
+			this.ID = data.ID;
+		}
 		public List<Song> LoadSongs() 
         {
             var songdata = songRepository.GetSongList(this.ID);

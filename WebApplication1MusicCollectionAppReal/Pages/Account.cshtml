@@ -49,7 +49,9 @@
                 var playlist = Model.Playlists[i];
                 <li>
                     <input type="hidden" name="playlistOrder" value="@playlist.ID" />
-                    <strong>@playlist.Name</strong> (Created: @playlist.DateAdded.ToShortDateString())
+                    <a asp-page="/PlaylistScreen" asp-route-id="@playlist.ID">
+                        <strong>@playlist.Name</strong>
+                    </a>(Created: @playlist.DateAdded.ToShortDateString())
 
                     @* Show "Move Up" if not first *@
                     @if (i > 0)

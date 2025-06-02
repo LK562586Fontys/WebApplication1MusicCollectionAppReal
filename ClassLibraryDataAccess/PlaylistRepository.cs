@@ -122,7 +122,35 @@ namespace DataAccessLayer
             }
             return result;
         }
-        public List<PlaylistDataModel> GetPlaylistsByIds(List<int> playlistIds)
+
+		public PlaylistDataModel GetPlaylistById(int id)
+		{
+			PlaylistDataModel playlist = null;
+
+			string query = "SELECT * FROM [Playlist] WHERE ID = @id";
+			using (SqlConnection connection = new SqlConnection(_connectionString))
+			using (SqlCommand command = new SqlCommand(query, connection))
+			{
+				command.Parameters.AddWithValue("@id", id);
+				connection.Open();
+
+				using (SqlDataReader reader = command.ExecuteReader())
+				{
+					if (reader.Read())
+					{
+						playlist = new PlaylistDataModel
+						{
+							ID = (int)reader["ID"],
+							Name = reader["Name"].ToString()
+						};
+					}
+				}
+			}
+
+			return playlist;
+		}
+
+		public List<PlaylistDataModel> GetPlaylistsByIds(List<int> playlistIds)
         {
             var playlists = new List<PlaylistDataModel>();
 

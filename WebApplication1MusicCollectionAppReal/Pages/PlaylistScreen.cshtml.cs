@@ -14,7 +14,7 @@ namespace WebApplication1MusicCollectionAppReal.Pages
         public IFormFile NewPhoto { get; set; }
         public List<LogicLayer.Song> Songs { get; set; }
 
-        public void OnGet()
+        public void OnGet(int id)
         {
 			int? userId = HttpContext.Session.GetInt32("UserID");
 
@@ -27,6 +27,8 @@ namespace WebApplication1MusicCollectionAppReal.Pages
 
 			// Set the current user
 			CurrentUser = new User { ID = userId.Value };
+			CurrentPlaylist = new LogicLayer.Playlist { ID = id };
+			CurrentPlaylist.LoadSpecificPlaylist();
 			LoadPlaylistSongs();
         }
 
