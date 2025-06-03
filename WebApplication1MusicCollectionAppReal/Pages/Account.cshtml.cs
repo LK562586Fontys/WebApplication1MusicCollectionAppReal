@@ -1,12 +1,14 @@
 using LogicLayer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using WebApplication1MusicCollectionAppReal.Pages.ViewModels;
 
 namespace WebApplication1MusicCollectionAppReal.Pages
 {
     public class Account : PageModel
     {
-        public static User CurrentUser { get; set; }
+        public AccountViewModel ViewModel { get; set; }
+        private static User CurrentUser { get; set; }
 		public List<LogicLayer.Playlist> CreatedPlaylists => CurrentUser.userPlaylist;
         public IFormFile NewPhoto { get; set; }
 
@@ -24,15 +26,32 @@ namespace WebApplication1MusicCollectionAppReal.Pages
 
             if (userId == null)
             {
-                // Not logged in — redirect to login
                 Response.Redirect("/Login");
                 return;
             }
+            ViewModel = ViewModel ?? new AccountViewModel();
 
-            // Set the current user
             CurrentUser = new User { ID = userId.Value };
-            LoadUserPlaylists();
             CurrentUser.GetSpecificUser(CurrentUser.ID);
+            LoadUserPlaylists(); // this can still use CurrentUser internally
+
+            ViewModel.Name = CurrentUser.Name;
+            ViewModel.EmailAddress = CurrentUser.EmailAddress;
+            ViewModel.joinDate = CurrentUser.joinDate;
+            ViewModel.Playlists = CurrentUser.userPlaylist;
+
+            if (CurrentUser.ProfilePhoto != null)
+            {
+                ViewModel.ProfileBase64Photo = Convert.ToBase64String(CurrentUser.ProfilePhoto);
+            }
+
+            foreach (var playlist in ViewModel.Playlists)
+            {
+                if (playlist.Photo != null)
+                {
+                    playlist.Base64Photo = Convert.ToBase64String(playlist.Photo);
+                }
+            }
         }
 
         private void LoadUserPlaylists()

@@ -20,4 +20,11 @@
     position: fixed;
     left:25px;
 }
+.playlistimages{
+    height:100px;
+    width:100px;
+    position:fixed;
+    left:25px;
+    border-radius:999px;
+}
 

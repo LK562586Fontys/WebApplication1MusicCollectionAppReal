@@ -10,6 +10,7 @@ namespace LogicLayer
         public string Name { get; set; }
         public DateTime DateAdded { get; set; }
         public byte[] Photo { get; set; }
+        public string Base64Photo { get; set; }
         public List<Song> PlaylistSongs { get; private set; } = new List<Song>();
         public User Creator { get; set; }
         private UserRepository userRepository = new UserRepository("Server=mssqlstud.fhict.local;Database=dbi562586_i562586;User Id=dbi562586_i562586;Password=Wpb3grVisq;TrustServerCertificate=True;");

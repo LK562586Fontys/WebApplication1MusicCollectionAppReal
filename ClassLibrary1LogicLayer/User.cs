@@ -69,6 +69,7 @@ namespace LogicLayer
                 ID = item.ID,
                 Name = item.Name,
                 DateAdded = item.DateAdded,
+                Photo = item.Photo,
                 Creator = this
             }).ToList();
 
@@ -85,6 +86,7 @@ namespace LogicLayer
                     ID = item.ID,
                     Name = item.Name,
                     DateAdded = item.DateAdded,
+                    Photo = item.Photo,
                     Creator = this
                 });
 
@@ -96,7 +98,18 @@ namespace LogicLayer
 
         public void GetSpecificUser(int userid) 
         {
-            userRepository.GetSpecificUser(userid);
+            var users = userRepository.GetSpecificUser(userid);
+
+            if (users.Count > 0)
+            {
+                var userData = users[0];
+                this.ID = userData.ID;
+                this.Name = userData.userName;
+                this.EmailAddress = userData.email;
+                this.joinDate = userData.joinDate;
+                this.ProfilePhoto = userData.picture;
+                // Map any other fields as needed
+            }
         }
 		public async Task<int?> VerifyLoginAndReturnUserId(string email, string password)
 		{

@@ -13,5 +13,6 @@ namespace DataAccessLayer
         public string password { get; set; }
         public string email { get; set; }
         public DateTime joinDate { get; set; }
+        public byte[]? picture { get; set; }
     }
 }

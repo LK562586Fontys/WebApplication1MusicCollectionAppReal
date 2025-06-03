@@ -110,12 +110,15 @@ DELETE FROM [User] WHERE ID = @ID";
                 command.Parameters.AddWithValue("@UserID", userID);
                 connection.Open();
                 SqlDataReader reader = command.ExecuteReader();
-                while (reader.Read())
+                if (reader.Read())
                 {
                     var user = new UserDataModel
                     {
                         ID = Convert.ToInt32(reader["ID"]),
                         userName = reader["Username"].ToString(),
+                        email = reader["emailAddress"].ToString(),
+                        joinDate = (DateTime)reader["joinDate"],
+                        picture = reader["profilePicture"] != DBNull.Value ? (byte[])reader["profilePicture"] : null
                     };
 
                     result.Add(user);

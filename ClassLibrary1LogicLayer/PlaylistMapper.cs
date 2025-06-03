@@ -17,6 +17,7 @@ namespace LogicLayer
             {
                 ID = dataModel.ID,
                 Name = dataModel.Name,
+                Photo = dataModel.Photo,
                 Creator = creator
             };
         }

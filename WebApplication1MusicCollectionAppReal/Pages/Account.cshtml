@@ -36,12 +36,16 @@
 <form method="post">
     <button type="submit" asp-page-handler="SignOut">Sign Out</button>
 </form>
-@* 
+
 <h2>Your Information</h2>
-<h3>Name = @Model.CurrentUser.Name</h3>
-<h3>Email = @Model.CurrentUser.EmailAddress</h3>
-<h3>JoinDate = @Model.CurrentUser.joinDate.ToShortDateString()</h3>
-<h2>Your Playlists</h2> *@
+@if (!string.IsNullOrEmpty(Model.ViewModel.ProfileBase64Photo))
+{
+    <img src="data:image/jpeg;base64,@Model.ViewModel.ProfileBase64Photo" alt="Profile Photo" style="height: 300px; width: 300px; border-radius: 999px;"/>
+}
+<h3>Name = @Model.ViewModel.Name</h3>
+<h3>Email = @Model.ViewModel.EmailAddress</h3>
+<h3>JoinDate = @Model.ViewModel.joinDate.ToShortDateString()</h3>
+<h2>Your Playlists</h2>
 
 @if (Model.Playlists != null)
 {
@@ -55,6 +59,11 @@
                     <a asp-page="/PlaylistScreen" asp-route-id="@playlist.ID">
                         <strong>@playlist.Name</strong>
                     </a>(Created: @playlist.DateAdded.ToShortDateString())
+
+                    @if (!string.IsNullOrEmpty(playlist.Base64Photo))
+                    {
+                        <img src="data:image/jpeg;base64,@playlist.Base64Photo" alt="Playlist Image" style="height: 100px; width: 100px; border-radius: 999px;" />
+                    }
 
                     @* Show "Move Up" if not first *@
                     @if (i > 0)
@@ -71,8 +80,4 @@
             }
         </ul>
     </form>
-}
-else
-{
-    <p>No playlists found.</p>
 }

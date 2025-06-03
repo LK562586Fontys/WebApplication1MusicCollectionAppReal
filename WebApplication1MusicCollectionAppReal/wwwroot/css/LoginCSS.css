@@ -20,11 +20,13 @@
 .input {
     position: absolute;
     width: 50%;
-    height: 40px;
-    font-size: 24px;
+    height: 7.5%;
+    font-size: 32px;
     color: #000000;
     border: 2px #000000;
-    left: 25%
+    left: 25%;
+    border: 2px solid #000;
+    border-radius: 8px;
 }
 .emailvalue {
     top: 40%;
@@ -33,11 +35,11 @@
     top: 55%;
 }
 .email {
-    top: 43%;
+    top: 45%;
 }
 
 .password {
-    top: 58%;
+    top: 60%;
 }
 .requiredfields {
     position: absolute;
@@ -47,6 +49,7 @@
 .titlescreen {
     position: absolute;
     color: #000000;
-    left: 25%;
-    top: 20%;
+    left: 15%;
+    top: 5%;
+    font-size: 75px;
 }
