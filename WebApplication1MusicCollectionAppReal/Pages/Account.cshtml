@@ -40,7 +40,11 @@
 <h2>Your Information</h2>
 @if (!string.IsNullOrEmpty(Model.ViewModel.ProfileBase64Photo))
 {
-    <img src="data:image/jpeg;base64,@Model.ViewModel.ProfileBase64Photo" alt="Profile Photo" style="height: 300px; width: 300px; border-radius: 999px;"/>
+    <img src="data:image/jpeg;base64,@Model.ViewModel.ProfileBase64Photo" alt="Profile Photo" style="height: 300px; width: 300px; border-radius: 999px; border: 2px solid #000;" />
+}
+@if (string.IsNullOrEmpty(Model.ViewModel.ProfileBase64Photo))
+{
+    <img src="@Url.Content("~/noimage.jpg")" alt="noimage" style="height: 300px; width: 300px; border-radius: 999px; border: 2px solid #000;" />
 }
 <h3>Name = @Model.ViewModel.Name</h3>
 <h3>Email = @Model.ViewModel.EmailAddress</h3>
@@ -62,16 +66,18 @@
 
                     @if (!string.IsNullOrEmpty(playlist.Base64Photo))
                     {
-                        <img src="data:image/jpeg;base64,@playlist.Base64Photo" alt="Playlist Image" style="height: 100px; width: 100px; border-radius: 999px;" />
+                        <img src="data:image/jpeg;base64,@playlist.Base64Photo" alt="Playlist Image" style="height: 100px; width: 100px; border-radius: 999px; border: 2px solid #000;" />
+                    }
+                    @if (string.IsNullOrEmpty(playlist.Base64Photo))
+                    {
+                        <img src="@Url.Content("~/noimage.jpg")" alt="noimage" style="height: 100px; width: 100px; border-radius: 999px; border: 2px solid #000; " />
                     }
 
-                    @* Show "Move Up" if not first *@
                     @if (i > 0)
                     {
                         <button type="submit" name="move" value="up_@i">↑</button>
                     }
 
-                    @* Show "Move Down" if not last *@
                     @if (i < Model.Playlists.Count - 1)
                     {
                         <button type="submit" name="move" value="down_@i">↓</button>

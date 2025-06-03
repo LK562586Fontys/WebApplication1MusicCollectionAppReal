@@ -32,7 +32,7 @@ namespace WebApplication1MusicCollectionAppReal.Pages
 			// Store user ID in session
 			HttpContext.Session.SetInt32("UserID", userId.Value);
 
-			return RedirectToPage("/Index"); // or wherever
+			return RedirectToPage("/Index");
 		}
 	}
 }

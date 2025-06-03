@@ -9,7 +9,7 @@ namespace WebApplication1MusicCollectionAppReal.Pages
         public static LogicLayer.Song CurrentSong { get; set; } = new LogicLayer.Song { ID = 6 };
         public static LogicLayer.Playlist CurrentPlaylist { get; set; } = new LogicLayer.Playlist { ID = 6 };
         public User CurrentUser { get; set; }
-        public void OnGet()
+        public void OnGet(int id)
         {
             int? userId = HttpContext.Session.GetInt32("UserID");
 
@@ -22,6 +22,7 @@ namespace WebApplication1MusicCollectionAppReal.Pages
 
             // Set the current user
             CurrentUser = new User { ID = userId.Value };
+            CurrentSong = new LogicLayer.Song { ID = id };
             CurrentSong.GetSpecificSong(CurrentSong.ID);
         }
 

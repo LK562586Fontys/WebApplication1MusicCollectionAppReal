@@ -20,7 +20,7 @@ namespace WebApplication1MusicCollectionAppReal.Pages
         public string NewEmail { get; set; }
         public List<Playlist> Playlists { get; set; }
 
-        public void OnGet()
+        public void OnGet(int id)
         {
             int? userId = HttpContext.Session.GetInt32("UserID");
 
@@ -30,8 +30,13 @@ namespace WebApplication1MusicCollectionAppReal.Pages
                 return;
             }
             ViewModel = ViewModel ?? new AccountViewModel();
-
-            CurrentUser = new User { ID = userId.Value };
+            if (id != 0)
+            {
+                CurrentUser = new User { ID = id };
+            }
+            else {
+                CurrentUser = new User { ID = userId.Value };
+            }
             CurrentUser.GetSpecificUser(CurrentUser.ID);
             LoadUserPlaylists(); // this can still use CurrentUser internally
 

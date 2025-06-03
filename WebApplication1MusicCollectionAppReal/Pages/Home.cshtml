@@ -27,9 +27,15 @@
             @foreach (var song in Model.Songs)
             {
                 <tr>
-                    <td>@song.Name</td>
-                    <td>@song.Artist?.Name</td>
-                    <td>@song.Album?.Name</td>
+                    <td> <a asp-page="/Song" asp-route-id="@song.ID">@song.Name </a>
+
+                </td>
+                    <td> <a asp-page="/Account" asp-route-id="@song.Artist.ID">@song.Artist?.Name</a>
+
+                </td>
+                    <td> <a asp-page="/PlaylistScreen" asp-route-id="@song.Album.ID">@song.Album?.Name</a>
+
+                </td>
                     <td>@song.DateReleased.ToShortDateString()</td>
                 </tr>
             }
