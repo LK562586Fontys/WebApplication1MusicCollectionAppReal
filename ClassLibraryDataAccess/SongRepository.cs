@@ -115,18 +115,35 @@ namespace DataAccessLayer
             }
             return result;
         }
-        public List<SongDataModel> GetSpecificSong(int songID)
+        public SongDataModel GetSpecificSong(int songID)
         {
-            List<SongDataModel> result = new List<SongDataModel>();
+            SongDataModel song = null;
+
+            string query = "SELECT * FROM Song WHERE ID = @SongID";
             using (SqlConnection connection = new SqlConnection(_connectionString))
+            using (SqlCommand command = new SqlCommand(query, connection))
             {
-                string query = " SELECT * FROM Song WHERE ID = @SongID";
-                SqlCommand command = new SqlCommand(query, connection);
                 command.Parameters.AddWithValue("@SongID", songID);
                 connection.Open();
-                SqlDataReader reader = command.ExecuteReader();
+
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    if (reader.Read()) // If there is at least one row
+                    {
+                        song = new SongDataModel
+                        {
+                            ID = (int)reader["ID"],
+                            name = reader["name"].ToString(),
+                            weight = reader["weight"] != DBNull.Value ? (int)reader["weight"] : 0,  // Handle DBNull for weight
+                            dateReleased = reader["dateReleased"] != DBNull.Value ? (DateTime)reader["dateReleased"] : DateTime.MinValue,
+                            artistID = (int)reader["artistID"],  // Assuming artistID is required
+                            albumID = (int)reader["albumID"]   // Assuming albumID is required
+                        };
+                    }
+                }
             }
-            return result;
+
+            return song;
         }
 
     }

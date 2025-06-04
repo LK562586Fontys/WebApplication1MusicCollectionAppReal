@@ -96,22 +96,27 @@ namespace LogicLayer
             return playlists;
         }
 
-        public void GetSpecificUser(int userid) 
+        public User GetSpecificUser(int userid)
         {
             var users = userRepository.GetSpecificUser(userid);
 
             if (users.Count > 0)
             {
                 var userData = users[0];
-                this.ID = userData.ID;
-                this.Name = userData.userName;
-                this.EmailAddress = userData.email;
-                this.joinDate = userData.joinDate;
-                this.ProfilePhoto = userData.picture;
-                // Map any other fields as needed
+                return new User
+                {
+                    ID = userData.ID,
+                    Name = userData.userName,
+                    EmailAddress = userData.email,
+                    joinDate = userData.joinDate,
+                    ProfilePhoto = userData.picture,
+                    PasswordHash = userData.password,
+                };
             }
+
+            return null;
         }
-		public async Task<int?> VerifyLoginAndReturnUserId(string email, string password)
+        public async Task<int?> VerifyLoginAndReturnUserId(string email, string password)
 		{
 			return await userRepository.VerifyLoginAndReturnUserId(email, password);
 		}

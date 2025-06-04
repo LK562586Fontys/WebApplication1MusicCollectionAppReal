@@ -28,7 +28,7 @@ namespace WebApplication1MusicCollectionAppReal.Pages
 			// Set the current user
 			CurrentUser = new User { ID = userId.Value };
 			CurrentPlaylist = new LogicLayer.Playlist { ID = id };
-			CurrentPlaylist.LoadSpecificPlaylist();
+			CurrentPlaylist.GetSpecificPlaylist(id);
 			LoadPlaylistSongs();
         }
 

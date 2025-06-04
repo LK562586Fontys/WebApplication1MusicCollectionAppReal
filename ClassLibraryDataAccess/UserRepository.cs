@@ -118,6 +118,7 @@ DELETE FROM [User] WHERE ID = @ID";
                         userName = reader["Username"].ToString(),
                         email = reader["emailAddress"].ToString(),
                         joinDate = (DateTime)reader["joinDate"],
+                        password = reader["passwordHash"].ToString(),
                         picture = reader["profilePicture"] != DBNull.Value ? (byte[])reader["profilePicture"] : null
                     };
 

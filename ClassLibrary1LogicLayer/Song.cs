@@ -26,9 +26,22 @@ namespace LogicLayer
             if (Weight > 10 || Weight < -10) { return; }
             songRepository.ChangeSongWeight(songID, weight);
         }
-        public void GetSpecificSong(int songId)
+        public Song GetSpecificSong(int songId)
         {
-            songRepository.GetSpecificSong(songId);
+            var data = songRepository.GetSpecificSong(songId);
+
+            if (data != null)
+            {
+                return new Song
+                {
+                    ID = data.ID,
+                    Name = data.name,
+                    Weight = data.weight,
+                    DateReleased = data.dateReleased
+                };
+            }
+
+            return null;
         }
         public List<Song> SearchSongs(string searchTerm)
         {

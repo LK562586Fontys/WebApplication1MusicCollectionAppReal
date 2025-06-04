@@ -141,8 +141,9 @@ namespace DataAccessLayer
 						playlist = new PlaylistDataModel
 						{
 							ID = (int)reader["ID"],
-							Name = reader["Name"].ToString()
-						};
+							Name = reader["Name"].ToString(),
+                            Photo = reader["picture"] != DBNull.Value ? (byte[])reader["picture"] : null
+                        };
 					}
 				}
 			}
