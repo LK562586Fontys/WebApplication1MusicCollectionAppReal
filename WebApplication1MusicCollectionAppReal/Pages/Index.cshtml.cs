@@ -1,3 +1,4 @@
+using Interfaces;
 using LogicLayer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -6,12 +7,14 @@ namespace WebApplication1MusicCollectionAppReal.Pages
 {
     public class IndexModel : PageModel
     {
+        private IUserService _userService;
         private readonly ILogger<IndexModel> _logger;
         private User CurrentUser { get; set; }
 
-        public IndexModel(ILogger<IndexModel> logger)
+        public IndexModel(ILogger<IndexModel> logger, IUserService userService)
         {
             _logger = logger;
+            _userService = userService;
         }
         public string TestResult { get; set; }
         public void OnGet()
@@ -26,7 +29,7 @@ namespace WebApplication1MusicCollectionAppReal.Pages
             }
 
             // Set the current user
-            CurrentUser = new User { ID = userId.Value };
+            CurrentUser = (User)_userService.GetUserById((int)userId);
         }
     }
 }

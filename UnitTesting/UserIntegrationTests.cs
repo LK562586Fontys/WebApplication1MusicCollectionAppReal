@@ -1,15 +1,21 @@
 ﻿using LogicLayer;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using DataAccessLayer;
+using Interfaces;
 namespace UnitTesting
 {
     [TestClass]
     public class UserIntegrationTests
     {
         private User userObject;
+        private UserService _userService;
         [TestInitialize]
         public void Setup()
         {
-            userObject = new User { ID = 10 };
+            var userRepo = new UserRepository("Server=mssqlstud.fhict.local;Database=dbi562586_i562586;User Id=dbi562586_i562586;Password=Wpb3grVisq;TrustServerCertificate=True;"); // Use the actual implementation for integration tests
+            _userService = new UserService(userRepo);
+
+            userObject = (User)_userService.GetUserById(1)!; // Make sure ID = 1 exists in your DB or test seed
         }
 
         [TestMethod]
@@ -34,7 +40,7 @@ namespace UnitTesting
             //Assert
             var userfromdatabase = userObject.GetSpecificUser(userObject.ID);
             bool isValid = BCrypt.Net.BCrypt.Verify(newpassword, userfromdatabase.PasswordHash);
-            Assert.IsTrue(isValid, "The stored bcrypt hash does not match the new password.");
+            Assert.IsTrue(isValid, "The stored bcrypt hash does not match the new PasswordHash.");
         }
         [TestMethod]
         public void IntegrationTestChangeEmail()
@@ -79,8 +85,8 @@ namespace UnitTesting
             userObject.DeleteAccount(skadoosh);
             //Assert
             var userfromdatabase = userObject.GetSpecificUser(skadoosh);
-            Assert.IsNull(userfromdatabase.Name);
-            Assert.IsNull(userfromdatabase.ID);
+            Assert.IsNull(userfromdatabase);
+
         }
     }
 }

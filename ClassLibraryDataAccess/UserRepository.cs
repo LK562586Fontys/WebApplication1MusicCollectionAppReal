@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using Interfaces;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections;
@@ -12,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer
 {
-    public class UserRepository
+    public class UserRepository : Interfaces.IUserRepository 
     {
         public readonly string _connectionString;
         public UserRepository(string connectionString)
@@ -27,10 +28,10 @@ namespace DataAccessLayer
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                string query = "UPDATE [User] SET userName = @userName WHERE ID = @ID";
+                string query = "UPDATE [User] SET Name = @Name WHERE ID = @ID";
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
-                    command.Parameters.AddWithValue("@userName", newUsername);
+                    command.Parameters.AddWithValue("@Name", newUsername);
                     command.Parameters.AddWithValue("@ID", userId);
 
                     connection.Open();
@@ -74,10 +75,10 @@ namespace DataAccessLayer
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                string query = "UPDATE [User] SET profilePicture = @picture WHERE ID = @ID";
+                string query = "UPDATE [User] SET profilePicture = @ProfilePhoto WHERE ID = @ID";
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
-                    command.Parameters.Add("@picture", SqlDbType.VarBinary).Value = newPhoto;
+                    command.Parameters.Add("@ProfilePhoto", SqlDbType.VarBinary).Value = newPhoto;
                     command.Parameters.Add("@ID", SqlDbType.Int).Value = userId;
 
                     connection.Open();
@@ -90,7 +91,7 @@ namespace DataAccessLayer
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 string query = @"UPDATE [Playlist] SET creator = NULL WHERE creator = @ID;
-DELETE FROM [User] WHERE ID = @ID";
+                DELETE FROM [User] WHERE ID = @ID";
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@ID", userID);
@@ -100,34 +101,31 @@ DELETE FROM [User] WHERE ID = @ID";
                 }
             }
         }
-        public List<UserDataModel> GetSpecificUser(int userID)
+        public IUserDTO GetSpecificUser(int userID)
         {
-            List<UserDataModel> result = new List<UserDataModel>();
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                string query = " SELECT * FROM [User] WHERE ID = @UserID";
+                string query = "SELECT * FROM [User] WHERE ID = @UserID";
                 SqlCommand command = new SqlCommand(query, connection);
                 command.Parameters.AddWithValue("@UserID", userID);
                 connection.Open();
                 SqlDataReader reader = command.ExecuteReader();
                 if (reader.Read())
                 {
-                    var user = new UserDataModel
+                    return new UserDataModel
                     {
                         ID = Convert.ToInt32(reader["ID"]),
-                        userName = reader["Username"].ToString(),
-                        email = reader["emailAddress"].ToString(),
+                        Name = reader["Username"].ToString(),
+                        EmailAddress = reader["emailAddress"].ToString(),
                         joinDate = (DateTime)reader["joinDate"],
-                        password = reader["passwordHash"].ToString(),
-                        picture = reader["profilePicture"] != DBNull.Value ? (byte[])reader["profilePicture"] : null
+                        PasswordHash = reader["passwordHash"].ToString(),
+                        ProfilePhoto = reader["profilePicture"] != DBNull.Value ? (byte[])reader["profilePicture"] : null
                     };
-
-                    result.Add(user);
                 }
             }
-            return result;
+            return null;
         }
-        public List<UserDataModel> GetUsersByIds(List<int> userIds)
+        public IEnumerable<IUserDTO> GetUsersByIds(List<int> userIds)
         {
             var users = new List<UserDataModel>();
 
@@ -148,7 +146,7 @@ DELETE FROM [User] WHERE ID = @ID";
                         users.Add(new UserDataModel
                         {
                             ID = (int)reader["ID"],
-                            userName = reader["userName"].ToString()
+                            Name = reader["Name"].ToString()
                         });
                     }
                 }
@@ -156,7 +154,7 @@ DELETE FROM [User] WHERE ID = @ID";
 
             return users;
         }
-        public List<UserDataModel> GetAllUsers()
+        public IEnumerable<IUserDTO> GetAllUsers()
         {
             List<UserDataModel> result = new List<UserDataModel>();
             using (SqlConnection connection = new SqlConnection(_connectionString))
@@ -170,9 +168,9 @@ DELETE FROM [User] WHERE ID = @ID";
                     result.Add(new UserDataModel
                     {
                         ID = (int)reader["ID"],
-                        userName = reader["userName"].ToString(),
-                        password = reader["passwordHash"].ToString(),
-                        email = reader["emailAddress"].ToString(),
+                        Name = reader["Name"].ToString(),
+                        PasswordHash = reader["passwordHash"].ToString(),
+                        EmailAddress = reader["emailAddress"].ToString(),
                         joinDate = (DateTime)reader["joinDate"],
                     });
                 }

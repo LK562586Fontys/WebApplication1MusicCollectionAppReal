@@ -1,13 +1,12 @@
-﻿using Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataAccessLayer
+namespace Interfaces
 {
-    public class SongDataModel : ISongDTO
+    public interface ISongDTO
     {
         public int ID { get; set; }
         public string Name { get; set; }

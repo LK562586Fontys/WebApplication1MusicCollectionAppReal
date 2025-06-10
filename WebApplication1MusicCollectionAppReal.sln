@@ -4,15 +4,23 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.11.35222.181
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApplication1MusicCollectionAppReal", "WebApplication1MusicCollectionAppReal\WebApplication1MusicCollectionAppReal.csproj", "{F8CA53CF-E379-4CFC-8245-9D1DF0E0E36C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{46A2AA3A-4763-4002-ABB1-2CDA27D2F470} = {46A2AA3A-4763-4002-ABB1-2CDA27D2F470}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAccessLayer", "ClassLibraryDataAccess\DataAccessLayer.csproj", "{46A2AA3A-4763-4002-ABB1-2CDA27D2F470}"
+	ProjectSection(ProjectDependencies) = postProject
+		{227E4ED2-F45E-479B-A189-46C2344F3C7E} = {227E4ED2-F45E-479B-A189-46C2344F3C7E}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LogicLayer", "ClassLibrary1LogicLayer\LogicLayer.csproj", "{5E8BEF5C-66F2-41A8-BEAE-3E11B30F513B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTesting", "UnitTesting\UnitTesting.csproj", "{2CDE6BD2-6727-4E95-B445-9B85536A9EE4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTesting", "UnitTesting\UnitTesting.csproj", "{2CDE6BD2-6727-4E95-B445-9B85536A9EE4}"
 	ProjectSection(ProjectDependencies) = postProject
 		{5E8BEF5C-66F2-41A8-BEAE-3E11B30F513B} = {5E8BEF5C-66F2-41A8-BEAE-3E11B30F513B}
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Interfaces", "Interfaces\Interfaces.csproj", "{227E4ED2-F45E-479B-A189-46C2344F3C7E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,6 +44,10 @@ Global
 		{2CDE6BD2-6727-4E95-B445-9B85536A9EE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2CDE6BD2-6727-4E95-B445-9B85536A9EE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2CDE6BD2-6727-4E95-B445-9B85536A9EE4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{227E4ED2-F45E-479B-A189-46C2344F3C7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{227E4ED2-F45E-479B-A189-46C2344F3C7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{227E4ED2-F45E-479B-A189-46C2344F3C7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{227E4ED2-F45E-479B-A189-46C2344F3C7E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

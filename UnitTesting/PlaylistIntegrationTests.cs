@@ -1,5 +1,6 @@
 ﻿using LogicLayer;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using DataAccessLayer;
 
 namespace UnitTesting
 {
@@ -7,10 +8,25 @@ namespace UnitTesting
     public class PlaylistIntegrationTests
     {
         private Playlist playlistObject;
+        private PlaylistService _playlistService;
+        private SongService _songService;
+        private SongRepository _songRepository;
+        private UserRepository _userRepository;
+        private PlaylistRepository _playlistRepository;
+
+        private Song playlistSongObject;
         [TestInitialize]
         public void Setup()
         {
-            playlistObject = new Playlist { ID = 1015 };
+            var playlistRepo = new PlaylistRepository("Server=mssqlstud.fhict.local;Database=dbi562586_i562586;User Id=dbi562586_i562586;Password=Wpb3grVisq;TrustServerCertificate=True;");
+            var userRepo = new UserRepository("Server=mssqlstud.fhict.local;Database=dbi562586_i562586;User Id=dbi562586_i562586;Password=Wpb3grVisq;TrustServerCertificate=True;");
+            var songRepo = new SongRepository("Server=mssqlstud.fhict.local;Database=dbi562586_i562586;User Id=dbi562586_i562586;Password=Wpb3grVisq;TrustServerCertificate=True;");
+
+            _playlistService = new PlaylistService(playlistRepo, userRepo, songRepo);
+            _songService = new SongService(songRepo, userRepo, playlistRepo);
+
+            playlistObject = (Playlist)_playlistService.GetPlaylistById(1)!;
+            playlistSongObject = (Song)_songService.GetSongById(playlistObject.ID)!;
         }
         [TestMethod]
         public void IntegrationTestChangePlaylistPicture()
@@ -44,35 +60,32 @@ namespace UnitTesting
             playlistObject.DeletePlaylist(skadoosh);
             //Assert
             var playlistfromdatabase = playlistObject.GetSpecificPlaylist(playlistObject.ID);
-            Assert.IsNull(playlistfromdatabase.Name);
-            Assert.IsNull(playlistfromdatabase.ID);
+            Assert.IsNull(playlistfromdatabase);
         }
         [TestMethod]
         public void IntegrationTestAddSong()
         {
             //Arrange
-            Song song = new Song { ID = 8 };
-            int songid = song.ID;
-            playlistObject.LoadSongs();
-            Assert.IsFalse(playlistObject.PlaylistSongs.Any(s => s.ID == song.ID));
+            int songid = playlistSongObject.ID;
+            playlistObject.LoadSongs(new List<User>(), new List<Playlist>());
+            Assert.IsFalse(playlistObject.PlaylistSongs.Any(s => s.ID == songid));
             //Act
             playlistObject.AddSong(songid);
             //Assert
-            playlistObject.LoadSongs();
+            playlistObject.LoadSongs(new List<User>(), new List<Playlist>());
             Assert.IsTrue(playlistObject.PlaylistSongs.Any(s => s.ID == songid));
         }
         [TestMethod]
         public void IntegrationTestRemoveSong()
         {
             //Arrange
-            Song song = new Song { ID = 8 };
-            int songid = song.ID;
-            playlistObject.LoadSongs();
+            int songid = playlistSongObject.ID;
+            playlistObject.LoadSongs(new List<User>(), new List<Playlist>());
             Assert.IsTrue(playlistObject.PlaylistSongs.Any(s => s.ID == songid));
             //Act
             playlistObject.RemoveSong(songid);
             //Assert
-            playlistObject.LoadSongs();
+            playlistObject.LoadSongs(new List<User>(), new List<Playlist>());
             Assert.IsFalse(playlistObject.PlaylistSongs.Any(s => s.ID == songid));
         }
     }

@@ -1,10 +1,10 @@
-﻿using DataAccessLayer;
-using System.Net.Http;
+﻿using System.Net.Http;
 using Newtonsoft.Json;
+using Interfaces;
 
 namespace LogicLayer
 {
-    public class Playlist
+    public class Playlist : IPlaylistDTO
     {
         public int ID { get; set; }
         public string Name { get; set; }
@@ -12,10 +12,18 @@ namespace LogicLayer
         public byte[] Photo { get; set; }
         public string Base64Photo { get; set; }
         public List<Song> PlaylistSongs { get; private set; } = new List<Song>();
-        public User Creator { get; set; }
-        private UserRepository userRepository = new UserRepository("Server=mssqlstud.fhict.local;Database=dbi562586_i562586;User Id=dbi562586_i562586;Password=Wpb3grVisq;TrustServerCertificate=True;");
-        private SongRepository songRepository = new SongRepository("Server=mssqlstud.fhict.local;Database=dbi562586_i562586;User Id=dbi562586_i562586;Password=Wpb3grVisq;TrustServerCertificate=True;");
-        PlaylistRepository playlistRepository = new PlaylistRepository("Server=mssqlstud.fhict.local;Database=dbi562586_i562586;User Id=dbi562586_i562586;Password=Wpb3grVisq;TrustServerCertificate=True;");
+        public IUserDTO Creator { get; set; }
+        private IUserRepository userRepository;
+        private ISongRepository songRepository;
+        IPlaylistRepository playlistRepository;
+        private readonly PlaylistMapper playlistMapper;
+        private readonly SongMapper songMapper;
+        
+        public Playlist(ISongRepository songRepository, IPlaylistRepository playlistRepository) 
+        {
+            this.songRepository = songRepository;
+            this.playlistRepository = playlistRepository;
+        }
         public void ChangePlaylistPicture(byte[] newPhoto)
         {
             Photo = newPhoto;
@@ -50,37 +58,30 @@ namespace LogicLayer
 		}
         public Playlist GetSpecificPlaylist(int playlistid)
         {
-            var data = playlistRepository.GetPlaylistById(playlistid);
+            var playlistData = playlistRepository.GetPlaylistById(playlistid);
 
-            if (data != null)
+            if (playlistData != null)
             {
-                return new Playlist
-                {
-                    ID = data.ID,
-                    Name = data.Name,
-                    Photo = data.Photo,
-                };
+                var users = userRepository.GetAllUsers();
+
+                return playlistMapper.FromDataModel(playlistData, users);
             }
 
             return null;
         }
-        public List<Song> LoadSongs() 
+        public List<Song> LoadSongs(List<User> users, List<Playlist> playlists)
         {
             var songdata = songRepository.GetSongList(this.ID);
             List<Song> songs = new List<Song>();
+
             foreach (var item in songdata)
             {
-                songs.Add(new Song
-                {
-                    ID = item.ID,
-                    Name = item.name,
-                    Weight = item.weight,
-                    DateReleased = item.dateReleased,
-                });
+                var song = songMapper.FromDataModel(item, users, playlists);
+                songs.Add(song);
             }
+
             this.PlaylistSongs = songs;
             return songs;
-
         }
 
         private List<Song> ApplySortingOrShuffle(List<Song> songs, string field, string order, int? seed = null)
@@ -105,19 +106,40 @@ namespace LogicLayer
         }
         public void UpdatePlaylistList(string field = null, string order = null, int? shuffleSeed = null)
         {
+            // Initialize mappers
+            var userMapper = new UserMapper(userRepository);
+            var playlistMapper = new PlaylistMapper(playlistRepository, songRepository, userRepository);
+            var songMapper = new SongMapper(songRepository, playlistRepository, userRepository);  // Create an instance of SongMapper
+
+            // Get the list of songs from the repository
             var dataModels = songRepository.GetSongList(this.ID);
 
-            var artistIds = dataModels.Select(dm => dm.artistID).Distinct().ToList();
-            var albumIds = dataModels.Select(dm => dm.albumID).Distinct().ToList();
+            // Get distinct artist and album IDs from the songs
+            var artistIds = dataModels.Select(dm => dm.Artist.ID).Distinct().ToList();
+            var albumIds = dataModels.Select(dm => dm.Album.ID).Distinct().ToList();
 
+            // Fetch user data models (artists) and playlist data models (albums)
             var userDataModels = userRepository.GetUsersByIds(artistIds);
             var playlistDataModels = playlistRepository.GetPlaylistsByIds(albumIds);
 
-            var users = userDataModels.Select(UserMapper.FromDataModel).ToList();
-            var playlists = playlistDataModels.Select(dm => PlaylistMapper.FromDataModel(dm, users)).ToList();
+            // Map user data models to LogicLayer.User objects
+            var users = userDataModels.Select(userMapper.FromDataModel).ToList();
 
-            var songs = dataModels.Select(dm => SongMapper.FromDataModel(dm, users, playlists)).ToList();
+            // Map user data models to IUserDTO for use in PlaylistMapper
+            var userDTOs = users.Select(user => new User(userRepository)
+            {
+                ID = user.ID,
+                Name = user.Name,
+                EmailAddress = user.EmailAddress
+            }).ToList();
 
+            // Map playlist data models to LogicLayer.Playlist objects
+            var playlists = playlistDataModels.Select(dm => playlistMapper.FromDataModel(dm, userDTOs)).ToList();
+
+            // Map song data models to LogicLayer.Song objects
+            var songs = dataModels.Select(dm => songMapper.FromDataModel(dm, users, playlists)).ToList();
+
+            // Apply sorting or shuffle to the list of songs
             PlaylistSongs = ApplySortingOrShuffle(songs, field, order, shuffleSeed);
         }
     }

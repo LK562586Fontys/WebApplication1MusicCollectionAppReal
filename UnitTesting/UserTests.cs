@@ -1,4 +1,4 @@
-
+using Interfaces;
 using LogicLayer;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace UnitTesting
@@ -6,11 +6,15 @@ namespace UnitTesting
     [TestClass]
     public class UserTests
     {
-        private User userObject;
+        private IUserService userService;
+        private User? userObject;
         [TestInitialize]
         public void Setup()
         {
-            userObject = new User { ID = 3};
+            var fakeRepo = new UserRepositoryMock();
+            userService = new UserService(fakeRepo);
+
+            userObject = userService.GetUserById(9) as User;
         }
 
         [TestMethod]
@@ -45,7 +49,7 @@ namespace UnitTesting
             Assert.AreEqual(NEWWEMPAIL, userObject.EmailAddress);
         }
         [TestMethod]
-        public void TestChangePFP() 
+        public void TestChangeProfilePicture() 
         {
             //Arrange
             byte[] newphoto = { 1, 2, 3, 4 };

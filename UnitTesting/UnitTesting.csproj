@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ClassLibrary1LogicLayer\LogicLayer.csproj" />
+    <ProjectReference Include="..\ClassLibraryDataAccess\DataAccessLayer.csproj" />
   </ItemGroup>
 
   <ItemGroup>

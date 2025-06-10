@@ -1,8 +1,8 @@
-﻿using DataAccessLayer;
+﻿using Interfaces;
 
 namespace LogicLayer
 {
-    public class User
+    public class User : IUserDTO
     {
         public int ID { get; set; }
         public string Name { get; set; }
@@ -11,41 +11,45 @@ namespace LogicLayer
         public byte[] ProfilePhoto { get; set; }
         public DateTime joinDate { get; set; }
         public List<Playlist> userPlaylist { get; set; } = new();
-        private UserRepository userRepository = new UserRepository("Server=mssqlstud.fhict.local;Database=dbi562586_i562586;User Id=dbi562586_i562586;Password=Wpb3grVisq;TrustServerCertificate=True;");
-        private PlaylistRepository playlistRepository = new PlaylistRepository("Server=mssqlstud.fhict.local;Database=dbi562586_i562586;User Id=dbi562586_i562586;Password=Wpb3grVisq;TrustServerCertificate=True;");
+        private readonly IUserRepository userRepositorys;
+        private IPlaylistRepository playlistRepository;
+        private ISongRepository songRepository;
+        private readonly UserMapper userMapper;
+        private readonly PlaylistMapper playlistMapper;
 
-        public User() 
+        public User(IUserRepository userRepositorys)
         {
+            this.userRepositorys = userRepositorys;
         }
 
         public void ChangeUsername(string newName)
         {
             Name = newName;
-            userRepository.UpdateUsername(ID, newName);
+            userRepositorys.UpdateUsername(ID, newName);
         }
 
         public void ChangeEmailAddress(string newEmail)
         {
             EmailAddress = newEmail;
-            userRepository.UpdateEmail(ID, newEmail);
+            userRepositorys.UpdateEmail(ID, newEmail);
         }
 
         public void ChangePassword(string newPassword)
         {
             PasswordHash = newPassword;
-            userRepository.UpdatePassword(ID, newPassword);
+            userRepositorys.UpdatePassword(ID, newPassword);
         }
 
         public void ChangeProfilePhoto(byte[] newPhoto)
         {
             ProfilePhoto = newPhoto;
-            userRepository.UpdateProfilePhoto(ID, newPhoto);
+            userRepositorys.UpdateProfilePhoto(ID, newPhoto);
         }
 
         public void AddPlaylist(DateTime CurrentDate)
         {
             string generatedName = $"Playlist #{userPlaylist.Count + 1}";
-            var newPlaylist = new Playlist
+            var newPlaylist = new Playlist(songRepository, playlistRepository)
             {
                 Name = generatedName,
                 DateAdded = CurrentDate,
@@ -57,14 +61,14 @@ namespace LogicLayer
 
         public void DeleteAccount(int userID)
         {
-            userRepository.DeleteAccount(this.ID);
+            userRepositorys.DeleteAccount(this.ID);
             
         }
 
         public List<Playlist> LoadPlaylists(string playlistOrderCookie = null)
         {
             var dataModels = playlistRepository.LoadPlaylists(this.ID);
-            List<Playlist> playlists = dataModels.Select(item => new Playlist
+            List<Playlist> playlists = dataModels.Select(item => new Playlist(songRepository, playlistRepository)
             {
                 ID = item.ID,
                 Name = item.Name,
@@ -81,7 +85,7 @@ namespace LogicLayer
                 playlists = orderedIds.Select(id => playlists.FirstOrDefault(p => p.ID == id))
                     .Where(p => p != null).ToList();
 
-                var missing = dataModels.Where(dm => !orderedIds.Contains(dm.ID)).Select(item => new Playlist
+                var missing = dataModels.Where(dm => !orderedIds.Contains(dm.ID)).Select(item => new Playlist(songRepository, playlistRepository)
                 {
                     ID = item.ID,
                     Name = item.Name,
@@ -92,33 +96,25 @@ namespace LogicLayer
 
                 playlists.AddRange(missing);
             }
+
             this.userPlaylist = playlists;
             return playlists;
         }
 
         public User GetSpecificUser(int userid)
         {
-            var users = userRepository.GetSpecificUser(userid);
+            var userData = userRepositorys.GetSpecificUser(userid);
 
-            if (users.Count > 0)
+            if (userData != null)
             {
-                var userData = users[0];
-                return new User
-                {
-                    ID = userData.ID,
-                    Name = userData.userName,
-                    EmailAddress = userData.email,
-                    joinDate = userData.joinDate,
-                    ProfilePhoto = userData.picture,
-                    PasswordHash = userData.password,
-                };
+                return userMapper.FromDataModel(userData);
             }
 
             return null;
         }
         public async Task<int?> VerifyLoginAndReturnUserId(string email, string password)
 		{
-			return await userRepository.VerifyLoginAndReturnUserId(email, password);
+			return await userRepositorys.VerifyLoginAndReturnUserId(email, password);
 		}
 	}
 } 

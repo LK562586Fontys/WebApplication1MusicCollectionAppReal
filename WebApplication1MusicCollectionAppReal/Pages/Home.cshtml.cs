@@ -1,3 +1,4 @@
+using Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -5,7 +6,8 @@ namespace WebApplication1MusicCollectionAppReal.Pages
 {
     public class Home : PageModel
     {
-        public LogicLayer.Song AllSongs { get; set; } = new LogicLayer.Song();
+        private readonly ISongService _songService;
+        public static LogicLayer.Song AllSongs { get; set; }
         [BindProperty(SupportsGet = true)]
         public string SearchTerm { get; set; }
 

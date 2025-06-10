@@ -4,12 +4,13 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Interfaces;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 
 namespace DataAccessLayer
 {
-    public class PlaylistRepository
+    public class PlaylistRepository : Interfaces.IPlaylistRepository
     {
         private readonly string _connectionString;
         public PlaylistRepository(string connectionString)
@@ -68,10 +69,10 @@ namespace DataAccessLayer
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                string query = "UPDATE [Playlist] SET picture = @picture WHERE ID = @ID";
+                string query = "UPDATE [Playlist] SET ProfilePhoto = @ProfilePhoto WHERE ID = @ID";
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
-                    command.Parameters.Add("@picture", SqlDbType.VarBinary).Value = newPhoto;
+                    command.Parameters.Add("@ProfilePhoto", SqlDbType.VarBinary).Value = newPhoto;
                     command.Parameters.Add("@ID", SqlDbType.Int).Value = playlistId;
 
                     connection.Open();
@@ -84,7 +85,7 @@ namespace DataAccessLayer
             using (SqlConnection connection = new SqlConnection(_connectionString)) 
             {
                 string query = $@"
-                SELECT Song.ID, Song.songTitle, Song.songDuration, Song.songGenre, Song.AlbumID, Song.ArtistID, Album.playlistName AS AlbumName, Artist.userName AS ArtistName FROM Playlist_Song
+                SELECT Song.ID, Song.songTitle, Song.songDuration, Song.songGenre, Song.AlbumID, Song.ArtistID, Album.playlistName AS AlbumName, Artist.Name AS ArtistName FROM Playlist_Song
                 INNER JOIN Song ON Song.ID = Playlist_Song.song_ID
                 INNER JOIN Playlist AS Album ON Song.AlbumID = Album.ID
                 INNER JOIN [User] AS Artist ON Song.ArtistID = Artist.ID
@@ -98,7 +99,7 @@ namespace DataAccessLayer
                 }
             }
         }
-        public List<PlaylistDataModel> LoadPlaylists(int userId)
+        public IEnumerable<IPlaylistDTO> LoadPlaylists(int userId)
         {
             List<PlaylistDataModel> result = new();
             using (SqlConnection connection = new SqlConnection(_connectionString))
@@ -116,14 +117,14 @@ namespace DataAccessLayer
                         ID = (int)reader["ID"],
                         Name = reader["name"].ToString(),
                         DateAdded = (DateTime)reader["dateAdded"],
-                        Photo = reader["picture"] != DBNull.Value ? (byte[])reader["picture"] : null
+                        Photo = reader["ProfilePhoto"] != DBNull.Value ? (byte[])reader["ProfilePhoto"] : null
                     });
                 }
             }
             return result;
         }
 
-		public PlaylistDataModel GetPlaylistById(int id)
+        public IPlaylistDTO GetPlaylistById(int id)
 		{
 			PlaylistDataModel playlist = null;
 
@@ -142,7 +143,7 @@ namespace DataAccessLayer
 						{
 							ID = (int)reader["ID"],
 							Name = reader["Name"].ToString(),
-                            Photo = reader["picture"] != DBNull.Value ? (byte[])reader["picture"] : null
+                            Photo = reader["ProfilePhoto"] != DBNull.Value ? (byte[])reader["ProfilePhoto"] : null
                         };
 					}
 				}
@@ -151,7 +152,7 @@ namespace DataAccessLayer
 			return playlist;
 		}
 
-		public List<PlaylistDataModel> GetPlaylistsByIds(List<int> playlistIds)
+		public IEnumerable<IPlaylistDTO> GetPlaylistsByIds(List<int> playlistIds)
         {
             var playlists = new List<PlaylistDataModel>();
 
@@ -180,7 +181,7 @@ namespace DataAccessLayer
 
             return playlists;
         }
-        public List<PlaylistDataModel> GetAllPlaylists()
+        public IEnumerable<IPlaylistDTO> GetAllPlaylists()
         {
             List<PlaylistDataModel> result = new List<PlaylistDataModel>();
             using (SqlConnection connection = new SqlConnection(_connectionString))
@@ -195,7 +196,7 @@ namespace DataAccessLayer
                     {
                         ID = (int)reader["ID"],
                         Name = reader["name"].ToString(),
-                        Creator = reader["creator"] != DBNull.Value ? (int?)reader["creator"] : null,
+                        Creator = reader["creator"] != DBNull.Value ? (IUserDTO)reader["creator"] : null,
                         DateAdded = (DateTime)reader["dateAdded"],
                     });
                 }

@@ -5,11 +5,29 @@ namespace UnitTesting
     [TestClass]
     public class PlaylistTests
     {
+        private PlaylistService _playlistService;
+        private SongService _songService;
+
         private Playlist playlistObject;
+        private Song songObject;
+
         [TestInitialize]
         public void Setup()
         {
-            playlistObject = new Playlist { ID = 1015 };
+            // Mock Repositories
+            var playlistRepoMock = new PlaylistRepositoryMock(); // Implements IPlaylistRepository
+            var userRepoMock = new UserRepositoryMock();         // Implements IUserRepository
+            var songRepoMock = new SongRepositoryMock();         // Implements ISongRepository
+
+            // Services
+            _playlistService = new PlaylistService(playlistRepoMock, userRepoMock, songRepoMock);
+            _songService = new SongService(songRepoMock, userRepoMock, playlistRepoMock);
+
+            // Get a specific playlist (ensure ID exists in your mock)
+            playlistObject = (Playlist)_playlistService.GetPlaylistById(1)!;
+
+            // Get a single song from that playlist
+            songObject = _songService.GetAllSongs(playlistObject.ID).First();
         }
         [TestMethod]
         public void TestChangePlaylistPicture() 
@@ -45,8 +63,7 @@ namespace UnitTesting
         public void TestAddSong() 
         {
             //Arrange
-            Song song = new Song { ID = 8 };
-            int songid = song.ID;
+            int songid = songObject.ID;
             //Act
             playlistObject.AddSong(songid);
             //Assert
@@ -56,8 +73,7 @@ namespace UnitTesting
         public void TestRemoveSong()
         {
             //Arrange
-            Song song = new Song { ID = 8 };
-            int songid = song.ID;
+            int songid = songObject.ID;
             //Act
             playlistObject.RemoveSong(songid);
             //Assert

@@ -1,3 +1,4 @@
+using Interfaces;
 using LogicLayer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -6,7 +7,8 @@ namespace WebApplication1MusicCollectionAppReal.Pages
 {
     public class Login : PageModel
     {
-		private User _userService { get; set; } = new User();
+		private readonly IUserService _userService;
+		private static User CurrentUser { get; set; }
 		[BindProperty]
         public string EmailAddress { get; set; }
         [BindProperty]
@@ -14,18 +16,22 @@ namespace WebApplication1MusicCollectionAppReal.Pages
         public void OnGet()
         {
         }
-		public async Task<IActionResult> OnPostAsync()
+        public Login(IUserService userService)
+        {
+            _userService = userService;
+        }
+        public async Task<IActionResult> OnPostAsync()
 		{
 			if (!ModelState.IsValid)
 			{
 				return Page();
 			}
 
-			int? userId = await _userService.VerifyLoginAndReturnUserId(EmailAddress, Password);
+			int? userId = await CurrentUser.VerifyLoginAndReturnUserId(EmailAddress, Password);
 
 			if (userId == null)
 			{
-				ModelState.AddModelError(string.Empty, "Invalid email or password.");
+				ModelState.AddModelError(string.Empty, "Invalid EmailAddress or PasswordHash.");
 				return Page();
 			}
 

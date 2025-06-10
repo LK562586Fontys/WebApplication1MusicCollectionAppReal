@@ -1,8 +1,8 @@
-﻿using DataAccessLayer;
+﻿using Interfaces;
 
 namespace LogicLayer
 {
-    public class Song
+    public class Song : ISongDTO
     {
         public int ID { get; set; }
         public string Name { get; set; }
@@ -10,11 +10,19 @@ namespace LogicLayer
         public int Weight { get; set; }
         public List<Genre> GenreSong { get; set; }
         public List<Playlist> PlaylistSong { get; set; }
-        public User Artist { get; set; }
-        public Playlist Album { get; set; }
+        public IUserDTO Artist { get; set; }
+        public IPlaylistDTO Album { get; set; }
         public Genre Genre { get; set; }
-        public SongRepository songRepository = new SongRepository("Server=mssqlstud.fhict.local;Database=dbi562586_i562586;User Id=dbi562586_i562586;Password=Wpb3grVisq;TrustServerCertificate=True;");
+        public ISongRepository songRepository;
+        public IPlaylistRepository playlistRepository;
+        public IUserRepository userRepository;
 
+        public Song(ISongRepository songRepository, IUserRepository userRepository, IPlaylistRepository playlistRepository) 
+        {
+            this.songRepository = songRepository;
+            this.userRepository = userRepository;
+            this.playlistRepository = playlistRepository;
+        }
         private void PlaySong()
         {
             //Play or replace a song
@@ -22,7 +30,7 @@ namespace LogicLayer
 
         public void ChangeSongWeight(int songID, int weight)
         {
-            Weight = weight;
+            Weight = Weight + weight;
             if (Weight > 10 || Weight < -10) { return; }
             songRepository.ChangeSongWeight(songID, weight);
         }
@@ -32,12 +40,12 @@ namespace LogicLayer
 
             if (data != null)
             {
-                return new Song
+                return new Song(songRepository, userRepository, playlistRepository)
                 {
                     ID = data.ID,
-                    Name = data.name,
-                    Weight = data.weight,
-                    DateReleased = data.dateReleased
+                    Name = data.Name,
+                    Weight = data.Weight,
+                    DateReleased = data.DateReleased
                 };
             }
 
@@ -45,27 +53,36 @@ namespace LogicLayer
         }
         public List<Song> SearchSongs(string searchTerm)
         {
-            var songRepo = new SongRepository("Server=mssqlstud.fhict.local;Database=dbi562586_i562586;User Id=dbi562586_i562586;Password=Wpb3grVisq;TrustServerCertificate=True;");
-            var userRepo = new UserRepository("Server=mssqlstud.fhict.local;Database=dbi562586_i562586;User Id=dbi562586_i562586;Password=Wpb3grVisq;TrustServerCertificate=True;");
-            var playlistRepo = new PlaylistRepository("Server=mssqlstud.fhict.local;Database=dbi562586_i562586;User Id=dbi562586_i562586;Password=Wpb3grVisq;TrustServerCertificate=True;");
+            var userMapper = new UserMapper(userRepository);
+            var playlistMapper = new PlaylistMapper(playlistRepository, songRepository, userRepository);
+            var songMapper = new SongMapper(songRepository, playlistRepository, userRepository);
 
-            var userDataModels = userRepo.GetAllUsers();
+            // Get all users and map them
+            var userDataModels = userRepository.GetAllUsers();
             var users = userDataModels
-                .Select(udm => UserMapper.FromDataModel(udm))
+                .Select(udm => userMapper.FromDataModel(udm))
                 .ToList();
+
+            // Map LogicLayer.User to IUserDTO manually (if User doesn't implement IUserDTO)
+            var userDTOs = users.Select(user => new User(userRepository)
+            {
+                ID = user.ID,
+                Name = user.Name,
+                EmailAddress = user.EmailAddress
+            }).ToList();
 
             // Get all playlists and map them (requires users for creator)
-            var playlistDataModels = playlistRepo.GetAllPlaylists();
+            var playlistDataModels = playlistRepository.GetAllPlaylists();
             var playlists = playlistDataModels
-                .Select(pm => PlaylistMapper.FromDataModel(pm, users))
+                .Select(pm => playlistMapper.FromDataModel(pm, userDTOs))  // Pass userDTOs here
                 .ToList();
 
-            // Get filtered songs based on search term
-            var songDataModels = songRepo.SearchSongs(searchTerm);
+            // Get songs filtered by search term
+            var songDataModels = songRepository.SearchSongs(searchTerm);
 
-            // Map songs to logic layer
+            // Map song DTOs to song domain models
             var allSongs = songDataModels
-                .Select(dm => SongMapper.FromDataModel(dm, users, playlists))
+                .Select(dm => songMapper.FromDataModel(dm, users, playlists))  // Call on instance of songMapper
                 .ToList();
 
             return allSongs;

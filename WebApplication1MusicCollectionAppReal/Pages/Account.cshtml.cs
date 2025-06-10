@@ -1,3 +1,4 @@
+using Interfaces;
 using LogicLayer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -7,9 +8,9 @@ namespace WebApplication1MusicCollectionAppReal.Pages
 {
     public class Account : PageModel
     {
+        private readonly IUserService _userService;
         public AccountViewModel ViewModel { get; set; }
         private static User CurrentUser { get; set; }
-		public List<LogicLayer.Playlist> CreatedPlaylists => CurrentUser.userPlaylist;
         public IFormFile NewPhoto { get; set; }
 
         [BindProperty]
@@ -20,6 +21,10 @@ namespace WebApplication1MusicCollectionAppReal.Pages
         public string NewEmail { get; set; }
         public List<Playlist> Playlists { get; set; }
 
+        public Account(IUserService userService) 
+        {
+            _userService = userService;
+        }
         public void OnGet(int id)
         {
             int? userId = HttpContext.Session.GetInt32("UserID");
@@ -32,13 +37,13 @@ namespace WebApplication1MusicCollectionAppReal.Pages
             ViewModel = ViewModel ?? new AccountViewModel();
             if (id != 0)
             {
-                CurrentUser = new User { ID = id };
+                CurrentUser = (User)_userService.GetUserById(id);
             }
             else {
-                CurrentUser = new User { ID = userId.Value };
+                CurrentUser = (User)_userService.GetUserById((int)userId);
             }
             CurrentUser.GetSpecificUser(CurrentUser.ID);
-            LoadUserPlaylists(); // this can still use CurrentUser internally
+            LoadUserPlaylists();
 
             ViewModel.Name = CurrentUser.Name;
             ViewModel.EmailAddress = CurrentUser.EmailAddress;

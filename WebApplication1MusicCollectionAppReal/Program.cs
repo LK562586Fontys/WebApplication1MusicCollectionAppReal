@@ -1,11 +1,20 @@
-using DataAccessLayer;
+using Interfaces;
 using LogicLayer;
+using DataAccessLayer;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddSession();
+
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IPlaylistService, PlaylistService>();
+builder.Services.AddScoped<ISongService, SongService>();
+
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IPlaylistRepository, PlaylistRepository>();
+builder.Services.AddScoped<ISongRepository, SongRepository>();
 
 var app = builder.Build();
 

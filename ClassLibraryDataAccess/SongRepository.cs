@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using Interfaces;
+using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer
 {
-    public class SongRepository
+    public class SongRepository : Interfaces.ISongRepository
     {
         private readonly string _connectionString;
 
@@ -64,7 +65,7 @@ namespace DataAccessLayer
 				}
 			}
 		}
-        public List<SongDataModel> GetSongList(int playlistID) 
+        public IEnumerable<ISongDTO> GetSongList(int playlistID) 
         {
             List<SongDataModel> result = new List<SongDataModel>();
             using (SqlConnection connection = new SqlConnection(_connectionString))
@@ -80,17 +81,17 @@ namespace DataAccessLayer
                     result.Add(new SongDataModel
                     {
                         ID = (int)reader["ID"],
-                        name = reader["Name"].ToString(),
-                        weight = (int)reader["Weight"],
-                        dateReleased = (DateTime)reader["DateReleased"],
-                        artistID = (int)reader["artistID"],
-                        albumID = (int)reader["albumID"],
+                        Name = reader["Name"].ToString(),
+                        Weight = (int)reader["Weight"],
+                        DateReleased = (DateTime)reader["DateReleased"],
+                        Artist = (IUserDTO)reader["artistID"],
+                        Album = (IPlaylistDTO)reader["albumID"],
                     });
                 }
             }
             return result;
         }
-        public List<SongDataModel> SearchSongs(string searchTerm) 
+        public IEnumerable<ISongDTO> SearchSongs(string searchTerm) 
         {
             List<SongDataModel> result = new List<SongDataModel>();
             using (SqlConnection connection = new SqlConnection(_connectionString))
@@ -105,17 +106,17 @@ namespace DataAccessLayer
                     result.Add(new SongDataModel
                     {
                         ID = (int)reader["ID"],
-                        name = reader["Name"].ToString(),
-                        weight = (int)reader["Weight"],
-                        dateReleased = (DateTime)reader["DateReleased"],
-                        artistID = (int)reader["artistID"],
-                        albumID = (int)reader["albumID"],
+                        Name = reader["Name"].ToString(),
+                        Weight = (int)reader["Weight"],
+                        DateReleased = (DateTime)reader["DateReleased"],
+                        Artist = (IUserDTO)reader["artistID"],
+                        Album = (IPlaylistDTO)reader["albumID"],
                     });
                 }
             }
             return result;
         }
-        public SongDataModel GetSpecificSong(int songID)
+        public ISongDTO GetSpecificSong(int songID)
         {
             SongDataModel song = null;
 
@@ -133,11 +134,11 @@ namespace DataAccessLayer
                         song = new SongDataModel
                         {
                             ID = (int)reader["ID"],
-                            name = reader["name"].ToString(),
-                            weight = reader["weight"] != DBNull.Value ? (int)reader["weight"] : 0,  // Handle DBNull for weight
-                            dateReleased = reader["dateReleased"] != DBNull.Value ? (DateTime)reader["dateReleased"] : DateTime.MinValue,
-                            artistID = (int)reader["artistID"],  // Assuming artistID is required
-                            albumID = (int)reader["albumID"]   // Assuming albumID is required
+                            Name = reader["name"].ToString(),
+                            Weight = reader["weight"] != DBNull.Value ? (int)reader["weight"] : 0,
+                            DateReleased = reader["dateReleased"] != DBNull.Value ? (DateTime)reader["dateReleased"] : DateTime.MinValue,
+                            Artist = (IUserDTO)reader["artistID"],
+                            Album = (IPlaylistDTO)reader["albumID"]
                         };
                     }
                 }

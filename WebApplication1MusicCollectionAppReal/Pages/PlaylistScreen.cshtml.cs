@@ -1,3 +1,4 @@
+using Interfaces;
 using LogicLayer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -6,14 +7,21 @@ namespace WebApplication1MusicCollectionAppReal.Pages
 {
     public class PlaylistScreen : PageModel
     {
+        private readonly IUserService _userService;
+        private readonly IPlaylistService _playlistService;
         public static User CurrentUser { get; set; }
-        public static LogicLayer.Playlist CurrentPlaylist { get; set; } = new LogicLayer.Playlist { ID = 6 };
+        public static LogicLayer.Playlist CurrentPlaylist { get; set; }
         [BindProperty]
         public string NewName { get; set; }
         [BindProperty]
         public IFormFile NewPhoto { get; set; }
         public List<LogicLayer.Song> Songs { get; set; }
 
+        public PlaylistScreen(IUserService userService, IPlaylistService playlistService) 
+        {
+            _userService = userService;
+            _playlistService = playlistService;
+        }
         public void OnGet(int id)
         {
 			int? userId = HttpContext.Session.GetInt32("UserID");
@@ -25,9 +33,9 @@ namespace WebApplication1MusicCollectionAppReal.Pages
 				return;
 			}
 
-			// Set the current user
-			CurrentUser = new User { ID = userId.Value };
-			CurrentPlaylist = new LogicLayer.Playlist { ID = id };
+            // Set the current user
+			CurrentUser = (User)_userService.GetUserById((int)userId);
+            CurrentPlaylist = (LogicLayer.Playlist)_playlistService.GetPlaylistById(id);
 			CurrentPlaylist.GetSpecificPlaylist(id);
 			LoadPlaylistSongs();
         }

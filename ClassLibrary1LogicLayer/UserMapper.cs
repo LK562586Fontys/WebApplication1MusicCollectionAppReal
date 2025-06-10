@@ -1,4 +1,4 @@
-﻿using DataAccessLayer;
+﻿using Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,16 +7,22 @@ using System.Threading.Tasks;
 
 namespace LogicLayer
 {
-    public static class UserMapper
+    public class UserMapper
     {
-        public static User FromDataModel(UserDataModel dataModel)
+        private readonly IUserRepository userRepository;
+
+        public UserMapper(IUserRepository userRepository)
         {
-            return new User
+            this.userRepository = userRepository;
+        }
+        public User FromDataModel(IUserDTO dataModel)
+        {
+            return new User(userRepository)
             {
                 ID = dataModel.ID,
-                Name = dataModel.userName,
-                EmailAddress = dataModel.email,
-                PasswordHash = dataModel.password,
+                Name = dataModel.Name,
+                EmailAddress = dataModel.EmailAddress,
+                PasswordHash = dataModel.PasswordHash,
                 
             };
         }
