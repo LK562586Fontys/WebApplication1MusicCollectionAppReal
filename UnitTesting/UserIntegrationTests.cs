@@ -74,7 +74,7 @@ namespace UnitTesting
             //Arrange
             DateTime currentdate = DateTime.Now;
             //Act
-            userObject.AddPlaylist(currentdate);
+            userObject.AddPlaylist(currentdate, _playlistRepository);
             //Assert
             var playlistfromdatabase = userObject.LoadPlaylists(_playlistRepository, _songRepository);
             Assert.IsNotNull(playlistfromdatabase);

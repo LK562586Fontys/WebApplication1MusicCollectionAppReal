@@ -47,7 +47,7 @@ namespace LogicLayer
             userRepository.UpdateProfilePhoto(ID, newPhoto);
         }
 
-        public void AddPlaylist(DateTime CurrentDate)
+        public void AddPlaylist(DateTime CurrentDate, IPlaylistRepository playlistRepo)
         {
             string generatedName = $"Playlist #{userPlaylist.Count + 1}";
             var newPlaylist = new Playlist(songRepository, playlistRepository, userRepository)
@@ -57,7 +57,7 @@ namespace LogicLayer
                 Creator = this,
             };
             userPlaylist.Add(newPlaylist);
-            playlistRepository.InsertPlaylist(generatedName, CurrentDate, this.ID);
+            playlistRepo.InsertPlaylist(generatedName, CurrentDate, this.ID);
         }
 
         public void DeleteAccount(int userID)

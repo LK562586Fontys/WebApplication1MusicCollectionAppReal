@@ -77,7 +77,7 @@ namespace WebApplication1MusicCollectionAppReal.Pages
         public IActionResult OnPostAddPlaylist()
         {
             DateTime CurrentDate = DateTime.Now;
-            CurrentUser.AddPlaylist(CurrentDate);
+            CurrentUser.AddPlaylist(CurrentDate, _playlistRepository);
             return RedirectToPage();
         }
 

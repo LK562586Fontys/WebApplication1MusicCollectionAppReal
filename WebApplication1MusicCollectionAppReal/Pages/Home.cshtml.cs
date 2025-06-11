@@ -11,6 +11,10 @@ namespace WebApplication1MusicCollectionAppReal.Pages
         [BindProperty(SupportsGet = true)]
         public string SearchTerm { get; set; }
 
+        public Home(ISongService songService) 
+        {
+            _songService = songService;
+        }
         public List<LogicLayer.Song> Songs { get; set; }
 
         public void OnGet()

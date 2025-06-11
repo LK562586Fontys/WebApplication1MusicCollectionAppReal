@@ -31,7 +31,7 @@ namespace UnitTesting
 
         public void InsertPlaylist(string generatedName, DateTime CurrentDate, int userID)
         {
-            throw new NotImplementedException();
+            return;
         }
 
         public IEnumerable<IPlaylistDTO> LoadPlaylists(int playlistID)

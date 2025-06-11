@@ -63,8 +63,9 @@ namespace UnitTesting
         {
             //Arrange
             DateTime currentdate = DateTime.Now;
+            var fakePlaylistRepo = new PlaylistRepositoryMock();
             //Act
-            userObject.AddPlaylist(currentdate);
+            userObject.AddPlaylist(currentdate, fakePlaylistRepo);
             //Assert
             Assert.AreEqual(1, userObject.userPlaylist.Count);
             Assert.AreEqual(currentdate, userObject.userPlaylist[0].DateAdded);
