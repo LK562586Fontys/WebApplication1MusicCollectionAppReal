@@ -23,5 +23,9 @@ namespace LogicLayer
             var dto = userRepo.GetSpecificUser(id);
             return dto != null ? mapper.FromDataModel(dto) : null;
         }
+        public async Task<int?> VerifyLoginAndReturnUserId(string email, string password)
+        {
+            return await userRepo.VerifyLoginAndReturnUserId(email, password);
+        }
     }
 }

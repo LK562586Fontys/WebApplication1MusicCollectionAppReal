@@ -27,7 +27,8 @@ namespace WebApplication1MusicCollectionAppReal.Pages
 				return Page();
 			}
 
-			int? userId = await CurrentUser.VerifyLoginAndReturnUserId(EmailAddress, Password);
+			
+			int? userId = await _userService.VerifyLoginAndReturnUserId(EmailAddress, Password);
 
 			if (userId == null)
 			{

@@ -9,5 +9,6 @@ namespace Interfaces
     public interface IUserService
     {
         IUserDTO GetUserById(int id);
+        Task<int?> VerifyLoginAndReturnUserId(string email, string password);
     }
 }

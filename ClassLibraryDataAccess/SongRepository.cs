@@ -1,5 +1,6 @@
 ﻿using Interfaces;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,11 @@ namespace DataAccessLayer
         public SongRepository(string connectionString)
         {
             _connectionString = connectionString;
+        }
+
+        public SongRepository(IConfiguration configuration) 
+        {
+            _connectionString = configuration.GetConnectionString("DefaultConnection");
         }
 
         public void AddSongToPlaylist(int playlistId, int songId)

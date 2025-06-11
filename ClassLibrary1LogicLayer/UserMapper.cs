@@ -23,7 +23,9 @@ namespace LogicLayer
                 Name = dataModel.Name,
                 EmailAddress = dataModel.EmailAddress,
                 PasswordHash = dataModel.PasswordHash,
-                
+                ProfilePhoto = dataModel.ProfilePhoto,
+                joinDate = dataModel.joinDate,
+
             };
         }
     }

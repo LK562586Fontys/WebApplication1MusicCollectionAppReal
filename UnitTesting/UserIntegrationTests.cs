@@ -9,13 +9,17 @@ namespace UnitTesting
     {
         private User userObject;
         private UserService _userService;
+        private PlaylistRepository _playlistRepository;
+        private SongRepository _songRepository;
         [TestInitialize]
         public void Setup()
         {
             var userRepo = new UserRepository("Server=mssqlstud.fhict.local;Database=dbi562586_i562586;User Id=dbi562586_i562586;Password=Wpb3grVisq;TrustServerCertificate=True;"); // Use the actual implementation for integration tests
             _userService = new UserService(userRepo);
 
-            userObject = (User)_userService.GetUserById(1)!; // Make sure ID = 1 exists in your DB or test seed
+            _playlistRepository = new PlaylistRepository("Server=mssqlstud.fhict.local;Database=dbi562586_i562586;User Id=dbi562586_i562586;Password=Wpb3grVisq;TrustServerCertificate=True;");
+            _songRepository = new SongRepository("Server=mssqlstud.fhict.local;Database=dbi562586_i562586;User Id=dbi562586_i562586;Password=Wpb3grVisq;TrustServerCertificate=True;");
+            userObject = (User)_userService.GetUserById(8)!;
         }
 
         [TestMethod]
@@ -72,7 +76,7 @@ namespace UnitTesting
             //Act
             userObject.AddPlaylist(currentdate);
             //Assert
-            var playlistfromdatabase = userObject.LoadPlaylists();
+            var playlistfromdatabase = userObject.LoadPlaylists(_playlistRepository, _songRepository);
             Assert.IsNotNull(playlistfromdatabase);
             Assert.AreEqual(1, playlistfromdatabase.Count);
         }

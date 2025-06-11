@@ -16,22 +16,23 @@ namespace DataAccessLayer
     public class UserRepository : Interfaces.IUserRepository 
     {
         public readonly string _connectionString;
+
         public UserRepository(string connectionString)
         {
             _connectionString = connectionString;
         }
-		//public UserRepository(IConfiguration configuration)
-		//{
-		//	_connectionString = configuration.GetConnectionString("DefaultConnection");
-		//}
-		public void UpdateUsername(int userId, string newUsername)
+        public UserRepository(IConfiguration configuration)
+        {
+            _connectionString = configuration.GetConnectionString("DefaultConnection");
+        }
+        public void UpdateUsername(int userId, string newUsername)
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                string query = "UPDATE [User] SET Name = @Name WHERE ID = @ID";
+                string query = "UPDATE [User] SET userName = @userName WHERE ID = @ID";
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
-                    command.Parameters.AddWithValue("@Name", newUsername);
+                    command.Parameters.AddWithValue("@userName", newUsername);
                     command.Parameters.AddWithValue("@ID", userId);
 
                     connection.Open();
@@ -168,7 +169,7 @@ namespace DataAccessLayer
                     result.Add(new UserDataModel
                     {
                         ID = (int)reader["ID"],
-                        Name = reader["Name"].ToString(),
+                        Name = reader["userName"].ToString(),
                         PasswordHash = reader["passwordHash"].ToString(),
                         EmailAddress = reader["emailAddress"].ToString(),
                         joinDate = (DateTime)reader["joinDate"],

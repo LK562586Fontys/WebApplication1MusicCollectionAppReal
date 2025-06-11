@@ -50,7 +50,7 @@ namespace WebApplication1MusicCollectionAppReal.Pages
         public IActionResult OnPostChangePlaylistName()
         {
             CurrentPlaylist.ChangePlaylistName(NewName);
-            return RedirectToPage();
+            return RedirectToPage(new { id = CurrentPlaylist.ID });
         }
         public async Task<IActionResult> OnPostChangePlaylistPhoto()
         {
@@ -58,7 +58,7 @@ namespace WebApplication1MusicCollectionAppReal.Pages
             await NewPhoto.CopyToAsync(memoryStream);
             byte[] imageBytes = memoryStream.ToArray();
             CurrentPlaylist.ChangePlaylistPicture(imageBytes);
-            return RedirectToPage();
+            return RedirectToPage(new { id = CurrentPlaylist.ID });
         }
         public IActionResult OnPostDeletePlaylist() 
         {
@@ -92,7 +92,7 @@ namespace WebApplication1MusicCollectionAppReal.Pages
                 }
             }
 
-            return RedirectToPage();
+            return RedirectToPage(new { id = CurrentPlaylist.ID });
         }
     }
 }

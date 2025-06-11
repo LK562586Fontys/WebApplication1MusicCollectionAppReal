@@ -23,7 +23,7 @@ namespace LogicLayer
         public Playlist FromDataModel(IPlaylistDTO dataModel, IEnumerable<IUserDTO> users)
         {
 
-            return new Playlist(_songRepository, _playlistRepository)
+            return new Playlist(_songRepository, _playlistRepository, _userRepository)
             {
                 ID = dataModel.ID,
                 Name = dataModel.Name,

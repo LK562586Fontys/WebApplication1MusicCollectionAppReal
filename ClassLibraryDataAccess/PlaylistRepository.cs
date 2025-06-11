@@ -17,6 +17,11 @@ namespace DataAccessLayer
         {
             _connectionString = connectionString;
         }
+
+        public PlaylistRepository(IConfiguration configuration)
+        {
+            _connectionString = configuration.GetConnectionString("DefaultConnection");
+        }
         public void InsertPlaylist(string name, DateTime dateAdded, int creator)
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
@@ -69,10 +74,10 @@ namespace DataAccessLayer
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                string query = "UPDATE [Playlist] SET ProfilePhoto = @ProfilePhoto WHERE ID = @ID";
+                string query = "UPDATE [Playlist] SET picture = @picture WHERE ID = @ID";
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
-                    command.Parameters.Add("@ProfilePhoto", SqlDbType.VarBinary).Value = newPhoto;
+                    command.Parameters.Add("@picture", SqlDbType.VarBinary).Value = newPhoto;
                     command.Parameters.Add("@ID", SqlDbType.Int).Value = playlistId;
 
                     connection.Open();
@@ -117,7 +122,7 @@ namespace DataAccessLayer
                         ID = (int)reader["ID"],
                         Name = reader["name"].ToString(),
                         DateAdded = (DateTime)reader["dateAdded"],
-                        Photo = reader["ProfilePhoto"] != DBNull.Value ? (byte[])reader["ProfilePhoto"] : null
+                        Photo = reader["picture"] != DBNull.Value ? (byte[])reader["picture"] : null
                     });
                 }
             }
@@ -143,7 +148,7 @@ namespace DataAccessLayer
 						{
 							ID = (int)reader["ID"],
 							Name = reader["Name"].ToString(),
-                            Photo = reader["ProfilePhoto"] != DBNull.Value ? (byte[])reader["ProfilePhoto"] : null
+                            Photo = reader["picture"] != DBNull.Value ? (byte[])reader["picture"] : null
                         };
 					}
 				}

@@ -38,7 +38,7 @@ namespace LogicLayer
                          .ToList();
 
             var playlists = _playlistRepo.GetAllPlaylists()
-                                        .Select(p => new Playlist(_songRepo, _playlistRepo)
+                                        .Select(p => new Playlist(_songRepo, _playlistRepo, _userRepo)
                                         {
                                             ID = p.ID,
                                             Name = p.Name,
@@ -65,7 +65,7 @@ namespace LogicLayer
                          .ToList();
 
             var playlists = _playlistRepo.GetAllPlaylists()
-                                        .Select(p => new Playlist(_songRepo, _playlistRepo)
+                                        .Select(p => new Playlist(_songRepo, _playlistRepo, _userRepo)
                                         {
                                             ID = p.ID,
                                             Name = p.Name,

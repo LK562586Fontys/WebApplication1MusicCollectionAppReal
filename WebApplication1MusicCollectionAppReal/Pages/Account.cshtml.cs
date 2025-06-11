@@ -8,6 +8,8 @@ namespace WebApplication1MusicCollectionAppReal.Pages
 {
     public class Account : PageModel
     {
+        private readonly ISongRepository _songRepository;
+        private readonly IPlaylistRepository _playlistRepository;
         private readonly IUserService _userService;
         public AccountViewModel ViewModel { get; set; }
         private static User CurrentUser { get; set; }
@@ -21,9 +23,11 @@ namespace WebApplication1MusicCollectionAppReal.Pages
         public string NewEmail { get; set; }
         public List<Playlist> Playlists { get; set; }
 
-        public Account(IUserService userService) 
+        public Account(IUserService userService, IPlaylistRepository playlistRepository, ISongRepository songRepository) 
         {
             _userService = userService;
+            _playlistRepository = playlistRepository;
+            _songRepository = songRepository;
         }
         public void OnGet(int id)
         {
@@ -42,7 +46,6 @@ namespace WebApplication1MusicCollectionAppReal.Pages
             else {
                 CurrentUser = (User)_userService.GetUserById((int)userId);
             }
-            CurrentUser.GetSpecificUser(CurrentUser.ID);
             LoadUserPlaylists();
 
             ViewModel.Name = CurrentUser.Name;
@@ -67,7 +70,7 @@ namespace WebApplication1MusicCollectionAppReal.Pages
         private void LoadUserPlaylists()
         {
             var cookie = Request.Cookies["PlaylistOrder"];
-            Playlists = CurrentUser.LoadPlaylists(cookie);
+            Playlists = CurrentUser.LoadPlaylists(_playlistRepository, _songRepository, cookie);
             
         }
 

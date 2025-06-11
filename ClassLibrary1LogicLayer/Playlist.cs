@@ -19,10 +19,12 @@ namespace LogicLayer
         private readonly PlaylistMapper playlistMapper;
         private readonly SongMapper songMapper;
         
-        public Playlist(ISongRepository songRepository, IPlaylistRepository playlistRepository) 
+        public Playlist(ISongRepository songRepository, IPlaylistRepository playlistRepository, IUserRepository userRepository) 
         {
             this.songRepository = songRepository;
             this.playlistRepository = playlistRepository;
+            this.userRepository = userRepository;
+            playlistMapper = new PlaylistMapper(playlistRepository, songRepository, userRepository);
         }
         public void ChangePlaylistPicture(byte[] newPhoto)
         {

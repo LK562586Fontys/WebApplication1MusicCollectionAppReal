@@ -35,17 +35,17 @@ namespace UnitTesting
 
         public void UpdateEmail(int userId, string email)
         {
-            throw new NotImplementedException();
+            return;
         }
 
         public void UpdatePassword(int userId, string newPassword)
         {
-            throw new NotImplementedException();
+            return;
         }
 
         public void UpdateProfilePhoto(int userId, byte[] picture)
         {
-            throw new NotImplementedException();
+            return;
         }
 
         public void UpdateUsername(int userId, string newName)
@@ -58,7 +58,6 @@ namespace UnitTesting
             throw new NotImplementedException();
         }
 
-        // Simple DTO class for mocking purposes
         private class UserDTO : IUserDTO
         {
             public int ID { get; set; }

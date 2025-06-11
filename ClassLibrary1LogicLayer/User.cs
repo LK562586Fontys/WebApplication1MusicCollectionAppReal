@@ -11,7 +11,7 @@ namespace LogicLayer
         public byte[] ProfilePhoto { get; set; }
         public DateTime joinDate { get; set; }
         public List<Playlist> userPlaylist { get; set; } = new();
-        private readonly IUserRepository userRepositorys;
+        private readonly IUserRepository userRepository;
         private IPlaylistRepository playlistRepository;
         private ISongRepository songRepository;
         private readonly UserMapper userMapper;
@@ -19,37 +19,38 @@ namespace LogicLayer
 
         public User(IUserRepository userRepositorys)
         {
-            this.userRepositorys = userRepositorys;
+            this.userRepository = userRepositorys;
+            userMapper = new UserMapper(userRepositorys);
         }
 
         public void ChangeUsername(string newName)
         {
             Name = newName;
-            userRepositorys.UpdateUsername(ID, newName);
+            userRepository.UpdateUsername(ID, newName);
         }
 
         public void ChangeEmailAddress(string newEmail)
         {
             EmailAddress = newEmail;
-            userRepositorys.UpdateEmail(ID, newEmail);
+            userRepository.UpdateEmail(ID, newEmail);
         }
 
         public void ChangePassword(string newPassword)
         {
             PasswordHash = newPassword;
-            userRepositorys.UpdatePassword(ID, newPassword);
+            userRepository.UpdatePassword(ID, newPassword);
         }
 
         public void ChangeProfilePhoto(byte[] newPhoto)
         {
             ProfilePhoto = newPhoto;
-            userRepositorys.UpdateProfilePhoto(ID, newPhoto);
+            userRepository.UpdateProfilePhoto(ID, newPhoto);
         }
 
         public void AddPlaylist(DateTime CurrentDate)
         {
             string generatedName = $"Playlist #{userPlaylist.Count + 1}";
-            var newPlaylist = new Playlist(songRepository, playlistRepository)
+            var newPlaylist = new Playlist(songRepository, playlistRepository, userRepository)
             {
                 Name = generatedName,
                 DateAdded = CurrentDate,
@@ -61,14 +62,14 @@ namespace LogicLayer
 
         public void DeleteAccount(int userID)
         {
-            userRepositorys.DeleteAccount(this.ID);
+            userRepository.DeleteAccount(this.ID);
             
         }
 
-        public List<Playlist> LoadPlaylists(string playlistOrderCookie = null)
+        public List<Playlist> LoadPlaylists(IPlaylistRepository playlistRepo, ISongRepository songRepo, string playlistOrderCookie = null)
         {
-            var dataModels = playlistRepository.LoadPlaylists(this.ID);
-            List<Playlist> playlists = dataModels.Select(item => new Playlist(songRepository, playlistRepository)
+            var dataModels = playlistRepo.LoadPlaylists(this.ID);
+            List<Playlist> playlists = dataModels.Select(item => new Playlist(songRepo, playlistRepo, userRepository)
             {
                 ID = item.ID,
                 Name = item.Name,
@@ -85,7 +86,7 @@ namespace LogicLayer
                 playlists = orderedIds.Select(id => playlists.FirstOrDefault(p => p.ID == id))
                     .Where(p => p != null).ToList();
 
-                var missing = dataModels.Where(dm => !orderedIds.Contains(dm.ID)).Select(item => new Playlist(songRepository, playlistRepository)
+                var missing = dataModels.Where(dm => !orderedIds.Contains(dm.ID)).Select(item => new Playlist(songRepository, playlistRepository, userRepository)
                 {
                     ID = item.ID,
                     Name = item.Name,
@@ -103,7 +104,7 @@ namespace LogicLayer
 
         public User GetSpecificUser(int userid)
         {
-            var userData = userRepositorys.GetSpecificUser(userid);
+            var userData = userRepository.GetSpecificUser(userid);
 
             if (userData != null)
             {
@@ -112,9 +113,5 @@ namespace LogicLayer
 
             return null;
         }
-        public async Task<int?> VerifyLoginAndReturnUserId(string email, string password)
-		{
-			return await userRepositorys.VerifyLoginAndReturnUserId(email, password);
-		}
 	}
 } 
