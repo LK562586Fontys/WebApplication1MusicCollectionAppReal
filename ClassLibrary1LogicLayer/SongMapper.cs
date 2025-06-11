@@ -20,6 +20,8 @@ namespace LogicLayer
         }
         public Song FromDataModel(ISongDTO dataModel, List<User> users, List<Playlist> playlists)
         {
+            var artist = users.FirstOrDefault(u => u.ID == dataModel.Artist?.ID);
+            var album = playlists.FirstOrDefault(p => p.ID == dataModel.Album?.ID);
 
             return new Song(_songRepository, _userRepository, _playlistRepository)
             {
@@ -27,8 +29,8 @@ namespace LogicLayer
                 Name = dataModel.Name,
                 Weight = dataModel.Weight,
                 DateReleased = dataModel.DateReleased,
-                Artist = dataModel.Artist,
-                Album = dataModel.Album,
+                Artist = artist,
+                Album = album
             };
         }
     }

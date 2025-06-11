@@ -90,8 +90,8 @@ namespace DataAccessLayer
                         Name = reader["Name"].ToString(),
                         Weight = (int)reader["Weight"],
                         DateReleased = (DateTime)reader["DateReleased"],
-                        Artist = (IUserDTO)reader["artistID"],
-                        Album = (IPlaylistDTO)reader["albumID"],
+                        Artist = new UserDataModel { ID = (int)reader["artistID"] },
+                        Album = new PlaylistDataModel { ID = (int)reader["albumID"] },
                     });
                 }
             }
@@ -115,8 +115,8 @@ namespace DataAccessLayer
                         Name = reader["Name"].ToString(),
                         Weight = (int)reader["Weight"],
                         DateReleased = (DateTime)reader["DateReleased"],
-                        Artist = (IUserDTO)reader["artistID"],
-                        Album = (IPlaylistDTO)reader["albumID"],
+                        Artist = new UserDataModel { ID = (int)reader["artistID"] },
+                        Album = new PlaylistDataModel { ID = (int)reader["albumID"] },
                     });
                 }
             }
@@ -143,8 +143,8 @@ namespace DataAccessLayer
                             Name = reader["name"].ToString(),
                             Weight = reader["weight"] != DBNull.Value ? (int)reader["weight"] : 0,
                             DateReleased = reader["dateReleased"] != DBNull.Value ? (DateTime)reader["dateReleased"] : DateTime.MinValue,
-                            Artist = (IUserDTO)reader["artistID"],
-                            Album = (IPlaylistDTO)reader["albumID"]
+                            Artist = new UserDataModel { ID = (int)reader["artistID"] },
+                            Album = new PlaylistDataModel { ID = (int)reader["albumID"] },
                         };
                     }
                 }

@@ -25,6 +25,11 @@ namespace LogicLayer
 
         public void ChangeUsername(string newName)
         {
+            if (newName.Length < 2 || newName.Length > 50)
+            {
+                throw new ArgumentException("The username must be between 2 and 50 characters long.");
+            }
+
             Name = newName;
             userRepository.UpdateUsername(ID, newName);
         }

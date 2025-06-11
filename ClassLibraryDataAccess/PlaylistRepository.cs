@@ -201,7 +201,7 @@ namespace DataAccessLayer
                     {
                         ID = (int)reader["ID"],
                         Name = reader["name"].ToString(),
-                        Creator = reader["creator"] != DBNull.Value ? (IUserDTO)reader["creator"] : null,
+                        Creator = reader["creator"] != DBNull.Value ? new UserDataModel { ID = Convert.ToInt32(reader["creator"]) } : null,
                         DateAdded = (DateTime)reader["dateAdded"],
                     });
                 }

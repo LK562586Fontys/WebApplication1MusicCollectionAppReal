@@ -12,6 +12,7 @@ namespace WebApplication1MusicCollectionAppReal.Pages
         private readonly IPlaylistRepository _playlistRepository;
         private readonly IUserService _userService;
         public AccountViewModel ViewModel { get; set; }
+        public string ErrorMessage { get; set; }
         private static User CurrentUser { get; set; }
         public IFormFile NewPhoto { get; set; }
 
@@ -29,30 +30,31 @@ namespace WebApplication1MusicCollectionAppReal.Pages
             _playlistRepository = playlistRepository;
             _songRepository = songRepository;
         }
-        public void OnGet(int id)
+        public IActionResult OnGet(int? id)
         {
             int? userId = HttpContext.Session.GetInt32("UserID");
 
             if (userId == null)
             {
-                Response.Redirect("/Login");
-                return;
+                return RedirectToPage("/Login");
             }
-            ViewModel = ViewModel ?? new AccountViewModel();
-            if (id != 0)
+            
+            if (id != null)
             {
-                CurrentUser = (User)_userService.GetUserById(id);
+                CurrentUser = (User)_userService.GetUserById((int)id);
             }
             else {
                 CurrentUser = (User)_userService.GetUserById((int)userId);
             }
             LoadUserPlaylists();
-
-            ViewModel.Name = CurrentUser.Name;
-            ViewModel.EmailAddress = CurrentUser.EmailAddress;
-            ViewModel.joinDate = CurrentUser.joinDate;
-            ViewModel.Playlists = CurrentUser.userPlaylist;
-
+            ViewModel = new AccountViewModel
+            {
+                Name = CurrentUser.Name,
+                EmailAddress = CurrentUser.EmailAddress,
+                joinDate = CurrentUser.joinDate,
+                Playlists = CurrentUser.userPlaylist,
+                ProfilePhoto = CurrentUser.ProfilePhoto,
+            };
             if (CurrentUser.ProfilePhoto != null)
             {
                 ViewModel.ProfileBase64Photo = Convert.ToBase64String(CurrentUser.ProfilePhoto);
@@ -65,6 +67,8 @@ namespace WebApplication1MusicCollectionAppReal.Pages
                     playlist.Base64Photo = Convert.ToBase64String(playlist.Photo);
                 }
             }
+
+            return Page();
         }
 
         private void LoadUserPlaylists()
@@ -83,11 +87,31 @@ namespace WebApplication1MusicCollectionAppReal.Pages
 
         public IActionResult OnPostChangeUsername()
         {
-            if (NewUsername.Length > 3 && NewUsername.Length < 50)
+            //CurrentUser.ChangeUsername(NewUsername);
+            //return RedirectToPage();
+            try
             {
+                // Try to change the username
                 CurrentUser.ChangeUsername(NewUsername);
+
+                // If successful, redirect to the same page or another page
+                return RedirectToPage();
             }
-            return RedirectToPage();
+            catch (ArgumentException ex)
+            {
+                // If the username is invalid, handle the exception
+                ErrorMessage = ex.Message;  // Pass the error message to the view
+
+                // Stay on the same page and show the error message
+                return Page();
+            }
+            catch (Exception ex)
+            {
+                // Handle any unexpected errors
+                ErrorMessage = "An unexpected error occurred. Please try again later.";
+                // Optionally log the exception for debugging
+                return Page();
+            }
         }
 
         public IActionResult OnPostChangePassword()

@@ -19,6 +19,10 @@ namespace WebApplication1MusicCollectionAppReal.Pages
 
         public void OnGet()
         {
+            if (AllSongs == null)
+            {
+                AllSongs = (LogicLayer.Song)_songService.GetSongById(1); // Populate once
+            }
             Songs = AllSongs.SearchSongs(SearchTerm);
         }
     }
