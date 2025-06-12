@@ -10,6 +10,7 @@ namespace WebApplication1MusicCollectionAppReal.Pages
         private readonly IUserService _userService;
         private readonly IPlaylistService _playlistService;
         public static User CurrentUser { get; set; }
+        private string ErrorMessage { get; set; }
         public static LogicLayer.Playlist CurrentPlaylist { get; set; }
         [BindProperty]
         public string NewName { get; set; }
@@ -49,16 +50,37 @@ namespace WebApplication1MusicCollectionAppReal.Pages
         }
         public IActionResult OnPostChangePlaylistName()
         {
-            CurrentPlaylist.ChangePlaylistName(NewName);
-            return RedirectToPage(new { id = CurrentPlaylist.ID });
+            try
+            {
+                CurrentPlaylist.ChangePlaylistName(NewName);
+                return RedirectToPage(new { id = CurrentPlaylist.ID });
+            }
+            catch (ArgumentException ex) 
+            {
+                ErrorMessage = ex.Message;
+                return Page();
+            }
+            catch (Exception) 
+            {
+                ErrorMessage = "An unexpected error has occurred please try again later";
+                return Page();
+            }
         }
         public async Task<IActionResult> OnPostChangePlaylistPhoto()
         {
             using var memoryStream = new MemoryStream();
             await NewPhoto.CopyToAsync(memoryStream);
             byte[] imageBytes = memoryStream.ToArray();
-            CurrentPlaylist.ChangePlaylistPicture(imageBytes);
-            return RedirectToPage(new { id = CurrentPlaylist.ID });
+            try
+            {
+                CurrentPlaylist.ChangePlaylistPicture(imageBytes);
+                return RedirectToPage(new { id = CurrentPlaylist.ID });
+            }
+            catch (Exception) 
+            {
+                ErrorMessage = "An unexpected error has occurred please try again later";
+                return Page();
+            }
         }
         public IActionResult OnPostDeletePlaylist() 
         {

@@ -34,18 +34,30 @@ namespace LogicLayer
 
         public void ChangePlaylistName(string newName)
         {
+            if (newName == null || newName.Length == 0) 
+            {
+                throw new ArgumentException("Please fill in the space");
+            }
             Name = newName;
             playlistRepository.UpdatePlaylistName(ID, newName);
         }
 
         public void AddSong(int songid)
         {
+            if (songRepository.SongPlaylistCheck(ID, songid)) 
+            {
+                throw new InvalidOperationException("Cannot add duplicates of a song to a playlist");
+            }
             songRepository.AddSongToPlaylist(ID, songid);
 
         }
 
         public void RemoveSong(int songid)
         {
+            if (!songRepository.SongPlaylistCheck(ID, songid)) 
+            {
+                throw new InvalidOperationException("Cannot remove a song from a playlist that doesnt include that song");
+            }
             songRepository.RemoveSongFromPlaylist(ID, songid);
         }
 

@@ -55,6 +55,21 @@ namespace DataAccessLayer
                 }
             }
         }
+
+        public bool SongPlaylistCheck(int playlistID, int songID) 
+        {
+            using (var connection = new SqlConnection(_connectionString)) 
+            {
+                string query = "SELECT COUNT(*) FROM [Playlist_Song] WHERE playlist_ID = @PlaylistID AND song_ID = @SongID";
+                using SqlCommand cmd = new SqlCommand(query, connection);
+                cmd.Parameters.AddWithValue("@PlaylistID", playlistID);
+                cmd.Parameters.AddWithValue("@SongID", songID);
+
+                connection.Open();
+                int count = (int)cmd.ExecuteScalar();
+                return count > 0;
+            }
+        }
         public void ChangeSongWeight(int songID, int weight) 
         {
 			using (SqlConnection connection = new SqlConnection(_connectionString))

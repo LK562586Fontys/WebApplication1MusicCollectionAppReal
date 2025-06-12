@@ -36,12 +36,28 @@ namespace LogicLayer
 
         public void ChangeEmailAddress(string newEmail)
         {
+            if (newEmail.Length < 7) 
+            {
+                throw new ArgumentException("Your E-mail must be above 7 characters");
+            }
+            if (!newEmail.Contains("@") && !newEmail.Contains(".")) 
+            {
+                throw new ArgumentException("Your E-mail must include '@' and '.'");
+            }
+            if (userRepository.CheckEmail(newEmail)) 
+            {
+                throw new InvalidOperationException("The E-mail provided is already in use");
+            }
             EmailAddress = newEmail;
             userRepository.UpdateEmail(ID, newEmail);
         }
 
         public void ChangePassword(string newPassword)
         {
+            if (newPassword.Length < 7) 
+            {
+                throw new ArgumentException("Your password must be above 7 characters");
+            }
             PasswordHash = newPassword;
             userRepository.UpdatePassword(ID, newPassword);
         }

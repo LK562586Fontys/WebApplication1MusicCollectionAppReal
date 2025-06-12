@@ -11,5 +11,6 @@
         IUserDTO GetSpecificUser(int userId);
         IEnumerable<IUserDTO> GetUsersByIds(List<int> userIds);
         IEnumerable<IUserDTO> GetAllUsers();
+        bool CheckEmail(string email);
     }
 }

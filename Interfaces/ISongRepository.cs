@@ -12,6 +12,7 @@ namespace Interfaces
         ISongDTO GetSpecificSong(int songID);
         void AddSongToPlaylist(int playlistID, int songid);
         void RemoveSongFromPlaylist(int playlistID, int songid);
+        bool SongPlaylistCheck(int playlistID,int songID);
         IEnumerable<ISongDTO> GetSongList(int songID);
         IEnumerable<ISongDTO> SearchSongs(string searchterm);
     }

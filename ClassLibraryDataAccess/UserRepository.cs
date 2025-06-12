@@ -202,5 +202,18 @@ namespace DataAccessLayer
 			}
 			return null;
 		}
+        public bool CheckEmail(string emailAddress) 
+        {
+            using SqlConnection connection = new SqlConnection(_connectionString);
+            {
+                string query = "SELECT COUNT(*) FROM [User] WHERE LOWER(Email) = LOWER(@Email)";
+                using SqlCommand cmd = new SqlCommand(query, connection);
+                cmd.Parameters.AddWithValue("@Email", emailAddress);
+
+                connection.Open();
+                int count = (int)cmd.ExecuteScalar();
+                return count > 0;
+            }
+        }
 	}
 }

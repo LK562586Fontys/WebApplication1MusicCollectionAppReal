@@ -10,6 +10,7 @@ namespace WebApplication1MusicCollectionAppReal.Pages
         private readonly IUserService _userService;
         private readonly IPlaylistService _playlistService;
         private readonly ISongService _songService;
+        private string ErrorMessage { get; set; }
         public static LogicLayer.Song CurrentSong { get; set; }
         public static LogicLayer.Playlist CurrentPlaylist { get; set; }
         private static User CurrentUser { get; set; }
@@ -38,8 +39,21 @@ namespace WebApplication1MusicCollectionAppReal.Pages
 
         public IActionResult OnPostAddSongToPlaylist() 
         {
-            CurrentPlaylist.AddSong(CurrentSong.ID);
-            return RedirectToPage();
+            try
+            {
+                CurrentPlaylist.AddSong(CurrentSong.ID);
+                return RedirectToPage();
+            }
+            catch (ArgumentException ex)
+            {
+                ErrorMessage = ex.Message;
+                return Page();
+            }
+            catch (Exception) 
+            {
+                ErrorMessage = "An unexpected error has occurred please try again later";
+                return Page();
+            }
         }
 		public IActionResult OnPostUpdateWeight(int Weight)
 		{
@@ -48,8 +62,21 @@ namespace WebApplication1MusicCollectionAppReal.Pages
 		}
         public IActionResult OnPostRemoveSongFromPlaylist()
         {
-            CurrentPlaylist.RemoveSong(CurrentSong.ID);
-            return RedirectToPage();
+            try 
+            {
+                CurrentPlaylist.RemoveSong(CurrentSong.ID);
+                return RedirectToPage();
+            }
+            catch (ArgumentException ex)
+            {
+                ErrorMessage = ex.Message;
+                return Page();
+            }
+            catch (Exception)
+            {
+                ErrorMessage = "An unexpected error has occurred please try again later";
+                return Page();
+            }
         }
     }
 }

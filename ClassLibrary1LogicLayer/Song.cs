@@ -30,8 +30,12 @@ namespace LogicLayer
 
         public void ChangeSongWeight(int songID, int weight)
         {
+            int newWeight = Weight + weight;
+            if (newWeight > 10 || newWeight < -10) 
+            {
+                throw new ArgumentException("Song weight above/below the limit");
+            }
             Weight = Weight + weight;
-            if (Weight > 10 || Weight < -10) { return; }
             songRepository.ChangeSongWeight(songID, weight);
         }
         public Song GetSpecificSong(int songId)

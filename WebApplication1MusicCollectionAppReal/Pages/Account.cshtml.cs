@@ -47,6 +47,14 @@ namespace WebApplication1MusicCollectionAppReal.Pages
                 CurrentUser = (User)_userService.GetUserById((int)userId);
             }
             LoadUserPlaylists();
+            return Page();
+        }
+
+        private void LoadUserPlaylists()
+        {
+            var cookie = Request.Cookies["PlaylistOrder"];
+            Playlists = CurrentUser.LoadPlaylists(_playlistRepository, _songRepository, cookie);
+
             ViewModel = new AccountViewModel
             {
                 Name = CurrentUser.Name,
@@ -68,68 +76,92 @@ namespace WebApplication1MusicCollectionAppReal.Pages
                 }
             }
 
-            return Page();
-        }
-
-        private void LoadUserPlaylists()
-        {
-            var cookie = Request.Cookies["PlaylistOrder"];
-            Playlists = CurrentUser.LoadPlaylists(_playlistRepository, _songRepository, cookie);
-            
         }
 
         public IActionResult OnPostAddPlaylist()
         {
             DateTime CurrentDate = DateTime.Now;
-            CurrentUser.AddPlaylist(CurrentDate, _playlistRepository);
-            return RedirectToPage();
+            try
+            {
+                CurrentUser.AddPlaylist(CurrentDate, _playlistRepository);
+                LoadUserPlaylists();
+                return Page();
+            }
+            catch (Exception ex) 
+            {
+                ErrorMessage = "An unexpected error has occurred. Please try again later";
+                LoadUserPlaylists();
+                return Page();
+            }
         }
 
         public IActionResult OnPostChangeUsername()
         {
-            //CurrentUser.ChangeUsername(NewUsername);
-            //return RedirectToPage();
             try
             {
-                // Try to change the username
                 CurrentUser.ChangeUsername(NewUsername);
 
-                // If successful, redirect to the same page or another page
-                return RedirectToPage();
+                LoadUserPlaylists();
+                return Page();
             }
             catch (ArgumentException ex)
             {
-                // If the username is invalid, handle the exception
-                ErrorMessage = ex.Message;  // Pass the error message to the view
+                ErrorMessage = ex.Message;
 
-                // Stay on the same page and show the error message
+                LoadUserPlaylists();
                 return Page();
             }
             catch (Exception ex)
             {
-                // Handle any unexpected errors
                 ErrorMessage = "An unexpected error occurred. Please try again later.";
-                // Optionally log the exception for debugging
+
+                LoadUserPlaylists();
                 return Page();
             }
         }
 
         public IActionResult OnPostChangePassword()
         {
-            if (NewPassword.Length > 7) 
-            { 
+            try
+            {
                 CurrentUser.ChangePassword(NewPassword);
+                LoadUserPlaylists();
+                return Page();
             }
-            return RedirectToPage();
+            catch (ArgumentException ex)
+            {
+                ErrorMessage = ex.Message;
+                LoadUserPlaylists();
+                return Page();
+            }
+            catch (Exception ex) 
+            {
+                ErrorMessage = "An unexpected error occurred. Please try again later";
+                LoadUserPlaylists();
+                return Page();
+            }
         }
 
         public IActionResult OnPostChangeEmail()
         {
-            if (NewEmail.Length > 10 && NewEmail.Contains("@") && NewEmail.Contains(".")) 
+            try
             {
-            CurrentUser.ChangeEmailAddress(NewEmail);
+                CurrentUser.ChangeEmailAddress(NewEmail);
+                LoadUserPlaylists();
+                return Page();
             }
-            return RedirectToPage();
+            catch (ArgumentException ex) 
+            {
+                ErrorMessage = ex.Message;
+                LoadUserPlaylists();
+                return Page();
+            }
+            catch (Exception ex) 
+            {
+                ErrorMessage = "An unexpected error occurred. Please try again later";
+                LoadUserPlaylists();
+                return Page();
+            }
         }
 
         public IActionResult OnPostSignOut()
@@ -149,8 +181,18 @@ namespace WebApplication1MusicCollectionAppReal.Pages
             using var memoryStream = new MemoryStream();
             await NewPhoto.CopyToAsync(memoryStream);
             byte[] imageBytes = memoryStream.ToArray();
-            CurrentUser.ChangeProfilePhoto(imageBytes);
-            return RedirectToPage();
+            try 
+            { 
+                CurrentUser.ChangeProfilePhoto(imageBytes); 
+                LoadUserPlaylists(); 
+                return Page(); 
+            } 
+            catch (Exception ex) 
+            { 
+                ErrorMessage = "An unexpected error has occurred please try again later"; 
+                LoadUserPlaylists(); 
+                return Page();
+            }
         }
         public IActionResult OnPostReorder(string move, List<int> playlistOrder)
         {
