@@ -50,12 +50,12 @@ namespace UnitTesting
         public void IntegrationTestChangeEmail()
         {
             //Arrange
-            string NEWWEMPAIL = "NewEmailADdereres";
+            string newemail = "NewEmail@testing.com";
             //Act
-            userObject.ChangeEmailAddress(NEWWEMPAIL);
+            userObject.ChangeEmailAddress(newemail);
             //Assert
             var userfromdatabase = userObject.GetSpecificUser(userObject.ID);
-            Assert.AreEqual(NEWWEMPAIL, userObject.EmailAddress);
+            Assert.AreEqual(newemail, userObject.EmailAddress);
         }
         [TestMethod]
         public void IntegrationTestChangePFP()
@@ -84,13 +84,23 @@ namespace UnitTesting
         public void IntegrationTestDeleteAccount()
         {
             //Arrrange
-            int skadoosh = userObject.ID;
+            int userid = userObject.ID;
             //Act
-            userObject.DeleteAccount(skadoosh);
+            userObject.DeleteAccount(userid);
             //Assert
-            var userfromdatabase = userObject.GetSpecificUser(skadoosh);
+            var userfromdatabase = userObject.GetSpecificUser(userid);
             Assert.IsNull(userfromdatabase);
 
+        }
+        [TestMethod]
+        public void ChangeEmailExceptionHandling() 
+        {
+            //Arrange
+            string alreadytakenemail = "user7@example.com";
+
+            //Act & Assert
+            var ex = Assert.ThrowsException<InvalidOperationException>(() => userObject.ChangeEmailAddress(alreadytakenemail));
+            Assert.AreEqual("The E-mail provided is already in use", ex.Message);
         }
     }
 }

@@ -9,6 +9,16 @@ namespace UnitTesting
 {
     public class UserRepositoryMock : IUserRepository
     {
+        private List<IUserDTO> _users = new List<IUserDTO>
+        {
+        new UserDTO { ID = 1, Name = "Alice" },
+        new UserDTO { ID = 2, Name = "Bob" }
+        };
+        public bool CheckEmail(string email)
+        {
+            throw new NotImplementedException();
+        }
+
         public void DeleteAccount(int userId)
         {
             throw new NotImplementedException();
@@ -16,7 +26,8 @@ namespace UnitTesting
 
         public IEnumerable<IUserDTO> GetAllUsers()
         {
-            throw new NotImplementedException();
+            
+            return _users;
         }
 
         public IUserDTO? GetSpecificUser(int id)

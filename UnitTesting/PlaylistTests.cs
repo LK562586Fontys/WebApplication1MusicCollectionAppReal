@@ -79,5 +79,15 @@ namespace UnitTesting
             //Assert
             Assert.IsFalse(playlistObject.PlaylistSongs.Any(s => s.ID == songid));
         }
+        [TestMethod]
+        public void ChangePlaylistNameExceptionHandling()
+        {
+            // Arrange
+            string newplaylistname = null;
+
+            //Act & Assert
+            var ex = Assert.ThrowsException<ArgumentException>(() => playlistObject.ChangePlaylistName(newplaylistname));
+            Assert.AreEqual("Please fill in the space", ex.Message);
+        }
     }
 }

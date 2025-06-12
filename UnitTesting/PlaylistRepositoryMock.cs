@@ -1,4 +1,5 @@
 ﻿using Interfaces;
+using LogicLayer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,11 @@ namespace UnitTesting
 {
     public class PlaylistRepositoryMock : IPlaylistRepository
     {
+        private List<IPlaylistDTO> _playlist = new List<IPlaylistDTO>
+        {
+        new PlaylistDTO { ID = 1, Name = "Alice" },
+        new PlaylistDTO { ID = 2, Name = "Bob" }
+        };
         public void DeletePlaylist(int playlistID)
         {
             throw new NotImplementedException();
@@ -16,12 +22,16 @@ namespace UnitTesting
 
         public IEnumerable<IPlaylistDTO> GetAllPlaylists()
         {
-            throw new NotImplementedException();
+            return _playlist;
         }
 
         public IPlaylistDTO GetPlaylistById(int playlistID)
         {
-            throw new NotImplementedException();
+            if (playlistID == 1)
+            {
+                return new PlaylistDTO { ID = 1, Name = "TestPlaylist" };
+            }
+            return null;
         }
 
         public IEnumerable<IPlaylistDTO> GetPlaylistsByIds(List<int> Playlistids)
@@ -46,12 +56,20 @@ namespace UnitTesting
 
         public void UpdatePlaylistName(int playlistID, string newName)
         {
-            throw new NotImplementedException();
+            return;
         }
 
         public void UpdatePlaylistPhoto(int playlistID, byte[] newPhoto)
         {
-            throw new NotImplementedException();
+            return;
+        }
+        private class PlaylistDTO : IPlaylistDTO
+        {
+            public int ID {  get; set; }
+            public string Name {  get; set; }
+            public DateTime DateAdded { get; set; }
+            public byte[]? Photo { get; set; }
+            public IUserDTO Creator { get; set; }
         }
     }
 }

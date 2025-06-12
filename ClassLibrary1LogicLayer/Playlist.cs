@@ -25,6 +25,7 @@ namespace LogicLayer
             this.playlistRepository = playlistRepository;
             this.userRepository = userRepository;
             playlistMapper = new PlaylistMapper(playlistRepository, songRepository, userRepository);
+            songMapper = new SongMapper(songRepository, playlistRepository, userRepository);
         }
         public void ChangePlaylistPicture(byte[] newPhoto)
         {

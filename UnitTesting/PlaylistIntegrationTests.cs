@@ -25,8 +25,8 @@ namespace UnitTesting
             _playlistService = new PlaylistService(playlistRepo, userRepo, songRepo);
             _songService = new SongService(songRepo, userRepo, playlistRepo);
 
-            playlistObject = (Playlist)_playlistService.GetPlaylistById(1)!;
-            playlistSongObject = (Song)_songService.GetSongById(playlistObject.ID)!;
+            playlistObject = (Playlist)_playlistService.GetPlaylistById(1004)!;
+            playlistSongObject = (Song)_songService.GetSongById(10)!;
         }
         [TestMethod]
         public void IntegrationTestChangePlaylistPicture()
@@ -87,6 +87,30 @@ namespace UnitTesting
             //Assert
             playlistObject.LoadSongs(new List<User>(), new List<Playlist>());
             Assert.IsFalse(playlistObject.PlaylistSongs.Any(s => s.ID == songid));
+        }
+        [TestMethod]
+        public void AddSongExceptionHandlingIntegration() 
+        {
+            // Arrange
+            int songid = playlistSongObject.ID;
+            playlistObject.LoadSongs(new List<User>(), new List<Playlist>());
+            Assert.IsTrue(playlistObject.PlaylistSongs.Any(s => s.ID == songid));
+
+            //Act & Assert
+            var ex = Assert.ThrowsException<InvalidOperationException>(() => playlistObject.AddSong(songid));
+            Assert.AreEqual("Cannot add duplicates of a song to a playlist", ex.Message);
+        }
+        [TestMethod]
+        public void RemoveSongExceptionHandlingIntegration()
+        {
+            // Arrange
+            int songid = playlistSongObject.ID;
+            playlistObject.LoadSongs(new List<User>(), new List<Playlist>());
+            Assert.IsFalse(playlistObject.PlaylistSongs.Any(s => s.ID == songid));
+
+            //Act & Assert
+            var ex = Assert.ThrowsException<InvalidOperationException>(() => playlistObject.RemoveSong(songid));
+            Assert.AreEqual("Cannot remove a song from a playlist that doesnt include that song", ex.Message); 
         }
     }
 }

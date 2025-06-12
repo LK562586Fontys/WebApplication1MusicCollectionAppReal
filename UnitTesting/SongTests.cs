@@ -33,5 +33,15 @@ namespace UnitTesting
             //Assert
             Assert.AreEqual(Weight, songObject.Weight);
         }
+        [TestMethod]
+        public void ChangeSongWeight() 
+        {
+            //Arrange
+            int Weight = 696969;
+
+            //Act & Assert
+            var ex = Assert.ThrowsException<ArgumentException>(() => songObject.ChangeSongWeight(songObject.ID , Weight));
+            Assert.AreEqual("Song weight above/below the limit", ex.Message);
+        }
     }
 }

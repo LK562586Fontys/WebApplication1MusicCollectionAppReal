@@ -206,7 +206,7 @@ namespace DataAccessLayer
         {
             using SqlConnection connection = new SqlConnection(_connectionString);
             {
-                string query = "SELECT COUNT(*) FROM [User] WHERE LOWER(Email) = LOWER(@Email)";
+                string query = "SELECT COUNT(*) FROM [User] WHERE LOWER(emailAddress) = LOWER(@Email)";
                 using SqlCommand cmd = new SqlCommand(query, connection);
                 cmd.Parameters.AddWithValue("@Email", emailAddress);
 

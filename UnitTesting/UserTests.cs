@@ -42,11 +42,11 @@ namespace UnitTesting
         public void TestChangeEmail() 
         {
             //Arrange
-            string NEWWEMPAIL = "NewEmailADdereres";
+            string newemail = "NewEmail@testing.com";
             //Act
-            userObject.ChangeEmailAddress(NEWWEMPAIL);
+            userObject.ChangeEmailAddress(newemail);
             //Assert
-            Assert.AreEqual(NEWWEMPAIL, userObject.EmailAddress);
+            Assert.AreEqual(newemail, userObject.EmailAddress);
         }
         [TestMethod]
         public void TestChangeProfilePicture() 
@@ -80,6 +80,47 @@ namespace UnitTesting
             //Assert
             Assert.IsNull(userObject.Name);
             Assert.IsNull(userObject.EmailAddress);
+        }
+        [TestMethod]
+        public void ChangeUsernameExceptionHandling()
+        {
+            // Arrange
+            string newname = "A";
+
+            // Act & Assert
+            var ex = Assert.ThrowsException<ArgumentException>(() => userObject.ChangeUsername(newname));
+            Assert.AreEqual("The username must be between 2 and 50 characters long.", ex.Message);
+        }
+        [TestMethod]
+        public void ChangePasswordExceptionHandling()
+        {
+            // Arrange
+            string newpassword = "B";
+
+            // Act & Assert
+            var ex = Assert.ThrowsException<ArgumentException>(() => userObject.ChangePassword(newpassword));
+            Assert.AreEqual("Your password must be above 7 characters", ex.Message);
+        }
+        [TestMethod]
+        public void ChangeEmailExceptionHandlingPart1() 
+        {
+            // Arrange
+            string newemail = "j@j.j";
+
+            // Act & Assert
+            var ex = Assert.ThrowsException<ArgumentException>(() => userObject.ChangeEmailAddress(newemail));
+            Assert.AreEqual("Your E-mail must be above 7 characters", ex.Message);
+        }
+
+        [TestMethod]
+        public void ChangeEmailExceptionHandlingPart2()
+        {
+            // Arrange
+            string newemail = "ThisIsTotallyTheEmailThatIAmGoingToUse";
+
+            // Act & Assert
+            var ex = Assert.ThrowsException<ArgumentException>(() => userObject.ChangeEmailAddress(newemail));
+            Assert.AreEqual("Your E-mail must include '@' and '.'", ex.Message);
         }
     }
 }
