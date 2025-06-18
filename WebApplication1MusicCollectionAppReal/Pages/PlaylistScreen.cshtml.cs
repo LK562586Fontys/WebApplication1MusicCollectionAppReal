@@ -1,7 +1,9 @@
 using Interfaces;
 using LogicLayer;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using WebApplication1MusicCollectionAppReal.Pages.ViewModels;
 
 namespace WebApplication1MusicCollectionAppReal.Pages
 {
@@ -9,6 +11,9 @@ namespace WebApplication1MusicCollectionAppReal.Pages
     {
         private readonly IUserService _userService;
         private readonly IPlaylistService _playlistService;
+        private readonly IUserRepository _userRepository;
+        private UserMapper _userMapper;
+        public PlaylistViewModel viewModel { get; set; }
         public static User CurrentUser { get; set; }
         private string ErrorMessage { get; set; }
         public static LogicLayer.Playlist CurrentPlaylist { get; set; }
@@ -18,35 +23,58 @@ namespace WebApplication1MusicCollectionAppReal.Pages
         public IFormFile NewPhoto { get; set; }
         public List<LogicLayer.Song> Songs { get; set; }
 
-        public PlaylistScreen(IUserService userService, IPlaylistService playlistService) 
+        public PlaylistScreen(IUserService userService, IPlaylistService playlistService, IUserRepository userRepository) 
         {
             _userService = userService;
             _playlistService = playlistService;
+            _userRepository = userRepository;
+            _userMapper = new UserMapper(_userRepository);
         }
-        public void OnGet(int id)
+        public IActionResult OnGet(int id)
         {
 			int? userId = HttpContext.Session.GetInt32("UserID");
 
 			if (userId == null)
 			{
 				// Not logged in — redirect to login
-				Response.Redirect("/Login");
-				return;
-			}
+				return RedirectToPage("/Login");
+            }
 
             // Set the current user
 			CurrentUser = (User)_userService.GetUserById((int)userId);
             CurrentPlaylist = (LogicLayer.Playlist)_playlistService.GetPlaylistById(id);
-			CurrentPlaylist.GetSpecificPlaylist(id);
+            if (CurrentPlaylist == null)
+            {
+                return RedirectToPage("/Error", new { message = "Playlist not found" });
+            }
 			LoadPlaylistSongs();
+            return Page();
         }
 
         private void LoadPlaylistSongs()
         {
+
             var sortField = HttpContext.Session.GetString("SortField");
             var sortOrder = HttpContext.Session.GetString("SortOrder");
 
             CurrentPlaylist.UpdatePlaylistList(sortField, sortOrder);
+
+            var creatorUser = _userMapper.FromDataModel(CurrentPlaylist.Creator);
+            viewModel = new PlaylistViewModel
+            {
+                ID = CurrentPlaylist.ID,
+                DateAdded = CurrentPlaylist.DateAdded,
+                Photo = CurrentPlaylist.Photo,
+                Name = CurrentPlaylist.Name,
+                Creator = creatorUser,
+                Base64Photo = CurrentPlaylist.Base64Photo,
+                playlistSongs = CurrentPlaylist.PlaylistSongs,
+            };
+            if (CurrentPlaylist.Photo != null)
+            {
+                CurrentPlaylist.Base64Photo = Convert.ToBase64String(CurrentPlaylist.Photo);
+                viewModel.Base64Photo = Convert.ToBase64String(CurrentPlaylist.Photo);
+            }
         }
         public IActionResult OnPostChangePlaylistName()
         {
@@ -58,11 +86,13 @@ namespace WebApplication1MusicCollectionAppReal.Pages
             catch (ArgumentException ex) 
             {
                 ErrorMessage = ex.Message;
+                LoadPlaylistSongs();
                 return Page();
             }
             catch (Exception) 
             {
                 ErrorMessage = "An unexpected error has occurred please try again later";
+                LoadPlaylistSongs();
                 return Page();
             }
         }

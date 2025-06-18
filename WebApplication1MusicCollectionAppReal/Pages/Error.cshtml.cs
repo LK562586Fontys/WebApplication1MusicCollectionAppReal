@@ -12,6 +12,8 @@ namespace WebApplication1MusicCollectionAppReal.Pages
 
         public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
 
+        public string ErrorMessage { get; set; }
+
         private readonly ILogger<ErrorModel> _logger;
 
         public ErrorModel(ILogger<ErrorModel> logger)
@@ -19,8 +21,9 @@ namespace WebApplication1MusicCollectionAppReal.Pages
             _logger = logger;
         }
 
-        public void OnGet()
+        public void OnGet(string message)
         {
+            ErrorMessage = message;
             RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
         }
     }

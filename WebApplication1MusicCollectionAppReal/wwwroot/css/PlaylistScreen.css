@@ -1,0 +1,24 @@
+﻿body {
+}
+.playlist-picture {
+    top: 10%;
+    height: 300px;
+    width: 300px;
+    border-radius: 999px;
+    border: 2px solid #000;
+}
+.playlist-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: sans-serif;
+}
+
+    .playlist-table th, .playlist-table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+
+    .playlist-table th {
+        background-color: #f9f9f9;
+    }

@@ -17,13 +17,14 @@ namespace WebApplication1MusicCollectionAppReal.Pages
         }
         public List<LogicLayer.Song> Songs { get; set; }
 
-        public void OnGet()
+        public IActionResult OnGet()
         {
             if (AllSongs == null)
             {
-                AllSongs = (LogicLayer.Song)_songService.GetSongById(1); // Populate once
+                AllSongs = (LogicLayer.Song)_songService.GetSongById(1);
             }
             Songs = AllSongs.SearchSongs(SearchTerm);
+            return Page();
         }
     }
 }

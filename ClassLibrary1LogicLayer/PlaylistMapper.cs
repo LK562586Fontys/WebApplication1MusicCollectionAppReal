@@ -13,6 +13,7 @@ namespace LogicLayer
         private readonly ISongRepository _songRepository;
         private readonly IUserRepository _userRepository;
 
+
         public PlaylistMapper(IPlaylistRepository playlistRepository, ISongRepository songRepository, IUserRepository userRepository)
         {
             _playlistRepository = playlistRepository;
@@ -20,15 +21,16 @@ namespace LogicLayer
             _userRepository = userRepository;
         }
 
-        public Playlist FromDataModel(IPlaylistDTO dataModel, IEnumerable<IUserDTO> users)
+        public Playlist FromDataModel(IPlaylistDTO dataModel, List<User> users)
         {
-
+            var fullCreator = users.FirstOrDefault(u => u.ID == dataModel.Creator?.ID);
             return new Playlist(_songRepository, _playlistRepository, _userRepository)
             {
                 ID = dataModel.ID,
                 Name = dataModel.Name,
                 Photo = dataModel.Photo,
-                Creator = dataModel.Creator
+                DateAdded = dataModel.DateAdded,
+                Creator = fullCreator ?? dataModel.Creator
             };
         }
     }

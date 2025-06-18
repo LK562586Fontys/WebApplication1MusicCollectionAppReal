@@ -1,4 +1,6 @@
-﻿namespace WebApplication1MusicCollectionAppReal.Pages.ViewModels
+﻿using LogicLayer;
+
+namespace WebApplication1MusicCollectionAppReal.Pages.ViewModels
 {
     public class PlaylistViewModel
     {
@@ -7,5 +9,8 @@
         public DateTime DateAdded { get; set; }
         public byte[] Photo { get; set; }
         public string Base64Photo { get; set; }
+        public User Creator { get; set; }
+        public List<LogicLayer.Song> playlistSongs { get; set; } = new();
+
     }
 }

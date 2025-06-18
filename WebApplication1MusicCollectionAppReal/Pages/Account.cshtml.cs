@@ -46,6 +46,10 @@ namespace WebApplication1MusicCollectionAppReal.Pages
             else {
                 CurrentUser = (User)_userService.GetUserById((int)userId);
             }
+            if (CurrentUser == null) 
+            {
+                return RedirectToPage("/Error", new { message = "User not found" });
+            }
             LoadUserPlaylists();
             return Page();
         }
@@ -57,6 +61,7 @@ namespace WebApplication1MusicCollectionAppReal.Pages
 
             ViewModel = new AccountViewModel
             {
+                ID = CurrentUser.ID,
                 Name = CurrentUser.Name,
                 EmailAddress = CurrentUser.EmailAddress,
                 joinDate = CurrentUser.joinDate,

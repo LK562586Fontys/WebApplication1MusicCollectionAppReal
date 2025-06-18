@@ -16,6 +16,7 @@ namespace LogicLayer
         private IUserRepository userRepository;
         private ISongRepository songRepository;
         IPlaylistRepository playlistRepository;
+        private readonly UserMapper userMapper;
         private readonly PlaylistMapper playlistMapper;
         private readonly SongMapper songMapper;
         
@@ -26,6 +27,7 @@ namespace LogicLayer
             this.userRepository = userRepository;
             playlistMapper = new PlaylistMapper(playlistRepository, songRepository, userRepository);
             songMapper = new SongMapper(songRepository, playlistRepository, userRepository);
+            userMapper = new UserMapper(userRepository);
         }
         public void ChangePlaylistPicture(byte[] newPhoto)
         {
@@ -77,7 +79,10 @@ namespace LogicLayer
 
             if (playlistData != null)
             {
-                var users = userRepository.GetAllUsers();
+                var userDTOs = userRepository.GetAllUsers();
+                var users = userDTOs
+                    .Select(dto => userMapper.FromDataModel(dto))
+                    .ToList();
 
                 return playlistMapper.FromDataModel(playlistData, users);
             }

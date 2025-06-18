@@ -15,9 +15,9 @@ namespace UnitTesting
         public void Setup()
         {
             // Mock Repositories
-            var playlistRepoMock = new PlaylistRepositoryMock(); // Implements IPlaylistRepository
-            var userRepoMock = new UserRepositoryMock();         // Implements IUserRepository
-            var songRepoMock = new SongRepositoryMock();         // Implements ISongRepository
+            var playlistRepoMock = new PlaylistRepositoryMock();
+            var userRepoMock = new UserRepositoryMock();
+            var songRepoMock = new SongRepositoryMock();
 
             // Services
             _playlistService = new PlaylistService(playlistRepoMock, userRepoMock, songRepoMock);

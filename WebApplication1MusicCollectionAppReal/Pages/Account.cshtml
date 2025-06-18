@@ -1,56 +1,60 @@
 ﻿@page "{id?}"
 @model WebApplication1MusicCollectionAppReal.Pages.Account
 @{
-	ViewData["Title"] = "Account Screen";
 }
 <h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's SCREEN</p>
-<h2>Create Playlist</h2>
-
-<form method="post">
-    <button type="submit" asp-page-handler="AddPlaylist">Create Playlist</button>
-</form>
+<body>
+    <link rel="stylesheet" href="~/css/Account.css" asp-append-version="true" />
+</body>
 
 
-<form method="post">
-    <input asp-for="NewUsername" placeholder="Enter new username" />
-    <button type="submit" asp-page-handler="ChangeUsername">Change Username</button>
-</form>
-<form method="post">
-    <input asp-for="NewPassword" placeholder="Enter new password" />
-    <button type="submit" asp-page-handler="ChangePassword">Change Password</button>
-</form>
-<form method="post">
-    <input asp-for="NewEmail" placeholder="Enter new e-mail" />
-    <button type="submit" asp-page-handler="ChangeEmail">Change Email</button>
-</form>
-<form method="post" enctype="multipart/form-data" asp-page-handler="ChangeProfilePhoto">
-    <label for="NewPhoto">Choose an image:</label>
-    <input type="file" id="NewPhoto" name="NewPhoto" accept=".jpg,.jpeg,.png, .webp" required />
-    <button type="submit">Upload</button>
-</form>
-<form method="post">
-    <button type="submit" asp-page-handler="DeleteAccount">Delete Account</button>
-</form>
-<form method="post">
-    <button type="submit" asp-page-handler="SignOut">Sign Out</button>
-</form>
-
-<h2>Your Information</h2>
+@if (Model.ViewModel.ID == HttpContext.Session.GetInt32("UserID"))
+{
+    <div class="userinfo accountbuttons leftbuttons">
+    <form method="post">
+        <input asp-for="NewUsername" class="input" placeholder="Enter new username" />
+        <button type="submit" class="button accountbuttons" asp-page-handler="ChangeUsername">Change Username</button>
+    </form>
+    <form method="post">
+        <input asp-for="NewPassword" class="input" placeholder="Enter new password" />
+        <button type="submit" class="button accountbuttons" asp-page-handler="ChangePassword">Change Password</button>
+    </form>
+    </div>
+    <div class="userinfo accountbuttons rightbuttons">
+    <form method="post">
+        <input asp-for="NewEmail" class="input" placeholder="Enter new e-mail" />
+        <button type="submit" class="button accountbuttons" asp-page-handler="ChangeEmail">Change Email</button>
+    </form>
+    <form method="post" enctype="multipart/form-data" asp-page-handler="ChangeProfilePhoto">
+        <label for="NewPhoto">Choose an image:</label>
+        <input type="file" id="NewPhoto" name="NewPhoto" accept=".jpg,.jpeg,.png, .webp" required />
+        <button type="submit" class="button accountbuttons changepicturebutton">Change Profile Picture</button>
+    </form>
+    </div>
+    <div class="userinfo accountbuttons bottombuttons">
+        <form method="post">
+            <button type="submit" class="button" asp-page-handler="SignOut">Sign Out</button>
+        </form>
+        <form method="post">
+            <button type="submit" class="button deletebutton" asp-page-handler="DeleteAccount">Delete Account</button>
+        </form>
+    </div>
+}
 @if (!string.IsNullOrEmpty(Model.ViewModel.ProfileBase64Photo))
 {
-    <img src="data:image/jpeg;base64,@Model.ViewModel.ProfileBase64Photo" alt="Profile Photo" style="height: 300px; width: 300px; border-radius: 999px; border: 2px solid #000;" />
+    <img src="data:image/jpeg;base64,@Model.ViewModel.ProfileBase64Photo" class="profile-picture userinfo" alt="Profile Photo" />
 }
 @if (string.IsNullOrEmpty(Model.ViewModel.ProfileBase64Photo))
 {
-    <img src="@Url.Content("~/noimage.jpg")" alt="noimage" style="height: 300px; width: 300px; border-radius: 999px; border: 2px solid #000;" />
+    <img src="@Url.Content("~/noimage.jpg")" alt="noimage" class="profile-picture userinfo"/>
 }
-<h3>Name = @Model.ViewModel.Name</h3>
-<h3>Email = @Model.ViewModel.EmailAddress</h3>
-<h3>JoinDate = @Model.ViewModel.joinDate.ToShortDateString()</h3>
-<h2>Your Playlists</h2>
+<h3 class="username userinfo">@Model.ViewModel.Name</h3>
+<h3 class="useremail userinfo">@Model.ViewModel.EmailAddress</h3>
+<h3 class="userjoindate userinfo">@Model.ViewModel.joinDate.ToShortDateString()</h3>
 
+<div class="playlists userinfo">
+    <h2 class="userplaylist">Playlists</h2>
 @if (Model.Playlists != null)
 {
     <form method="post" asp-page-handler="Reorder">
@@ -73,17 +77,28 @@
                         <img src="@Url.Content("~/noimage.jpg")" alt="noimage" style="height: 100px; width: 100px; border-radius: 999px; border: 2px solid #000; " />
                     }
 
-                    @if (i > 0)
-                    {
-                        <button type="submit" name="move" value="up_@i">↑</button>
-                    }
+                        @if (Model.ViewModel.ID == HttpContext.Session.GetInt32("UserID"))
+                        {
+                            @if (i > 0)
+                            {
+                                <button type="submit" name="move" value="up_@i">↑</button>
+                            }
 
-                    @if (i < Model.Playlists.Count - 1)
-                    {
-                        <button type="submit" name="move" value="down_@i">↓</button>
-                    }
+                            @if (i < Model.Playlists.Count - 1)
+                            {
+                            <button type="submit" name="move" value="down_@i">↓</button>
+                            }   
+                        }
                 </li>
             }
         </ul>
     </form>
+    
 }
+    @if (Model.ViewModel.ID == HttpContext.Session.GetInt32("UserID"))
+    {
+        <form method="post">
+            <button type="submit" class="button" asp-page-handler="AddPlaylist">Create Playlist</button>
+        </form>
+    }
+</div>

@@ -147,7 +147,7 @@ namespace DataAccessLayer
                         users.Add(new UserDataModel
                         {
                             ID = (int)reader["ID"],
-                            Name = reader["Name"].ToString()
+                            Name = reader["userName"].ToString()
                         });
                     }
                 }
