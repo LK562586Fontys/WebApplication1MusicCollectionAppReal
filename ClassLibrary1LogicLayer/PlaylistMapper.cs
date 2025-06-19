@@ -9,19 +9,13 @@ namespace LogicLayer
 {
     public class PlaylistMapper
     {
-        private readonly IPlaylistRepository _playlistRepository;
-        private readonly ISongRepository _songRepository;
-        private readonly IUserRepository _userRepository;
 
 
-        public PlaylistMapper(IPlaylistRepository playlistRepository, ISongRepository songRepository, IUserRepository userRepository)
+        public PlaylistMapper()
         {
-            _playlistRepository = playlistRepository;
-            _songRepository = songRepository;
-            _userRepository = userRepository;
         }
 
-        public Playlist FromDataModel(IPlaylistDTO dataModel, List<User> users)
+        public Playlist FromDataModel(IPlaylistDataModel dataModel, List<User> users)
         {
             var fullCreator = users.FirstOrDefault(u => u.ID == dataModel.Creator?.ID);
             return new Playlist(
@@ -29,7 +23,7 @@ namespace LogicLayer
                 dataModel.Name,
                 dataModel.DateAdded,
 				dataModel.Photo,
-				fullCreator ?? dataModel.Creator
+				fullCreator ?? (User)dataModel.Creator
                 );
             
         }

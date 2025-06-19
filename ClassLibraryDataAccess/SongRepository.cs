@@ -86,7 +86,7 @@ namespace DataAccessLayer
 				}
 			}
 		}
-        public IEnumerable<ISongDTO> GetSongList(int playlistID) 
+        public IEnumerable<ISongDataModel> GetSongList(int playlistID) 
         {
             List<SongDataModel> result = new List<SongDataModel>();
             using (SqlConnection connection = new SqlConnection(_connectionString))
@@ -112,7 +112,7 @@ namespace DataAccessLayer
             }
             return result;
         }
-        public IEnumerable<ISongDTO> SearchSongs(string searchTerm) 
+        public IEnumerable<ISongDataModel> SearchSongs(string searchTerm) 
         {
             List<SongDataModel> result = new List<SongDataModel>();
             using (SqlConnection connection = new SqlConnection(_connectionString))
@@ -137,7 +137,7 @@ namespace DataAccessLayer
             }
             return result;
         }
-        public ISongDTO GetSpecificSong(int songID)
+        public ISongDataModel GetSpecificSong(int songID)
         {
             SongDataModel song = null;
 

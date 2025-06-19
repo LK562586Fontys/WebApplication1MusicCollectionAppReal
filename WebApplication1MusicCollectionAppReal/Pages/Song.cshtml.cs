@@ -10,9 +10,9 @@ namespace WebApplication1MusicCollectionAppReal.Pages
 {
     public class Song : PageModel
     {
-        private readonly IUserService _userService;
-        private readonly IPlaylistService _playlistService;
-        private readonly ISongService _songService;
+        private readonly UserFactory _userService;
+        private readonly PlaylistFactory _playlistService;
+        private readonly SongFactory _songService;
         private readonly ISongRepository _songRepository;
         private readonly IPlaylistRepository _playlistRepository;
         public SongViewModel viewModel { get; set; }
@@ -22,7 +22,7 @@ namespace WebApplication1MusicCollectionAppReal.Pages
         public static LogicLayer.Playlist CurrentPlaylist { get; set; }
         private static User CurrentUser { get; set; }
         public List<Playlist> Playlists { get; set; }
-        public Song(IUserService userService, IPlaylistService playlistService, ISongService songService, IPlaylistRepository playlistRepository, ISongRepository songRepository) 
+        public Song(UserFactory userService, PlaylistFactory playlistService, SongFactory songService, IPlaylistRepository playlistRepository, ISongRepository songRepository) 
         {
             _userService = userService;
             _playlistService = playlistService;
@@ -41,7 +41,7 @@ namespace WebApplication1MusicCollectionAppReal.Pages
             }
 
             // Set the current user
-            CurrentUser = (User)_userService.GetUserById((int)userId);
+            CurrentUser = _userService.GetUserById((int)userId);
             CurrentSong = (LogicLayer.Song)_songService.GetSongById(id);
             if (CurrentSong == null) 
             {

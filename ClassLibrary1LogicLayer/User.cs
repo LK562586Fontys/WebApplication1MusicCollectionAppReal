@@ -2,20 +2,21 @@
 
 namespace LogicLayer
 {
-    public class User : IUserDTO
+    public class User
     {
-        public int ID { get; set; }
-        public string Name { get; set; }
-        public string EmailAddress { get; set; }
-        public string PasswordHash { get; set; }
-        public byte[] ProfilePhoto { get; set; }
-        public DateTime JoinDate { get; set; }
+        public int ID { get; private set; }
+        public string Name { get; private set; }
+        public string EmailAddress { get; private set; }
+        public string PasswordHash { get; private set; }
+        public byte[] ProfilePhoto { get; private set; }
+        public DateTime JoinDate { get; private set; }
         public List<Playlist> userPlaylist { get; private set; } = new();
-        private readonly IUserRepository userRepository;
+        private IUserRepository userRepository;
         private IPlaylistRepository playlistRepository;
         private ISongRepository songRepository;
-        private readonly UserMapper userMapper;
-        private readonly PlaylistMapper playlistMapper;
+        private UserMapper userMapper;
+        private PlaylistMapper playlistMapper;
+        private SongMapper songMapper;
 
 		public User(int id, string name, string emailAddress, string passwordHash, byte[]? profilePhoto, DateTime joinDate)
 		{
@@ -26,7 +27,15 @@ namespace LogicLayer
 			ProfilePhoto = profilePhoto;
 			JoinDate = joinDate;
 		}
-
+		public void InitialiseRepositories(IUserRepository userRepo, IPlaylistRepository playlistRepo, ISongRepository songRepo)
+		{
+			this.userRepository = userRepo;
+            this.playlistRepository = playlistRepo;
+            this.songRepository = songRepo;
+			playlistMapper = new PlaylistMapper();
+			userMapper = new UserMapper();
+            songMapper = new SongMapper();
+		}
 		public void ChangeUsername(string newName)
         {
             if (newName == null) 

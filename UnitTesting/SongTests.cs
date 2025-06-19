@@ -6,7 +6,7 @@ namespace UnitTesting
     [TestClass]
     public class SongTests
     {
-        private SongService _songService;
+        private SongFactory _songService;
         private Song songObject;
         private List<Song> _playlistSongs;
         private List<Song> _searchedSongs;
@@ -18,7 +18,7 @@ namespace UnitTesting
             var userRepoMock = new UserRepositoryMock();
             var playlistRepoMock = new PlaylistRepositoryMock();
 
-            _songService = new SongService(songRepoMock, userRepoMock, playlistRepoMock);
+            _songService = new SongFactory(songRepoMock, userRepoMock, playlistRepoMock);
 
             songObject = (Song)_songService.GetSongById(1)!;
             _playlistSongs = _songService.GetAllSongs(1);

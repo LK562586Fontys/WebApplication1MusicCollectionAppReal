@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace LogicLayer
 {
-    public class SongService : ISongService
+    public class SongFactory
     {
         private readonly ISongRepository _songRepo;
         private readonly IUserRepository _userRepo;
@@ -15,16 +15,16 @@ namespace LogicLayer
         private readonly SongMapper _songMapper;
         private readonly PlaylistMapper _playlistMapper;
 
-        public SongService(ISongRepository songRepo, IUserRepository userRepo, IPlaylistRepository playlistRepo)
+        public SongFactory(ISongRepository songRepo, IUserRepository userRepo, IPlaylistRepository playlistRepo)
         {
             _songRepo = songRepo;
             _userRepo = userRepo;
             _playlistRepo = playlistRepo;
-            _songMapper = new SongMapper(songRepo, playlistRepo, userRepo);
-            _playlistMapper = new PlaylistMapper(playlistRepo, songRepo, userRepo);
+            _songMapper = new SongMapper();
+            _playlistMapper = new PlaylistMapper();
         }
 
-        public ISongDTO? GetSongById(int id)
+        public Song? GetSongById(int id)
         {
             var dto = _songRepo.GetSpecificSong(id);
             if (dto == null) return null;
@@ -43,8 +43,13 @@ namespace LogicLayer
                     .Select(p => _playlistMapper.FromDataModel(p, users))
                     .ToList();
 
-            return (ISongDTO)_songMapper.FromDataModel(dto, users, playlists);
-        }
+            var song = _songMapper.FromDataModel(dto, users, playlists);
+
+            song.InitialiseRepositories(_userRepo, _playlistRepo, _songRepo);
+
+            return song;
+
+		}
 
         public List<Song> GetAllSongs(int playlistid)
         {

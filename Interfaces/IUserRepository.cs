@@ -9,8 +9,8 @@
         void DeleteAccount(int userId);
         bool CheckEmail(string email);
         Task<int?> VerifyLoginAndReturnUserId(string email, string password);
-        IUserDTO GetSpecificUser(int userId);
-        IEnumerable<IUserDTO> GetUsersByIds(List<int> userIds);
-        IEnumerable<IUserDTO> GetAllUsers();
+        IUserDataModel GetSpecificUser(int userId);
+        IEnumerable<IUserDataModel> GetUsersByIds(List<int> userIds);
+        IEnumerable<IUserDataModel> GetAllUsers();
     }
 }

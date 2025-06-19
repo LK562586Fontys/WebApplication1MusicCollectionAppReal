@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer
 {
-    public class PlaylistDataModel : IPlaylistDTO
+    public class PlaylistDataModel : IPlaylistDataModel
     {
         public int ID { get; set; }
         public string Name { get; set; }
         public DateTime DateAdded { get; set; }
         public byte[]? Photo { get; set; }
-        public IUserDTO Creator { get; set; }
+        public IUserDataModel Creator { get; set; }
     }
 }

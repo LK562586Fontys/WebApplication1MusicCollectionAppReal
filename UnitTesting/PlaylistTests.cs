@@ -5,8 +5,8 @@ namespace UnitTesting
     [TestClass]
     public class PlaylistTests
     {
-        private PlaylistService _playlistService;
-        private SongService _songService;
+        private PlaylistFactory _playlistService;
+        private SongFactory _songService;
 
         private Playlist playlistObject;
         private Song songObject;
@@ -20,8 +20,8 @@ namespace UnitTesting
             var songRepoMock = new SongRepositoryMock();
 
             // Services
-            _playlistService = new PlaylistService(playlistRepoMock, userRepoMock, songRepoMock);
-            _songService = new SongService(songRepoMock, userRepoMock, playlistRepoMock);
+            _playlistService = new PlaylistFactory(playlistRepoMock, userRepoMock, songRepoMock);
+            _songService = new SongFactory(songRepoMock, userRepoMock, playlistRepoMock);
 
             // Get a specific playlist (ensure ID exists in your mock)
             playlistObject = (Playlist)_playlistService.GetPlaylistById(1)!;

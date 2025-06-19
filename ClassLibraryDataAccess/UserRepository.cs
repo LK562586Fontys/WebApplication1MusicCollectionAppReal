@@ -102,7 +102,7 @@ namespace DataAccessLayer
                 }
             }
         }
-        public IUserDTO GetSpecificUser(int userID)
+        public IUserDataModel GetSpecificUser(int userID)
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
@@ -126,7 +126,7 @@ namespace DataAccessLayer
             }
             return null;
         }
-        public IEnumerable<IUserDTO> GetUsersByIds(List<int> userIds)
+        public IEnumerable<IUserDataModel> GetUsersByIds(List<int> userIds)
         {
             var users = new List<UserDataModel>();
 
@@ -155,7 +155,7 @@ namespace DataAccessLayer
 
             return users;
         }
-        public IEnumerable<IUserDTO> GetAllUsers()
+        public IEnumerable<IUserDataModel> GetAllUsers()
         {
             List<UserDataModel> result = new List<UserDataModel>();
             using (SqlConnection connection = new SqlConnection(_connectionString))

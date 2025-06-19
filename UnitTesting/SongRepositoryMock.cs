@@ -9,7 +9,7 @@ namespace UnitTesting
 {
     public class SongRepositoryMock : ISongRepository
     {
-        private List<ISongDTO> _songs = new List<ISongDTO>
+        private List<ISongDataModel> _songs = new List<ISongDataModel>
         {
             new SongDTO { ID = 1, Name ="fart"},
             new SongDTO { ID = 2, Name ="fart"},
@@ -25,14 +25,14 @@ namespace UnitTesting
             return;
         }
 
-        public IEnumerable<ISongDTO> GetSongList(int songID)
+        public IEnumerable<ISongDataModel> GetSongList(int songID)
         {
             return _songs;
         }
 
-        public ISongDTO GetSpecificSong(int songID)
+        public ISongDataModel GetSpecificSong(int songID)
         {
-            ISongDTO testsongLOL = new SongDTO { ID = 3 };
+            ISongDataModel testsongLOL = new SongDTO { ID = 3 };
             return testsongLOL;
         }
 
@@ -41,7 +41,7 @@ namespace UnitTesting
             throw new NotImplementedException();
         }
 
-        public IEnumerable<ISongDTO> SearchSongs(string searchterm)
+        public IEnumerable<ISongDataModel> SearchSongs(string searchterm)
         {
             throw new NotImplementedException();
         }
@@ -50,14 +50,14 @@ namespace UnitTesting
         {
             throw new NotImplementedException();
         }
-        private class SongDTO : ISongDTO
+        private class SongDTO : ISongDataModel
         {
             public int ID { get; set; }
             public string Name { get; set; }
             public int Weight { get; set; }
             public DateTime DateReleased { get; set; }
-            public IUserDTO Artist { get; set; }
-            public IPlaylistDTO Album { get; set; }
+            public IUserDataModel Artist { get; set; }
+            public IPlaylistDataModel Album { get; set; }
         }
     }
 }

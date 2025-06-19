@@ -7,11 +7,11 @@ namespace WebApplication1MusicCollectionAppReal.Pages
 {
     public class IndexModel : PageModel
     {
-        private IUserService _userService;
+        private UserFactory _userService;
         private readonly ILogger<IndexModel> _logger;
         private User CurrentUser { get; set; }
 
-        public IndexModel(ILogger<IndexModel> logger, IUserService userService)
+        public IndexModel(ILogger<IndexModel> logger, UserFactory userService)
         {
             _logger = logger;
             _userService = userService;
@@ -29,7 +29,7 @@ namespace WebApplication1MusicCollectionAppReal.Pages
             }
 
             // Set the current user
-            CurrentUser = (User)_userService.GetUserById((int)userId);
+            CurrentUser = _userService.GetUserById((int)userId);
         }
     }
 }

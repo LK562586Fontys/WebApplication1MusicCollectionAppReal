@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer
 {
-    public class SongDataModel : ISongDTO
+    public class SongDataModel : ISongDataModel
     {
         public int ID { get; set; }
         public string Name { get; set; }
         public int Weight { get; set; }
         public DateTime DateReleased { get; set; }
-        public IUserDTO Artist { get; set; }
-        public IPlaylistDTO Album { get; set; }
+        public IUserDataModel Artist { get; set; }
+        public IPlaylistDataModel Album { get; set; }
     }
 }

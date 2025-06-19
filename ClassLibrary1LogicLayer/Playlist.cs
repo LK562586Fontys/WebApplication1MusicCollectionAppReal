@@ -4,31 +4,41 @@ using Interfaces;
 
 namespace LogicLayer
 {
-    public class Playlist : IPlaylistDTO
+    public class Playlist
     {
-        public int ID { get; set; }
-        public string Name { get; set; }
-        public DateTime DateAdded { get; set; }
-        public byte[] Photo { get; set; }
+        public int ID { get; private set; }
+        public string Name { get; private set; }
+        public DateTime DateAdded { get; private set; }
+        public byte[] Photo { get; private set; }
         public string Base64Photo { get; set; }
         public List<Song> PlaylistSongs { get; private set; } = new List<Song>();
-        public IUserDTO Creator { get; set; }
+        public User Creator { get; set; }
         private IUserRepository userRepository;
         private ISongRepository songRepository;
-        IPlaylistRepository playlistRepository;
-        private readonly UserMapper userMapper;
-        private readonly PlaylistMapper playlistMapper;
-        private readonly SongMapper songMapper;
+        private IPlaylistRepository playlistRepository;
+        private UserMapper userMapper;
+        private PlaylistMapper playlistMapper;
+        private SongMapper songMapper;
         
-        public Playlist(int id, string name, DateTime dateadded, byte[] photo, IUserDTO creator) 
+        public Playlist(int id, string name, DateTime dateadded, byte[] photo, User creator) 
         {
             ID = id;
             Name = name;
             DateAdded = dateadded;
             Photo = photo;
             Creator = creator;
-        }
-        public void ChangePlaylistPicture(byte[] newPhoto)
+			InitialiseRepositories(userRepository, playlistRepository, songRepository);
+		}
+		public void InitialiseRepositories(IUserRepository userRepo, IPlaylistRepository playlistRepo, ISongRepository songRepo)
+		{
+			this.userRepository = userRepo;
+			this.playlistRepository = playlistRepo;
+			this.songRepository = songRepo;
+            playlistMapper = new PlaylistMapper();
+            songMapper = new SongMapper();
+            userMapper = new UserMapper();
+		}
+		public void ChangePlaylistPicture(byte[] newPhoto)
         {
             Photo = newPhoto;
             playlistRepository.UpdatePlaylistPhoto(ID, newPhoto);
@@ -126,9 +136,9 @@ namespace LogicLayer
         public void UpdatePlaylistList(string field = null, string order = null, int? shuffleSeed = null)
         {
             // Initialize mappers
-            var userMapper = new UserMapper(userRepository);
-            var playlistMapper = new PlaylistMapper(playlistRepository, songRepository, userRepository);
-            var songMapper = new SongMapper(songRepository, playlistRepository, userRepository);  // Create an instance of SongMapper
+            var userMapper = new UserMapper();
+            var playlistMapper = new PlaylistMapper();
+            var songMapper = new SongMapper();
 
             // Get the list of songs from the repository
             var dataModels = songRepository.GetSongList(this.ID);

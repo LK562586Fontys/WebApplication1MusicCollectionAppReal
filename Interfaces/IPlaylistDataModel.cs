@@ -6,13 +6,12 @@ using System.Threading.Tasks;
 
 namespace Interfaces
 {
-    public interface ISongDTO
+    public interface IPlaylistDataModel
     {
         public int ID { get; set; }
         public string Name { get; set; }
-        public int Weight { get; set; }
-        public DateTime DateReleased { get; set; }
-        public IUserDTO Artist { get; set; }
-        public IPlaylistDTO Album { get; set; }
+        public DateTime DateAdded { get; set; }
+        public byte[]? Photo { get; set; }
+        public IUserDataModel Creator { get; set; }
     }
 }

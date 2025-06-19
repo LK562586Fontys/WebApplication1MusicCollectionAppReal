@@ -9,10 +9,10 @@ namespace UnitTesting
 {
     public class UserRepositoryMock : IUserRepository
     {
-        private List<IUserDTO> _users = new List<IUserDTO>
+        private List<IUserDataModel> _users = new List<IUserDataModel>
         {
-        new UserDTO { ID = 1, Name = "Alice" },
-        new UserDTO { ID = 2, Name = "Bob" }
+        new UserDTO { ID = 1, Name = "joe" },
+        new UserDTO { ID = 2, Name = "louis" }
         };
         public bool CheckEmail(string email)
         {
@@ -24,13 +24,13 @@ namespace UnitTesting
             throw new NotImplementedException();
         }
 
-        public IEnumerable<IUserDTO> GetAllUsers()
+        public IEnumerable<IUserDataModel> GetAllUsers()
         {
             
             return _users;
         }
 
-        public IUserDTO? GetSpecificUser(int id)
+        public IUserDataModel? GetSpecificUser(int id)
         {
             if (id == 9)
             {
@@ -39,7 +39,7 @@ namespace UnitTesting
             return null;
         }
 
-        public IEnumerable<IUserDTO> GetUsersByIds(List<int> userIds)
+        public IEnumerable<IUserDataModel> GetUsersByIds(List<int> userIds)
         {
             throw new NotImplementedException();
         }
@@ -69,7 +69,7 @@ namespace UnitTesting
             throw new NotImplementedException();
         }
 
-        private class UserDTO : IUserDTO
+        private class UserDTO : IUserDataModel
         {
             public int ID { get; set; }
             public string Name { get; set; }

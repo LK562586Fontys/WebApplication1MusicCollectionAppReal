@@ -9,11 +9,11 @@ namespace Interfaces
     public interface ISongRepository
     {
         void ChangeSongWeight(int songID, int Weight);
-        ISongDTO GetSpecificSong(int songID);
+        ISongDataModel GetSpecificSong(int songID);
         void AddSongToPlaylist(int playlistID, int songid);
         void RemoveSongFromPlaylist(int playlistID, int songid);
         bool SongPlaylistCheck(int playlistID,int songID);
-        IEnumerable<ISongDTO> GetSongList(int songID);
-        IEnumerable<ISongDTO> SearchSongs(string searchterm);
+        IEnumerable<ISongDataModel> GetSongList(int songID);
+        IEnumerable<ISongDataModel> SearchSongs(string searchterm);
     }
 }

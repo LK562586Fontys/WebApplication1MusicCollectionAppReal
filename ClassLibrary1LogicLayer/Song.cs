@@ -4,17 +4,20 @@ namespace LogicLayer
 {
     public class Song
     {
-        public int ID { get; set; }
-        public string Name { get; set; }
-        public DateTime DateReleased { get; set; }
-        public int Weight { get; set; }
-        public IUserDTO Artist { get; set; }
-        public IPlaylistDTO Album { get; set; }
+        public int ID { get; private set; }
+        public string Name { get; private set; }
+        public DateTime DateReleased { get; private set; }
+        public int Weight { get; private set; }
+        public User Artist { get; private set; }
+        public Playlist Album { get; private set; }
         public ISongRepository songRepository;
         public IPlaylistRepository playlistRepository;
         public IUserRepository userRepository;
+		private UserMapper userMapper;
+		private PlaylistMapper playlistMapper;
+		private SongMapper songMapper;
 
-        public Song(int id, string name, DateTime dateReleased, int weight, IUserDTO artist, IPlaylistDTO album) 
+		public Song(int id, string name, DateTime dateReleased, int weight, User artist, Playlist album) 
         {
             ID = id;
             Name = name;
@@ -22,11 +25,18 @@ namespace LogicLayer
             Weight = weight;
             Artist = artist;
             Album = album;
-        }
-        private void PlaySong()
-        {
-            //Play or replace a song
-        }
+			InitialiseRepositories(userRepository, playlistRepository, songRepository);
+		}
+		public void InitialiseRepositories(IUserRepository userRepo, IPlaylistRepository playlistRepo, ISongRepository songRepo)
+		{
+			this.userRepository = userRepo;
+			this.playlistRepository = playlistRepo;
+			this.songRepository = songRepo;
+
+			playlistMapper = new PlaylistMapper();
+			userMapper = new UserMapper();
+			songMapper = new SongMapper();
+		}
 
         public void ChangeSongWeight(int songID, int weight)
         {
@@ -44,23 +54,25 @@ namespace LogicLayer
 
             if (data != null)
             {
-                return new Song(
-                    ID = data.ID,
-                    Name = data.Name,
-					DateReleased = data.DateReleased,
-					Weight = data.Weight,
-                    Artist = data.Artist,
-                    Album = data.Album
-                    );
-            }
+				var users = userRepository.GetAllUsers()
+				.Select(u => userMapper.FromDataModel(u))
+				.ToList();
+
+				var playlists = playlistRepository.GetAllPlaylists()
+							   .Select(p => playlistMapper.FromDataModel(p, users))
+							   .ToList();
+
+				return songMapper.FromDataModel(data, users, playlists);
+
+			}
 
             return null;
         }
         public List<Song> SearchSongs(string searchTerm)
         {
-            var userMapper = new UserMapper(userRepository);
-            var playlistMapper = new PlaylistMapper(playlistRepository, songRepository, userRepository);
-            var songMapper = new SongMapper(songRepository, playlistRepository, userRepository);
+            var userMapper = new UserMapper();
+            var playlistMapper = new PlaylistMapper();
+            var songMapper = new SongMapper();
 
             var userDataModels = userRepository.GetAllUsers();
             var users = userDataModels

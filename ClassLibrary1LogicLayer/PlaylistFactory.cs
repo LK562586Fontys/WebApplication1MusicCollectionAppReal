@@ -7,19 +7,19 @@ using System.Threading.Tasks;
 
 namespace LogicLayer
 {
-    public class PlaylistService : IPlaylistService
+    public class PlaylistFactory
     {
         private readonly IPlaylistRepository _playlistRepo;
         private readonly IUserRepository _userRepo;
         private readonly ISongRepository _songRepo;
         private readonly PlaylistMapper _playlistMapper;
 
-        public PlaylistService(IPlaylistRepository playlistRepo, IUserRepository userRepo, ISongRepository songRepo)
+        public PlaylistFactory(IPlaylistRepository playlistRepo, IUserRepository userRepo, ISongRepository songRepo)
         {
             _playlistRepo = playlistRepo;
             _userRepo = userRepo;
             _songRepo = songRepo;
-            _playlistMapper = new PlaylistMapper(playlistRepo, songRepo, userRepo);
+            _playlistMapper = new PlaylistMapper();
         }
 
         public List<Playlist> GetAllPlaylists()
@@ -39,7 +39,7 @@ namespace LogicLayer
             return playlists;
         }
 
-        public IPlaylistDTO? GetPlaylistById(int id)
+        public Playlist? GetPlaylistById(int id)
         {
             var dto = _playlistRepo.GetPlaylistById(id);
             if (dto == null) return null;
@@ -54,7 +54,11 @@ namespace LogicLayer
 						profilePhoto: u.ProfilePhoto
 					)).ToList();
 
-			return (IPlaylistDTO)_playlistMapper.FromDataModel(dto, users);
+			var playlist = _playlistMapper.FromDataModel(dto, users);
+
+            playlist.InitialiseRepositories(_userRepo, _playlistRepo, _songRepo);
+
+            return playlist;
         }
 
     }

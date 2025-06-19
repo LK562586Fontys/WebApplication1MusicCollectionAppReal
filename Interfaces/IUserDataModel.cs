@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Interfaces
 {
-    public interface IUserDTO
+    public interface IUserDataModel
     {
         public int ID { get; set; }
         public string Name { get; set; }

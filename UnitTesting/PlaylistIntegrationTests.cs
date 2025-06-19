@@ -8,8 +8,8 @@ namespace UnitTesting
     public class PlaylistIntegrationTests
     {
         private Playlist playlistObject;
-        private PlaylistService _playlistService;
-        private SongService _songService;
+        private PlaylistFactory _playlistService;
+        private SongFactory _songService;
         private SongRepository _songRepository;
         private UserRepository _userRepository;
         private PlaylistRepository _playlistRepository;
@@ -22,8 +22,8 @@ namespace UnitTesting
             var userRepo = new UserRepository("Server=mssqlstud.fhict.local;Database=dbi562586_i562586;User Id=dbi562586_i562586;Password=Wpb3grVisq;TrustServerCertificate=True;");
             var songRepo = new SongRepository("Server=mssqlstud.fhict.local;Database=dbi562586_i562586;User Id=dbi562586_i562586;Password=Wpb3grVisq;TrustServerCertificate=True;");
 
-            _playlistService = new PlaylistService(playlistRepo, userRepo, songRepo);
-            _songService = new SongService(songRepo, userRepo, playlistRepo);
+            _playlistService = new PlaylistFactory(playlistRepo, userRepo, songRepo);
+            _songService = new SongFactory(songRepo, userRepo, playlistRepo);
 
             playlistObject = (Playlist)_playlistService.GetPlaylistById(1004)!;
             playlistSongObject = (Song)_songService.GetSongById(10)!;

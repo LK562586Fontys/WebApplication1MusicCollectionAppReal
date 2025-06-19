@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer
 {
-    public class UserDataModel : IUserDTO
+    public class UserDataModel : IUserDataModel
     {
         public int ID { get; set; }
         public string Name { get; set; }

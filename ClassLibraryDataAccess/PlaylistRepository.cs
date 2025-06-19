@@ -104,7 +104,7 @@ namespace DataAccessLayer
                 }
             }
         }
-        public IEnumerable<IPlaylistDTO> LoadPlaylists(int userId)
+        public IEnumerable<IPlaylistDataModel> LoadPlaylists(int userId)
         {
             List<PlaylistDataModel> result = new();
             using (SqlConnection connection = new SqlConnection(_connectionString))
@@ -129,7 +129,7 @@ namespace DataAccessLayer
             return result;
         }
 
-        public IPlaylistDTO GetPlaylistById(int id)
+        public IPlaylistDataModel GetPlaylistById(int id)
 		{
 			PlaylistDataModel playlist = null;
 
@@ -159,7 +159,7 @@ namespace DataAccessLayer
 			return playlist;
 		}
 
-		public IEnumerable<IPlaylistDTO> GetPlaylistsByIds(List<int> playlistIds)
+		public IEnumerable<IPlaylistDataModel> GetPlaylistsByIds(List<int> playlistIds)
         {
             var playlists = new List<PlaylistDataModel>();
 
@@ -188,7 +188,7 @@ namespace DataAccessLayer
 
             return playlists;
         }
-        public IEnumerable<IPlaylistDTO> GetAllPlaylists()
+        public IEnumerable<IPlaylistDataModel> GetAllPlaylists()
         {
             List<PlaylistDataModel> result = new List<PlaylistDataModel>();
             using (SqlConnection connection = new SqlConnection(_connectionString))

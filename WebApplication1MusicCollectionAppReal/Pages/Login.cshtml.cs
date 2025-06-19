@@ -7,7 +7,7 @@ namespace WebApplication1MusicCollectionAppReal.Pages
 {
     public class Login : PageModel
     {
-		private readonly IUserService _userService;
+		private readonly UserFactory _userService;
 		private static User CurrentUser { get; set; }
 		public string ErrorMessage { get; private set; }
 		[BindProperty]
@@ -17,7 +17,7 @@ namespace WebApplication1MusicCollectionAppReal.Pages
         public void OnGet()
         {
         }
-        public Login(IUserService userService)
+        public Login(UserFactory userService)
         {
             _userService = userService;
         }

@@ -1,4 +1,5 @@
 using Interfaces;
+using LogicLayer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -6,12 +7,12 @@ namespace WebApplication1MusicCollectionAppReal.Pages
 {
     public class Home : PageModel
     {
-        private readonly ISongService _songService;
+        private readonly SongFactory _songService;
         public static LogicLayer.Song AllSongs { get; set; }
         [BindProperty(SupportsGet = true)]
         public string SearchTerm { get; set; }
 
-        public Home(ISongService songService) 
+        public Home(SongFactory songService) 
         {
             _songService = songService;
         }

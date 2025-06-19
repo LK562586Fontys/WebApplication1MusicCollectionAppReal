@@ -9,8 +9,8 @@ namespace WebApplication1MusicCollectionAppReal.Pages
 {
     public class PlaylistScreen : PageModel
     {
-        private readonly IUserService _userService;
-        private readonly IPlaylistService _playlistService;
+        private readonly UserFactory _userService;
+        private readonly PlaylistFactory _playlistService;
         private readonly IUserRepository _userRepository;
         private UserMapper _userMapper;
         public PlaylistViewModel viewModel { get; set; }
@@ -23,12 +23,12 @@ namespace WebApplication1MusicCollectionAppReal.Pages
         public IFormFile NewPhoto { get; set; }
         public List<LogicLayer.Song> Songs { get; set; }
 
-        public PlaylistScreen(IUserService userService, IPlaylistService playlistService, IUserRepository userRepository) 
+        public PlaylistScreen(UserFactory userService, PlaylistFactory playlistService, IUserRepository userRepository) 
         {
             _userService = userService;
             _playlistService = playlistService;
             _userRepository = userRepository;
-            _userMapper = new UserMapper(_userRepository);
+            _userMapper = new UserMapper();
         }
         public IActionResult OnGet(int id)
         {
@@ -41,8 +41,8 @@ namespace WebApplication1MusicCollectionAppReal.Pages
             }
 
             // Set the current user
-			CurrentUser = (User)_userService.GetUserById((int)userId);
-            CurrentPlaylist = (LogicLayer.Playlist)_playlistService.GetPlaylistById(id);
+			CurrentUser = _userService.GetUserById((int)userId);
+            CurrentPlaylist = _playlistService.GetPlaylistById(id);
             if (CurrentPlaylist == null)
             {
                 return RedirectToPage("/Error", new { message = "Playlist not found" });
@@ -91,10 +91,9 @@ namespace WebApplication1MusicCollectionAppReal.Pages
             }
             catch (Exception) 
             {
-                ErrorMessage = "An unexpected error has occurred please try again later";
-                LoadPlaylistSongs();
-                return Page();
-            }
+				ErrorMessage = "An unexpected error has occurred. Please try again later";
+				return RedirectToPage("/Error", new { message = ErrorMessage });
+			}
         }
         public async Task<IActionResult> OnPostChangePlaylistPhoto()
         {
@@ -108,43 +107,15 @@ namespace WebApplication1MusicCollectionAppReal.Pages
             }
             catch (Exception) 
             {
-                ErrorMessage = "An unexpected error has occurred please try again later";
-                return Page();
-            }
+				ErrorMessage = "An unexpected error has occurred. Please try again later";
+				return RedirectToPage("/Error", new { message = ErrorMessage });
+			}
         }
         public IActionResult OnPostDeletePlaylist() 
         {
             CurrentPlaylist.DeletePlaylist(CurrentPlaylist.ID);
             return RedirectToPage("/Account");
         }
-        public IActionResult OnPostSortingBy() 
-        {
-            var sort = Request.Form["sort"].ToString();
-
-            if (!string.IsNullOrEmpty(sort))
-            {
-                var parts = sort.Split('_');
-                if (parts.Length == 2)
-                {
-                    var sortField = parts[0];
-                    var sortOrder = parts[1];
-
-                    HttpContext.Session.SetString("SortField", sortField);
-                    HttpContext.Session.SetString("SortOrder", sortOrder);
-
-                    if (sortField == "random")
-                    {
-                        var seed = Guid.NewGuid().GetHashCode();
-                        HttpContext.Session.SetString("ShuffleSeed", seed.ToString());
-                    }
-                    else
-                    {
-                        HttpContext.Session.Remove("ShuffleSeed");
-                    }
-                }
-            }
-
-            return RedirectToPage(new { id = CurrentPlaylist.ID });
-        }
+        
     }
 }

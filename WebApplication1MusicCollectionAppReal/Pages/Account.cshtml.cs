@@ -10,7 +10,7 @@ namespace WebApplication1MusicCollectionAppReal.Pages
     {
         private readonly ISongRepository _songRepository;
         private readonly IPlaylistRepository _playlistRepository;
-        private readonly IUserService _userService;
+        private readonly UserFactory _userService;
         public AccountViewModel ViewModel { get; set; }
         public string ErrorMessage { get; set; }
         private static User CurrentUser { get; set; }
@@ -24,7 +24,7 @@ namespace WebApplication1MusicCollectionAppReal.Pages
         public string? NewEmail { get; set; }
         public List<Playlist> Playlists { get; set; }
 
-        public Account(IUserService userService, IPlaylistRepository playlistRepository, ISongRepository songRepository) 
+        public Account(UserFactory userService, IPlaylistRepository playlistRepository, ISongRepository songRepository) 
         {
             _userService = userService;
             _playlistRepository = playlistRepository;
@@ -41,10 +41,10 @@ namespace WebApplication1MusicCollectionAppReal.Pages
             
             if (id != null)
             {
-                CurrentUser = (User)_userService.GetUserById((int)id);
+                CurrentUser = _userService.GetUserById((int)id);
             }
             else {
-                CurrentUser = (User)_userService.GetUserById((int)userId);
+                CurrentUser = _userService.GetUserById((int)userId);
             }
             if (CurrentUser == null) 
             {
@@ -95,8 +95,7 @@ namespace WebApplication1MusicCollectionAppReal.Pages
             catch (Exception ex) 
             {
                 ErrorMessage = "An unexpected error has occurred. Please try again later";
-                LoadUserPlaylists();
-                return Page();
+                return RedirectToPage("/Error", new { message = ErrorMessage });
             }
         }
 
@@ -118,11 +117,9 @@ namespace WebApplication1MusicCollectionAppReal.Pages
             }
             catch (Exception ex)
             {
-                ErrorMessage = "An unexpected error occurred. Please try again later.";
-
-                LoadUserPlaylists();
-                return Page();
-            }
+				ErrorMessage = "An unexpected error has occurred. Please try again later";
+				return RedirectToPage("/Error", new { message = ErrorMessage });
+			}
         }
 
         public IActionResult OnPostChangePassword()
@@ -141,10 +138,9 @@ namespace WebApplication1MusicCollectionAppReal.Pages
             }
             catch (Exception ex) 
             {
-                ErrorMessage = "An unexpected error occurred. Please try again later";
-                LoadUserPlaylists();
-                return Page();
-            }
+				ErrorMessage = "An unexpected error has occurred. Please try again later";
+				return RedirectToPage("/Error", new { message = ErrorMessage });
+			}
         }
 
         public IActionResult OnPostChangeEmail()
@@ -163,10 +159,9 @@ namespace WebApplication1MusicCollectionAppReal.Pages
             }
             catch (Exception ex) 
             {
-                ErrorMessage = "An unexpected error occurred. Please try again later";
-                LoadUserPlaylists();
-                return Page();
-            }
+				ErrorMessage = "An unexpected error has occurred. Please try again later";
+				return RedirectToPage("/Error", new { message = ErrorMessage });
+			}
         }
 
         public IActionResult OnPostSignOut()
@@ -193,11 +188,10 @@ namespace WebApplication1MusicCollectionAppReal.Pages
                 return Page(); 
             } 
             catch (Exception ex) 
-            { 
-                ErrorMessage = "An unexpected error has occurred please try again later"; 
-                LoadUserPlaylists(); 
-                return Page();
-            }
+            {
+				ErrorMessage = "An unexpected error has occurred. Please try again later";
+				return RedirectToPage("/Error", new { message = ErrorMessage });
+			}
         }
         public IActionResult OnPostReorder(string move, List<int> playlistOrder)
         {

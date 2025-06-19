@@ -8,18 +8,19 @@ namespace UnitTesting
     public class UserIntegrationTests
     {
         private User userObject;
-        private UserService _userService;
+        private UserFactory _userService;
+        private UserRepository _userRepository;
         private PlaylistRepository _playlistRepository;
         private SongRepository _songRepository;
         [TestInitialize]
         public void Setup()
         {
-            var userRepo = new UserRepository("Server=mssqlstud.fhict.local;Database=dbi562586_i562586;User Id=dbi562586_i562586;Password=Wpb3grVisq;TrustServerCertificate=True;"); // Use the actual implementation for integration tests
-            _userService = new UserService(userRepo);
+            _userRepository = new UserRepository("Server=mssqlstud.fhict.local;Database=dbi562586_i562586;User Id=dbi562586_i562586;Password=Wpb3grVisq;TrustServerCertificate=True;"); // Use the actual implementation for integration tests
 
             _playlistRepository = new PlaylistRepository("Server=mssqlstud.fhict.local;Database=dbi562586_i562586;User Id=dbi562586_i562586;Password=Wpb3grVisq;TrustServerCertificate=True;");
             _songRepository = new SongRepository("Server=mssqlstud.fhict.local;Database=dbi562586_i562586;User Id=dbi562586_i562586;Password=Wpb3grVisq;TrustServerCertificate=True;");
-            userObject = (User)_userService.GetUserById(8)!;
+			_userService = new UserFactory(_userRepository, _playlistRepository, _songRepository);
+			userObject = _userService.GetUserById(8)!;
         }
 
         [TestMethod]
@@ -74,9 +75,9 @@ namespace UnitTesting
             //Arrange
             DateTime currentdate = DateTime.Now;
             //Act
-            userObject.AddPlaylist(currentdate, _playlistRepository);
+            userObject.AddPlaylist(currentdate);
             //Assert
-            var playlistfromdatabase = userObject.LoadPlaylists(_playlistRepository, _songRepository);
+            var playlistfromdatabase = userObject.LoadPlaylists();
             Assert.IsNotNull(playlistfromdatabase);
             Assert.AreEqual(1, playlistfromdatabase.Count);
         }

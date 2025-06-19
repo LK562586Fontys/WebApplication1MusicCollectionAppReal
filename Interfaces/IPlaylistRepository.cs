@@ -11,11 +11,11 @@ namespace Interfaces
         void InsertPlaylist(string generatedName, DateTime CurrentDate, int userID);
         void UpdatePlaylistPhoto(int playlistID, byte[] newPhoto);
         void UpdatePlaylistName(int playlistID, string newName);
-        IEnumerable<IPlaylistDTO> LoadPlaylists(int playlistID);
+        IEnumerable<IPlaylistDataModel> LoadPlaylists(int playlistID);
         void SortSongs(int playlistID, string field, string order);
         void DeletePlaylist(int playlistID);
-        IEnumerable<IPlaylistDTO> GetPlaylistsByIds(List<int> Playlistids);
-        IPlaylistDTO GetPlaylistById(int playlistID);
-        IEnumerable<IPlaylistDTO> GetAllPlaylists();
+        IEnumerable<IPlaylistDataModel> GetPlaylistsByIds(List<int> Playlistids);
+        IPlaylistDataModel GetPlaylistById(int playlistID);
+        IEnumerable<IPlaylistDataModel> GetAllPlaylists();
     }
 }

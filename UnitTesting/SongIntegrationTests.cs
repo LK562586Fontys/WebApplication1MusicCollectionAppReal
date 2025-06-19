@@ -8,7 +8,7 @@ namespace UnitTesting
     [TestClass]
     public class SongIntegrationTests
     {
-        private SongService _songService;
+        private SongFactory _songService;
         private Song songObject;
         [TestInitialize]
         public void Setup()
@@ -17,7 +17,7 @@ namespace UnitTesting
             var userRepo = new UserRepository("Server=mssqlstud.fhict.local;Database=dbi562586_i562586;User Id=dbi562586_i562586;Password=Wpb3grVisq;TrustServerCertificate=True;");
             var playlistRepo = new PlaylistRepository("Server=mssqlstud.fhict.local;Database=dbi562586_i562586;User Id=dbi562586_i562586;Password=Wpb3grVisq;TrustServerCertificate=True;");
 
-            _songService = new SongService(songRepo, userRepo, playlistRepo);
+            _songService = new SongFactory(songRepo, userRepo, playlistRepo);
 
             songObject = (Song)_songService.GetSongById(1)!;
         }

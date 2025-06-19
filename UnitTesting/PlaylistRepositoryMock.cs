@@ -10,7 +10,7 @@ namespace UnitTesting
 {
     public class PlaylistRepositoryMock : IPlaylistRepository
     {
-        private List<IPlaylistDTO> _playlist = new List<IPlaylistDTO>
+        private List<IPlaylistDataModel> _playlist = new List<IPlaylistDataModel>
         {
         new PlaylistDTO { ID = 1, Name = "Alice" },
         new PlaylistDTO { ID = 2, Name = "Bob" }
@@ -20,12 +20,12 @@ namespace UnitTesting
             throw new NotImplementedException();
         }
 
-        public IEnumerable<IPlaylistDTO> GetAllPlaylists()
+        public IEnumerable<IPlaylistDataModel> GetAllPlaylists()
         {
             return _playlist;
         }
 
-        public IPlaylistDTO GetPlaylistById(int playlistID)
+        public IPlaylistDataModel GetPlaylistById(int playlistID)
         {
             if (playlistID == 1)
             {
@@ -34,7 +34,7 @@ namespace UnitTesting
             return null;
         }
 
-        public IEnumerable<IPlaylistDTO> GetPlaylistsByIds(List<int> Playlistids)
+        public IEnumerable<IPlaylistDataModel> GetPlaylistsByIds(List<int> Playlistids)
         {
             throw new NotImplementedException();
         }
@@ -44,7 +44,7 @@ namespace UnitTesting
             return;
         }
 
-        public IEnumerable<IPlaylistDTO> LoadPlaylists(int playlistID)
+        public IEnumerable<IPlaylistDataModel> LoadPlaylists(int playlistID)
         {
             throw new NotImplementedException();
         }
@@ -63,13 +63,13 @@ namespace UnitTesting
         {
             return;
         }
-        private class PlaylistDTO : IPlaylistDTO
+        private class PlaylistDTO : IPlaylistDataModel
         {
             public int ID {  get; set; }
             public string Name {  get; set; }
             public DateTime DateAdded { get; set; }
             public byte[]? Photo { get; set; }
-            public IUserDTO Creator { get; set; }
+            public IUserDataModel Creator { get; set; }
         }
     }
 }

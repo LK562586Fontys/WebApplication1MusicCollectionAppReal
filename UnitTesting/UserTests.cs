@@ -6,13 +6,15 @@ namespace UnitTesting
     [TestClass]
     public class UserTests
     {
-        private IUserService userService;
+        private UserFactory userService;
         private User? userObject;
         [TestInitialize]
         public void Setup()
         {
-            var fakeRepo = new UserRepositoryMock();
-            userService = new UserService(fakeRepo);
+			var songRepoMock = new SongRepositoryMock();
+			var userRepoMock = new UserRepositoryMock();
+			var playlistRepoMock = new PlaylistRepositoryMock();
+			userService = new UserFactory(userRepoMock, playlistRepoMock, songRepoMock);
 
             userObject = userService.GetUserById(9) as User;
         }
@@ -65,7 +67,7 @@ namespace UnitTesting
             DateTime currentdate = DateTime.Now;
             var fakePlaylistRepo = new PlaylistRepositoryMock();
             //Act
-            userObject.AddPlaylist(currentdate, fakePlaylistRepo);
+            userObject.AddPlaylist(currentdate);
             //Assert
             Assert.AreEqual(1, userObject.userPlaylist.Count);
             Assert.AreEqual(currentdate, userObject.userPlaylist[0].DateAdded);

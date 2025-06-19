@@ -7,24 +7,27 @@ using System.Threading.Tasks;
 
 namespace LogicLayer
 {
-    public class UserMapper
-    {
-        private readonly IUserRepository userRepository;
+	public class UserMapper
+	{
 
-        public UserMapper(IUserRepository userRepository)
-        {
-            this.userRepository = userRepository;
-        }
-        public User FromDataModel(IUserDTO dataModel)
-        {
-			return new User(
-	        dataModel.ID,
-	        dataModel.Name,
-	        dataModel.EmailAddress,
-	        dataModel.PasswordHash,
-	        dataModel.ProfilePhoto,
-	        dataModel.JoinDate
-            );
+
+		public UserMapper()
+		{
 		}
-    }
+		public User FromDataModel(IUserDataModel dataModel)
+		{
+			return new User(
+			dataModel.ID,
+			dataModel.Name,
+			dataModel.EmailAddress,
+			dataModel.PasswordHash,
+			dataModel.ProfilePhoto,
+			dataModel.JoinDate
+			);
+		}
+		public User FromDataModel(User user)
+		{
+			return user;
+		}
+	}
 }

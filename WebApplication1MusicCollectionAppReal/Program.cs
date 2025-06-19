@@ -8,9 +8,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddSession();
 
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IPlaylistService, PlaylistService>();
-builder.Services.AddScoped<ISongService, SongService>();
+builder.Services.AddScoped<UserFactory>();
+builder.Services.AddScoped<PlaylistFactory>();
+builder.Services.AddScoped<SongFactory>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPlaylistRepository, PlaylistRepository>();
