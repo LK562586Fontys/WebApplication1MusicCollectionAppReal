@@ -24,14 +24,14 @@ namespace LogicLayer
         public Playlist FromDataModel(IPlaylistDTO dataModel, List<User> users)
         {
             var fullCreator = users.FirstOrDefault(u => u.ID == dataModel.Creator?.ID);
-            return new Playlist(_songRepository, _playlistRepository, _userRepository)
-            {
-                ID = dataModel.ID,
-                Name = dataModel.Name,
-                Photo = dataModel.Photo,
-                DateAdded = dataModel.DateAdded,
-                Creator = fullCreator ?? dataModel.Creator
-            };
+            return new Playlist(
+                dataModel.ID,
+                dataModel.Name,
+                dataModel.DateAdded,
+				dataModel.Photo,
+				fullCreator ?? dataModel.Creator
+                );
+            
         }
     }
 }

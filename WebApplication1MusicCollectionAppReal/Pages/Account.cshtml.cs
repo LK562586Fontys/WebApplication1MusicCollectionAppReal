@@ -17,11 +17,11 @@ namespace WebApplication1MusicCollectionAppReal.Pages
         public IFormFile NewPhoto { get; set; }
 
         [BindProperty]
-        public string NewUsername { get; set; }
+        public string? NewUsername { get; set; }
         [BindProperty]
-        public string NewPassword { get; set; }
+        public string? NewPassword { get; set; }
         [BindProperty]
-        public string NewEmail { get; set; }
+        public string? NewEmail { get; set; }
         public List<Playlist> Playlists { get; set; }
 
         public Account(IUserService userService, IPlaylistRepository playlistRepository, ISongRepository songRepository) 
@@ -57,14 +57,14 @@ namespace WebApplication1MusicCollectionAppReal.Pages
         private void LoadUserPlaylists()
         {
             var cookie = Request.Cookies["PlaylistOrder"];
-            Playlists = CurrentUser.LoadPlaylists(_playlistRepository, _songRepository, cookie);
+            Playlists = CurrentUser.LoadPlaylists(cookie);
 
             ViewModel = new AccountViewModel
             {
                 ID = CurrentUser.ID,
                 Name = CurrentUser.Name,
                 EmailAddress = CurrentUser.EmailAddress,
-                joinDate = CurrentUser.joinDate,
+                joinDate = CurrentUser.JoinDate,
                 Playlists = CurrentUser.userPlaylist,
                 ProfilePhoto = CurrentUser.ProfilePhoto,
             };
@@ -88,7 +88,7 @@ namespace WebApplication1MusicCollectionAppReal.Pages
             DateTime CurrentDate = DateTime.Now;
             try
             {
-                CurrentUser.AddPlaylist(CurrentDate, _playlistRepository);
+                CurrentUser.AddPlaylist(CurrentDate);
                 LoadUserPlaylists();
                 return Page();
             }

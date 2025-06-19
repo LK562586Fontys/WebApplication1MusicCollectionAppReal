@@ -1,2 +1,107 @@
 ﻿body {
 }
+.modal {
+    position: fixed;
+    width:36%;
+    height:50%;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -30%);
+    background-color: white;
+    padding: 20px;
+    border: 2px solid #000;
+    z-index: 1000;
+    border-radius: 10px;
+}
+.songname {
+    left: 27.5%;
+    top: 12.5%;
+}
+
+.songcreator {
+    left: 27.5%;
+    top: 22.5%;
+}
+
+.songplaylist {
+    left: 27.5%;
+    top: 32.5%;
+}
+.songdate {
+    left: 27.5%;
+    top: 42.5%;
+}
+.songinfo {
+    position: absolute;
+    font-size: 24px;
+    color: #000
+}
+.updateweight {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 1.5em;
+    margin-top: 40px;
+    top: 60%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+    .updateweight button {
+        
+        text-align: left;
+        font-size: 32px;
+        width: 50px;
+        height: 50px;
+        margin: 10px;
+        border-radius: 50%;
+    }
+.albumcover {
+    position:absolute;
+    top: 10%;
+    height: 300px;
+    width: 300px;
+    border-radius: 999px;
+    border: 2px solid #000;
+}
+.addbutton{
+    position:absolute;
+    top:52.5%;
+    
+}
+.removebutton {
+    position: absolute;
+    top: 52.5%;
+    left:20%;
+}
+.updateweight {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 1.5em;
+    margin-top: 40px;
+    top: 60%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+    .updateweight button {
+        text-align: left;
+        font-size: 32px;
+        width: 50px;
+        height: 50px;
+        margin: 10px;
+        border-radius: 50%;
+    }
+.plusbutton {
+    position: absolute;
+    top: 30%;
+    left: 30%;
+}
+.minusbutton {
+    position: absolute;
+    top: 30%;
+    right: 30%;
+}

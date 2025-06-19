@@ -3,18 +3,18 @@
 @{
 	ViewData["Title"] = "HomeScreen";
 }
-<h1>@ViewData["Title"]</h1>
-
-<p>Use this page to detail your site's SCREEN</p>
-
+<body>
+    <link rel="stylesheet" href="~/css/HomeScreen.css" asp-append-version="true" />
+</body>
+<div class="searchscreen">
 <form method="get">
-    <input type="text" name="SearchTerm" value="@Model.SearchTerm" placeholder="Search songs..." />
-    <button type="submit">Search</button>
+    <input type="text" name="SearchTerm" class="input" value="@Model.SearchTerm" placeholder="Search songs..." />
+    <button type="submit" class="button" >Search</button>
 </form>
 
 @if (Model.Songs != null && Model.Songs.Any())
 {
-    <table>
+    <table class="searchresults">
         <thead>
             <tr>
                 <th>Name</th>
@@ -46,3 +46,4 @@ else if (!string.IsNullOrWhiteSpace(Model.SearchTerm))
 {
     <p>No songs found matching "@Model.SearchTerm".</p>
 }
+</div>

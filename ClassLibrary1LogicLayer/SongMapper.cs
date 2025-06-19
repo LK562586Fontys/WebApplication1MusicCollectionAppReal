@@ -23,15 +23,14 @@ namespace LogicLayer
             var artist = users.FirstOrDefault(u => u.ID == dataModel.Artist?.ID);
             var album = playlists.FirstOrDefault(p => p.ID == dataModel.Album?.ID);
 
-            return new Song(_songRepository, _userRepository, _playlistRepository)
-            {
-                ID = dataModel.ID,
-                Name = dataModel.Name,
-                Weight = dataModel.Weight,
-                DateReleased = dataModel.DateReleased,
-                Artist = artist,
-                Album = album
-            };
+            return new Song(
+                dataModel.ID,
+                dataModel.Name,
+                dataModel.DateReleased,
+                dataModel.Weight,
+                artist,
+                album
+                );
         }
     }
 }

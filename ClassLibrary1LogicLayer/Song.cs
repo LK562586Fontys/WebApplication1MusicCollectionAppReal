@@ -2,26 +2,26 @@
 
 namespace LogicLayer
 {
-    public class Song : ISongDTO
+    public class Song
     {
         public int ID { get; set; }
         public string Name { get; set; }
         public DateTime DateReleased { get; set; }
         public int Weight { get; set; }
-        public List<Genre> GenreSong { get; set; }
-        public List<Playlist> PlaylistSong { get; set; }
         public IUserDTO Artist { get; set; }
         public IPlaylistDTO Album { get; set; }
-        public Genre Genre { get; set; }
         public ISongRepository songRepository;
         public IPlaylistRepository playlistRepository;
         public IUserRepository userRepository;
 
-        public Song(ISongRepository songRepository, IUserRepository userRepository, IPlaylistRepository playlistRepository) 
+        public Song(int id, string name, DateTime dateReleased, int weight, IUserDTO artist, IPlaylistDTO album) 
         {
-            this.songRepository = songRepository;
-            this.userRepository = userRepository;
-            this.playlistRepository = playlistRepository;
+            ID = id;
+            Name = name;
+            DateReleased = dateReleased;
+            Weight = weight;
+            Artist = artist;
+            Album = album;
         }
         private void PlaySong()
         {
@@ -44,13 +44,14 @@ namespace LogicLayer
 
             if (data != null)
             {
-                return new Song(songRepository, userRepository, playlistRepository)
-                {
+                return new Song(
                     ID = data.ID,
                     Name = data.Name,
-                    Weight = data.Weight,
-                    DateReleased = data.DateReleased
-                };
+					DateReleased = data.DateReleased,
+					Weight = data.Weight,
+                    Artist = data.Artist,
+                    Album = data.Album
+                    );
             }
 
             return null;
@@ -61,32 +62,28 @@ namespace LogicLayer
             var playlistMapper = new PlaylistMapper(playlistRepository, songRepository, userRepository);
             var songMapper = new SongMapper(songRepository, playlistRepository, userRepository);
 
-            // Get all users and map them
             var userDataModels = userRepository.GetAllUsers();
             var users = userDataModels
                 .Select(udm => userMapper.FromDataModel(udm))
                 .ToList();
 
-            // Map LogicLayer.User to IUserDTO manually (if User doesn't implement IUserDTO)
-            var userDTOs = users.Select(user => new User(userRepository)
-            {
-                ID = user.ID,
-                Name = user.Name,
-                EmailAddress = user.EmailAddress
-            }).ToList();
+			var userDTOs = users.Select(user => new User(
+			        id: user.ID,
+			        name: user.Name,
+			        emailAddress: user.EmailAddress,
+			        passwordHash: user.PasswordHash,
+			        joinDate: user.JoinDate,
+			        profilePhoto: user.ProfilePhoto)).ToList();
 
-            // Get all playlists and map them (requires users for creator)
-            var playlistDataModels = playlistRepository.GetAllPlaylists();
+			var playlistDataModels = playlistRepository.GetAllPlaylists();
             var playlists = playlistDataModels
-                .Select(pm => playlistMapper.FromDataModel(pm, userDTOs))  // Pass userDTOs here
+                .Select(pm => playlistMapper.FromDataModel(pm, userDTOs))
                 .ToList();
 
-            // Get songs filtered by search term
             var songDataModels = songRepository.SearchSongs(searchTerm);
 
-            // Map song DTOs to song domain models
             var allSongs = songDataModels
-                .Select(dm => songMapper.FromDataModel(dm, users, playlists))  // Call on instance of songMapper
+                .Select(dm => songMapper.FromDataModel(dm, users, playlists))
                 .ToList();
 
             return allSongs;

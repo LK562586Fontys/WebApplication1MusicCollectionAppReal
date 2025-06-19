@@ -9,22 +9,30 @@ namespace LogicLayer
         public string EmailAddress { get; set; }
         public string PasswordHash { get; set; }
         public byte[] ProfilePhoto { get; set; }
-        public DateTime joinDate { get; set; }
-        public List<Playlist> userPlaylist { get; set; } = new();
+        public DateTime JoinDate { get; set; }
+        public List<Playlist> userPlaylist { get; private set; } = new();
         private readonly IUserRepository userRepository;
         private IPlaylistRepository playlistRepository;
         private ISongRepository songRepository;
         private readonly UserMapper userMapper;
         private readonly PlaylistMapper playlistMapper;
 
-        public User(IUserRepository userRepositorys)
-        {
-            this.userRepository = userRepositorys;
-            userMapper = new UserMapper(userRepositorys);
-        }
+		public User(int id, string name, string emailAddress, string passwordHash, byte[]? profilePhoto, DateTime joinDate)
+		{
+			ID = id;
+			Name = name;
+			EmailAddress = emailAddress;
+			PasswordHash = passwordHash;
+			ProfilePhoto = profilePhoto;
+			JoinDate = joinDate;
+		}
 
-        public void ChangeUsername(string newName)
+		public void ChangeUsername(string newName)
         {
+            if (newName == null) 
+            {
+                throw new ArgumentException("The username cannot be blank.");
+            }
             if (newName.Length < 2 || newName.Length > 50)
             {
                 throw new ArgumentException("The username must be between 2 and 50 characters long.");
@@ -36,6 +44,10 @@ namespace LogicLayer
 
         public void ChangeEmailAddress(string newEmail)
         {
+            if (newEmail == null)
+            {
+                throw new ArgumentException("Your E-mail cannot be blank.");
+            }
             if (newEmail.Length < 7) 
             {
                 throw new ArgumentException("Your E-mail must be above 7 characters");
@@ -54,6 +66,10 @@ namespace LogicLayer
 
         public void ChangePassword(string newPassword)
         {
+            if (newPassword == null)
+            {
+                throw new ArgumentException("Your password cannot be blank.");
+            }
             if (newPassword.Length < 7) 
             {
                 throw new ArgumentException("Your password must be above 7 characters");
@@ -68,17 +84,18 @@ namespace LogicLayer
             userRepository.UpdateProfilePhoto(ID, newPhoto);
         }
 
-        public void AddPlaylist(DateTime CurrentDate, IPlaylistRepository playlistRepo)
+        public void AddPlaylist(DateTime CurrentDate)
         {
             string generatedName = $"Playlist #{userPlaylist.Count + 1}";
-            var newPlaylist = new Playlist(songRepository, playlistRepository, userRepository)
-            {
-                Name = generatedName,
-                DateAdded = CurrentDate,
-                Creator = this,
-            };
-            userPlaylist.Add(newPlaylist);
-            playlistRepo.InsertPlaylist(generatedName, CurrentDate, this.ID);
+            var newPlaylist = new Playlist(
+                id: 0,
+                name: generatedName,
+                dateadded: CurrentDate,
+                photo: null, // or some default
+                creator: this // if this is a User, implement IUserDTO or map it
+    );
+			userPlaylist.Add(newPlaylist);
+            playlistRepository.InsertPlaylist(generatedName, CurrentDate, this.ID);
         }
 
         public void DeleteAccount(int userID)
@@ -87,17 +104,16 @@ namespace LogicLayer
             
         }
 
-        public List<Playlist> LoadPlaylists(IPlaylistRepository playlistRepo, ISongRepository songRepo, string playlistOrderCookie = null)
+        public List<Playlist> LoadPlaylists(string playlistOrderCookie = null)
         {
-            var dataModels = playlistRepo.LoadPlaylists(this.ID);
-            List<Playlist> playlists = dataModels.Select(item => new Playlist(songRepo, playlistRepo, userRepository)
-            {
-                ID = item.ID,
-                Name = item.Name,
-                DateAdded = item.DateAdded,
-                Photo = item.Photo,
-                Creator = this
-            }).ToList();
+            var dataModels = playlistRepository.LoadPlaylists(this.ID);
+            List<Playlist> playlists = dataModels.Select(item => new Playlist(
+				item.ID,
+				item.Name,
+				item.DateAdded,
+				item.Photo,
+				this
+				)).ToList();
 
             if (!string.IsNullOrEmpty(playlistOrderCookie))
             {
@@ -107,14 +123,12 @@ namespace LogicLayer
                 playlists = orderedIds.Select(id => playlists.FirstOrDefault(p => p.ID == id))
                     .Where(p => p != null).ToList();
 
-                var missing = dataModels.Where(dm => !orderedIds.Contains(dm.ID)).Select(item => new Playlist(songRepository, playlistRepository, userRepository)
-                {
-                    ID = item.ID,
-                    Name = item.Name,
-                    DateAdded = item.DateAdded,
-                    Photo = item.Photo,
-                    Creator = this
-                });
+                var missing = dataModels.Where(dm => !orderedIds.Contains(dm.ID)).Select(item => new Playlist(
+				    item.ID,
+				    item.Name,
+				    item.DateAdded,
+				    item.Photo,
+				    this)).ToList();
 
                 playlists.AddRange(missing);
             }

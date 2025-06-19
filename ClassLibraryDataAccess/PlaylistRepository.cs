@@ -205,6 +205,7 @@ namespace DataAccessLayer
                         Name = reader["name"].ToString(),
                         Creator = reader["creator"] != DBNull.Value ? new UserDataModel { ID = Convert.ToInt32(reader["creator"]) } : null,
                         DateAdded = (DateTime)reader["dateAdded"],
+                        Photo = reader["picture"] != DBNull.Value ? (byte[])reader["picture"] : null,
                     });
                 }
             }

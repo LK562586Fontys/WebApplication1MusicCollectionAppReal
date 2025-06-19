@@ -9,6 +9,7 @@ namespace WebApplication1MusicCollectionAppReal.Pages
     {
 		private readonly IUserService _userService;
 		private static User CurrentUser { get; set; }
+		public string ErrorMessage { get; private set; }
 		[BindProperty]
         public string EmailAddress { get; set; }
         [BindProperty]
@@ -32,7 +33,7 @@ namespace WebApplication1MusicCollectionAppReal.Pages
 
 			if (userId == null)
 			{
-				ModelState.AddModelError(string.Empty, "Invalid EmailAddress or PasswordHash.");
+				ErrorMessage = "Invalid email address or password.";
 				return Page();
 			}
 

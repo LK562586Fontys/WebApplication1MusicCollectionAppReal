@@ -17,7 +17,7 @@ namespace WebApplication1MusicCollectionAppReal.Pages
         private readonly IPlaylistRepository _playlistRepository;
         public SongViewModel viewModel { get; set; }
         public AccountViewModel userPlaylists { get; set; }
-        private string ErrorMessage { get; set; }
+        public string ErrorMessage { get; private set; }
         public static LogicLayer.Song CurrentSong { get; set; }
         public static LogicLayer.Playlist CurrentPlaylist { get; set; }
         private static User CurrentUser { get; set; }
@@ -30,15 +30,14 @@ namespace WebApplication1MusicCollectionAppReal.Pages
             _playlistRepository = playlistRepository;
             _songRepository = songRepository;
         }
-        public void OnGet(int id)
+        public IActionResult OnGet(int id)
         {
             int? userId = HttpContext.Session.GetInt32("UserID");
 
             if (userId == null)
             {
                 // Not logged in — redirect to login
-                Response.Redirect("/Login");
-                return;
+                return RedirectToPage ("/Login");
             }
 
             // Set the current user
@@ -46,11 +45,11 @@ namespace WebApplication1MusicCollectionAppReal.Pages
             CurrentSong = (LogicLayer.Song)_songService.GetSongById(id);
             if (CurrentSong == null) 
             {
-                Response.Redirect("/Error");
-                return;
+                return RedirectToPage("/Error", new {message = "Song Not Found"});
             }
             CurrentSong.GetSpecificSong(CurrentSong.ID);
             LoadSongData();
+            return Page();
         }
         public void LoadSongData() 
         {
@@ -61,53 +60,79 @@ namespace WebApplication1MusicCollectionAppReal.Pages
                 Weight = CurrentSong.Weight,
                 Album = (Playlist)CurrentSong.Album,
                 Artist = (User)CurrentSong.Artist,
+                AlbumPicture = ((Playlist)CurrentSong.Album)?.Photo
             };
+            if (viewModel.AlbumPicture != null)
+            {
+                viewModel.AlbumBase64Picture = Convert.ToBase64String(viewModel.AlbumPicture);
+            }
             var cookie = Request.Cookies["PlaylistOrder"];
-            Playlists = CurrentUser.LoadPlaylists(_playlistRepository, _songRepository, cookie);
+            Playlists = CurrentUser.LoadPlaylists(cookie);
             userPlaylists = new AccountViewModel { 
                 ID = CurrentUser.ID,
                 Playlists = CurrentUser.userPlaylist
             };
         }
 
-        public IActionResult OnPostAddSongToPlaylist() 
+        public IActionResult OnPostAddSongToPlaylist(int playlistid) 
         {
+            CurrentPlaylist = (LogicLayer.Playlist)_playlistService.GetPlaylistById(playlistid);
             try
             {
                 CurrentPlaylist.AddSong(CurrentSong.ID);
-                return RedirectToPage();
+                return RedirectToPage(new { id = CurrentSong.ID });
             }
             catch (ArgumentException ex)
             {
                 ErrorMessage = ex.Message;
+                LoadSongData();
                 return Page();
             }
             catch (Exception) 
             {
                 ErrorMessage = "An unexpected error has occurred please try again later";
+                LoadSongData();
                 return Page();
             }
         }
 		public IActionResult OnPostUpdateWeight(int Weight)
 		{
-			CurrentSong.ChangeSongWeight(CurrentSong.ID, Weight);
-			return RedirectToPage();
+            try
+            {
+                CurrentSong.ChangeSongWeight(CurrentSong.ID, Weight);
+                return RedirectToPage(new { id = CurrentSong.ID });
+            }
+            catch (ArgumentException ex) 
+            {
+                ErrorMessage = ex.Message;
+                LoadSongData();
+                return Page();
+            }
+            catch (Exception) 
+            {
+                ErrorMessage = "An unexpected error has occurred please try again later";
+                LoadSongData();
+                return Page();
+            }
 		}
-        public IActionResult OnPostRemoveSongFromPlaylist()
+        public IActionResult OnPostRemoveSongFromPlaylist(int playlistid)
         {
+            CurrentPlaylist = (LogicLayer.Playlist)_playlistService.GetPlaylistById(playlistid);
             try 
             {
                 CurrentPlaylist.RemoveSong(CurrentSong.ID);
-                return RedirectToPage();
+                return RedirectToPage(new { id = CurrentSong.ID });
             }
             catch (ArgumentException ex)
             {
                 ErrorMessage = ex.Message;
+                LoadSongData();
                 return Page();
             }
             catch (Exception)
             {
                 ErrorMessage = "An unexpected error has occurred please try again later";
+                LoadSongData();
                 return Page();
             }
         }

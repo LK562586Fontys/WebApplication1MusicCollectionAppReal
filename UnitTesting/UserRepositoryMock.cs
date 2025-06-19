@@ -76,7 +76,7 @@ namespace UnitTesting
             public string PasswordHash { get; set; }
             public string EmailAddress { get; set; }
             public byte[] ProfilePhoto { get; set; }
-            public DateTime joinDate { get; set; }
+            public DateTime JoinDate { get; set; }
 
         } 
     }

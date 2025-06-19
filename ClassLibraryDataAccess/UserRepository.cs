@@ -118,7 +118,7 @@ namespace DataAccessLayer
                         ID = Convert.ToInt32(reader["ID"]),
                         Name = reader["Username"].ToString(),
                         EmailAddress = reader["emailAddress"].ToString(),
-                        joinDate = (DateTime)reader["joinDate"],
+                        JoinDate = (DateTime)reader["joinDate"],
                         PasswordHash = reader["passwordHash"].ToString(),
                         ProfilePhoto = reader["profilePicture"] != DBNull.Value ? (byte[])reader["profilePicture"] : null
                     };
@@ -172,7 +172,7 @@ namespace DataAccessLayer
                         Name = reader["userName"].ToString(),
                         PasswordHash = reader["passwordHash"].ToString(),
                         EmailAddress = reader["emailAddress"].ToString(),
-                        joinDate = (DateTime)reader["joinDate"],
+                        JoinDate = (DateTime)reader["joinDate"],
                     });
                 }
             }

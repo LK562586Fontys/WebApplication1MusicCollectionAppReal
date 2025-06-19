@@ -20,14 +20,13 @@ namespace LogicLayer
         private readonly PlaylistMapper playlistMapper;
         private readonly SongMapper songMapper;
         
-        public Playlist(ISongRepository songRepository, IPlaylistRepository playlistRepository, IUserRepository userRepository) 
+        public Playlist(int id, string name, DateTime dateadded, byte[] photo, IUserDTO creator) 
         {
-            this.songRepository = songRepository;
-            this.playlistRepository = playlistRepository;
-            this.userRepository = userRepository;
-            playlistMapper = new PlaylistMapper(playlistRepository, songRepository, userRepository);
-            songMapper = new SongMapper(songRepository, playlistRepository, userRepository);
-            userMapper = new UserMapper(userRepository);
+            ID = id;
+            Name = name;
+            DateAdded = dateadded;
+            Photo = photo;
+            Creator = creator;
         }
         public void ChangePlaylistPicture(byte[] newPhoto)
         {
@@ -145,16 +144,17 @@ namespace LogicLayer
             // Map user data models to LogicLayer.User objects
             var users = userDataModels.Select(userMapper.FromDataModel).ToList();
 
-            // Map user data models to IUserDTO for use in PlaylistMapper
-            var userDTOs = users.Select(user => new User(userRepository)
-            {
-                ID = user.ID,
-                Name = user.Name,
-                EmailAddress = user.EmailAddress
-            }).ToList();
+			// Map user data models to IUserDTO for use in PlaylistMapper
+			var userDTOs = users.Select(user => new User(
+	        id: user.ID,
+	        name: user.Name,
+	        emailAddress: user.EmailAddress,
+	        passwordHash: user.PasswordHash,
+	        joinDate: user.JoinDate,
+            profilePhoto: user.ProfilePhoto)).ToList();
 
-            // Map playlist data models to LogicLayer.Playlist objects
-            var playlists = playlistDataModels.Select(dm => playlistMapper.FromDataModel(dm, userDTOs)).ToList();
+			// Map playlist data models to LogicLayer.Playlist objects
+			var playlists = playlistDataModels.Select(dm => playlistMapper.FromDataModel(dm, userDTOs)).ToList();
 
             // Map song data models to LogicLayer.Song objects
             var songs = dataModels.Select(dm => songMapper.FromDataModel(dm, users, playlists)).ToList();

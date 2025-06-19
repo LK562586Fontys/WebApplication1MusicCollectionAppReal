@@ -1,2 +1,12 @@
 ﻿body {
 }
+.searchscreen {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    gap: 10px;
+    text-align: center;
+    font-size: 24px;
+}
+.searchresults{
+}

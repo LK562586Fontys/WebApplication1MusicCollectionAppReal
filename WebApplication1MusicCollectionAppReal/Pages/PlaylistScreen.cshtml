@@ -10,6 +10,7 @@
 
 @if (Model.viewModel.Creator.ID == HttpContext.Session.GetInt32("UserID"))
 {
+    <div class="playlistmethods playlistinfo">
     <form method="post">
         <input asp-for="NewName"  placeholder="Enter new PlaylistName" />
         <button type="submit" class="button" asp-page-handler="ChangePlaylistName">Change PlaylistName</button>
@@ -19,9 +20,11 @@
         <input type="file" id="NewPhoto" name="NewPhoto" accept=".jpg,.jpeg,.png,.webp" required />
         <button type="submit" class="button">Upload</button>
     </form>
-    <form method="post">
-        <button type="submit" class="button" asp-page-handler="DeletePlaylist">Delete Playlist</button>
-    </form>
+        <form method="post" class="deletemethod">
+            <button type="submit" class="button deletebutton" asp-page-handler="DeletePlaylist">Delete Playlist</button>
+        </form>
+    
+    </div>
 }
 @if (!string.IsNullOrEmpty(Model.viewModel.Base64Photo))
 {
@@ -35,7 +38,7 @@
 <h3 class="playlistcreator playlistinfo">@Model.viewModel.Creator.Name</h3>
 <h3 class="playlistcreationdate playlistinfo">@Model.viewModel.DateAdded.ToShortDateString()</h3>
 
-<table class="playlist-table">
+<table class="playlist-table playlistinfo">
     <thead>
         <tr>
             <th>Song Title</th>
@@ -59,7 +62,7 @@
                     </a>
                 </td>
                 <td>
-                    <a asp-page="/Playlist" asp-route-id="@song.Album.ID">
+                    <a asp-page="/PlaylistScreen" asp-route-id="@song.Album.ID">
                         @song.Album.Name
                     </a>
                 </td>
@@ -68,3 +71,4 @@
         }
     </tbody>
 </table>
+<h1 class="errormessage">@Model.ErrorMessage</h1>

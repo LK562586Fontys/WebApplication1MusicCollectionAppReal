@@ -25,17 +25,17 @@ namespace LogicLayer
         public List<Playlist> GetAllPlaylists()
         {
             var playlistDtos = _playlistRepo.GetAllPlaylists().ToList();
-            var users = _userRepo.GetAllUsers()
-                        .Select(u => new User(_userRepo)
-                        {
-                            ID = u.ID,
-                            Name = u.Name,
-                            EmailAddress = u.EmailAddress,
-                            PasswordHash = u.PasswordHash
-                        })
-                        .ToList();
+			var users = _userRepo.GetAllUsers()
+					.Select(u => new User(
+						id: u.ID,
+						name: u.Name,
+						emailAddress: u.EmailAddress,
+						passwordHash: u.PasswordHash,
+						joinDate: u.JoinDate,
+						profilePhoto: u.ProfilePhoto
+					)).ToList();
 
-            var playlists = playlistDtos.Select(dto => _playlistMapper.FromDataModel(dto, users)).ToList();
+			var playlists = playlistDtos.Select(dto => _playlistMapper.FromDataModel(dto, users)).ToList();
             return playlists;
         }
 
@@ -44,17 +44,17 @@ namespace LogicLayer
             var dto = _playlistRepo.GetPlaylistById(id);
             if (dto == null) return null;
 
-            var users = _userRepo.GetAllUsers()
-                        .Select(u => new User(_userRepo)
-                        {
-                            ID = u.ID,
-                            Name = u.Name,
-                            EmailAddress = u.EmailAddress,
-                            PasswordHash = u.PasswordHash
-                        })
-                        .ToList();
+			var users = _userRepo.GetAllUsers()
+					.Select(u => new User(
+						id: u.ID,
+						name: u.Name,
+						emailAddress: u.EmailAddress,
+						passwordHash: u.PasswordHash,
+						joinDate: u.JoinDate,
+						profilePhoto: u.ProfilePhoto
+					)).ToList();
 
-            return (IPlaylistDTO)_playlistMapper.FromDataModel(dto, users);
+			return (IPlaylistDTO)_playlistMapper.FromDataModel(dto, users);
         }
 
     }

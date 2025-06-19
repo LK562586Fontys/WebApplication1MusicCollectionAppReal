@@ -12,7 +12,7 @@ namespace Interfaces
         public string Name { get; set; }
         public string PasswordHash { get; set; }
         public string EmailAddress { get; set; }
-        public DateTime joinDate { get; set; }
+        public DateTime JoinDate { get; set; }
         public byte[]? ProfilePhoto { get; set; }
     }
 }

@@ -17,16 +17,14 @@ namespace LogicLayer
         }
         public User FromDataModel(IUserDTO dataModel)
         {
-            return new User(userRepository)
-            {
-                ID = dataModel.ID,
-                Name = dataModel.Name,
-                EmailAddress = dataModel.EmailAddress,
-                PasswordHash = dataModel.PasswordHash,
-                ProfilePhoto = dataModel.ProfilePhoto,
-                joinDate = dataModel.joinDate,
-
-            };
-        }
+			return new User(
+	        dataModel.ID,
+	        dataModel.Name,
+	        dataModel.EmailAddress,
+	        dataModel.PasswordHash,
+	        dataModel.ProfilePhoto,
+	        dataModel.JoinDate
+            );
+		}
     }
 }

@@ -1,14 +1,36 @@
 ﻿body {
 }
 .playlist-picture {
+    
     top: 10%;
     height: 300px;
     width: 300px;
     border-radius: 999px;
     border: 2px solid #000;
 }
+.playlistinfo {
+    position: absolute;
+}
+.playlistname {
+    left:27.5%;
+    top:18.5%;
+}
+.playlistcreator {
+    left:27.5%;
+    top:28.5%;
+}
+.playlistcreationdate{
+    left:27.5%;
+    top:38.5%;
+}
+.playlistmethods{
+    top:19%;
+    left:50%;
+    gap:20px;
+}
 .playlist-table {
-    width: 100%;
+    top:60%;
+    width: 85%;
     border-collapse: collapse;
     font-family: sans-serif;
 }
@@ -22,3 +44,10 @@
     .playlist-table th {
         background-color: #f9f9f9;
     }
+.deletemethod {
+    position: relative;
+}
+
+.deletebutton {
+    background-color: #ff3333;
+}

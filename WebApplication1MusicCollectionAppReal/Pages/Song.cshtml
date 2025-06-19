@@ -3,17 +3,48 @@
 @{
 	ViewData["Title"] = "SongScreen";
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's SCREEN</p>
+<body>
+    <link rel="stylesheet" href="~/css/SongScreen.css" asp-append-version="true" />
+    <script src="~/js/SongScreen.js" asp-append-version="true"></script>
+</body>
 
-<form method="post" asp-page-handler="AddSongToPlaylist">
-    <button type="submit">Add Song to a Playlist</button>
+<h1 class="songname songinfo" >Song: @Model.viewModel.Name</h1>
+<a class="songplaylist songinfo" asp-page="/PlaylistScreen" asp-route-id="@Model.viewModel.Album.ID">Album: @Model.viewModel.Album.Name</a>
+<a class="songcreator songinfo" asp-page="/Account" asp-route-id="@Model.viewModel.Artist.ID">Artist: @Model.viewModel.Artist.Name</a>
+<h1 class="songdate songinfo">Release Date: @Model.viewModel.DateReleased.ToString("yyyy-MM-dd")</h1>
+
+@if (Model.viewModel.AlbumBase64Picture != null)
+{
+    <img src="data:image/png;base64,@Model.viewModel.AlbumBase64Picture" class="albumcover" alt="Album cover" />
+}
+<button type="button" class="button addbutton" onclick="openUnifiedModal('Add')">Add Song to a Playlist</button>
+<button type="button" class="button removebutton"onclick="openUnifiedModal('Remove')">Remove Song from a Playlist</button>
+
+<div id="playlistModal" class="modal" style="display:none;">
+    <form id="playlistForm" method="post">
+        <h2 id="modalTitle">Choose Playlist</h2>
+
+        <label for="playlistId">Select Playlist:</label>
+        <select name="playlistId" id="playlistId">
+            @foreach (var playlist in Model.userPlaylists.Playlists)
+            {
+                <option value="@playlist.ID">@playlist.Name</option>
+            }
+        </select>
+
+        <input type="hidden" name="handlerType" id="handlerType" />
+        <div class="addbuttons">
+        <button type="submit" class="button">Confirm</button>
+        <button type="button" class="button" onclick="closeModal()">Cancel</button>
+        </div>
+    </form>
+</div>
+<form method="post" class="updateweight" asp-page-handler="UpdateWeight">
+    <h1>Add randomisation weight</h1>
+    <h1>@Model.viewModel.Weight.ToString()</h1>
+    <button type="submit" class="button plusbutton" name="Weight" value="-1">−</button>
+    <button type="submit" class="button minusbutton" name="Weight" value="+1">+</button>
 </form>
-<form method="post" asp-page-handler="RemoveSongFromPlaylist">
-	<button type="submit">Remove Song to a Playlist</button>
-</form>
-<form method="post" asp-page-handler="UpdateWeight">
-	<button type="submit" name="Weight" value="+1">+</button>
-	<button type="submit" name="Weight" value="-1">-</button>
-</form>
+<h1 class="errormessage">@Model.ErrorMessage</h1>
+

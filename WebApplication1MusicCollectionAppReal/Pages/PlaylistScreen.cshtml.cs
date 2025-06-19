@@ -15,7 +15,7 @@ namespace WebApplication1MusicCollectionAppReal.Pages
         private UserMapper _userMapper;
         public PlaylistViewModel viewModel { get; set; }
         public static User CurrentUser { get; set; }
-        private string ErrorMessage { get; set; }
+        public string ErrorMessage { get; private set; }
         public static LogicLayer.Playlist CurrentPlaylist { get; set; }
         [BindProperty]
         public string NewName { get; set; }
