@@ -9,8 +9,6 @@ namespace LogicLayer
 {
 	public class UserMapper
 	{
-
-
 		public UserMapper()
 		{
 		}

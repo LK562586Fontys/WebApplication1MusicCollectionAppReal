@@ -6,7 +6,7 @@ namespace UnitTesting
     [TestClass]
     public class UserTests
     {
-        private UserFactory userService;
+        private UserFactory userFactory;
         private User? userObject;
         [TestInitialize]
         public void Setup()
@@ -14,9 +14,9 @@ namespace UnitTesting
 			var songRepoMock = new SongRepositoryMock();
 			var userRepoMock = new UserRepositoryMock();
 			var playlistRepoMock = new PlaylistRepositoryMock();
-			userService = new UserFactory(userRepoMock, playlistRepoMock, songRepoMock);
+			userFactory = new UserFactory(userRepoMock, playlistRepoMock, songRepoMock);
 
-            userObject = userService.GetUserById(9) as User;
+            userObject = userFactory.GetUserById(9);
         }
 
         [TestMethod]

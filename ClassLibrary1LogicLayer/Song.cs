@@ -25,7 +25,6 @@ namespace LogicLayer
             Weight = weight;
             Artist = artist;
             Album = album;
-			InitialiseRepositories(userRepository, playlistRepository, songRepository);
 		}
 		public void InitialiseRepositories(IUserRepository userRepo, IPlaylistRepository playlistRepo, ISongRepository songRepo)
 		{
@@ -59,8 +58,8 @@ namespace LogicLayer
 				.ToList();
 
 				var playlists = playlistRepository.GetAllPlaylists()
-							   .Select(p => playlistMapper.FromDataModel(p, users))
-							   .ToList();
+				.Select(p => playlistMapper.FromDataModel(p, users))
+				.ToList();
 
 				return songMapper.FromDataModel(data, users, playlists);
 

@@ -27,7 +27,6 @@ namespace LogicLayer
             DateAdded = dateadded;
             Photo = photo;
             Creator = creator;
-			InitialiseRepositories(userRepository, playlistRepository, songRepository);
 		}
 		public void InitialiseRepositories(IUserRepository userRepo, IPlaylistRepository playlistRepo, ISongRepository songRepo)
 		{
@@ -38,7 +37,7 @@ namespace LogicLayer
             songMapper = new SongMapper();
             userMapper = new UserMapper();
 		}
-		public void ChangePlaylistPicture(byte[] newPhoto)
+		public void ChangePlaylistPhoto(byte[] newPhoto)
         {
             Photo = newPhoto;
             playlistRepository.UpdatePlaylistPhoto(ID, newPhoto);
@@ -71,11 +70,6 @@ namespace LogicLayer
                 throw new InvalidOperationException("Cannot remove a song from a playlist that doesnt include that song");
             }
             songRepository.RemoveSongFromPlaylist(ID, songid);
-        }
-
-        public void SortSong(string field, string order)
-        {
-            playlistRepository.SortSongs(this.ID, field, order);
         }
 
 		public void DeletePlaylist(int playlistID)
@@ -113,7 +107,7 @@ namespace LogicLayer
             return songs;
         }
 
-        private List<Song> ApplySortingOrShuffle(List<Song> songs, string field, string order, int? seed = null)
+        private List<Song> SortOrShuffle(List<Song> songs, string field, string order, int? seed = null)
         {
             if (field?.ToLower() == "random" && seed.HasValue)
             {
@@ -128,8 +122,6 @@ namespace LogicLayer
                 "name" => ascending ? songs.OrderBy(s => s.Name).ToList() : songs.OrderByDescending(s => s.Name).ToList(),
                 "weight" => ascending ? songs.OrderBy(s => s.Weight).ToList() : songs.OrderByDescending(s => s.Weight).ToList(),
                 "datereleased" => ascending ? songs.OrderBy(s => s.DateReleased).ToList() : songs.OrderByDescending(s => s.DateReleased).ToList(),
-                "artistname" => ascending ? songs.OrderBy(s => s.Artist?.Name).ToList() : songs.OrderByDescending(s => s.Artist?.Name).ToList(),
-                "albumname" => ascending ? songs.OrderBy(s => s.Album?.Name).ToList() : songs.OrderByDescending(s => s.Album?.Name).ToList(),
                 _ => songs
             };
         }
@@ -155,13 +147,7 @@ namespace LogicLayer
             var users = userDataModels.Select(userMapper.FromDataModel).ToList();
 
 			// Map user data models to IUserDTO for use in PlaylistMapper
-			var userDTOs = users.Select(user => new User(
-	        id: user.ID,
-	        name: user.Name,
-	        emailAddress: user.EmailAddress,
-	        passwordHash: user.PasswordHash,
-	        joinDate: user.JoinDate,
-            profilePhoto: user.ProfilePhoto)).ToList();
+			var userDTOs = users.Select(user => userMapper.FromDataModel(user)).ToList();
 
 			// Map playlist data models to LogicLayer.Playlist objects
 			var playlists = playlistDataModels.Select(dm => playlistMapper.FromDataModel(dm, userDTOs)).ToList();
@@ -170,7 +156,7 @@ namespace LogicLayer
             var songs = dataModels.Select(dm => songMapper.FromDataModel(dm, users, playlists)).ToList();
 
             // Apply sorting or shuffle to the list of songs
-            PlaylistSongs = ApplySortingOrShuffle(songs, field, order, shuffleSeed);
+            PlaylistSongs = SortOrShuffle(songs, field, order, shuffleSeed);
         }
     }
 }

@@ -10,7 +10,7 @@ namespace WebApplication1MusicCollectionAppReal.Pages
     {
         private readonly ISongRepository _songRepository;
         private readonly IPlaylistRepository _playlistRepository;
-        private readonly UserFactory _userService;
+        private readonly UserFactory _userFactory;
         public AccountViewModel ViewModel { get; set; }
         public string ErrorMessage { get; set; }
         private static User CurrentUser { get; set; }
@@ -24,9 +24,9 @@ namespace WebApplication1MusicCollectionAppReal.Pages
         public string? NewEmail { get; set; }
         public List<Playlist> Playlists { get; set; }
 
-        public Account(UserFactory userService, IPlaylistRepository playlistRepository, ISongRepository songRepository) 
+        public Account(UserFactory userFactory, IPlaylistRepository playlistRepository, ISongRepository songRepository) 
         {
-            _userService = userService;
+            _userFactory = userFactory;
             _playlistRepository = playlistRepository;
             _songRepository = songRepository;
         }
@@ -41,10 +41,10 @@ namespace WebApplication1MusicCollectionAppReal.Pages
             
             if (id != null)
             {
-                CurrentUser = _userService.GetUserById((int)id);
+                CurrentUser = _userFactory.GetUserById((int)id);
             }
             else {
-                CurrentUser = _userService.GetUserById((int)userId);
+                CurrentUser = _userFactory.GetUserById((int)userId);
             }
             if (CurrentUser == null) 
             {
@@ -92,7 +92,7 @@ namespace WebApplication1MusicCollectionAppReal.Pages
                 LoadUserPlaylists();
                 return Page();
             }
-            catch (Exception ex) 
+            catch (Exception) 
             {
                 ErrorMessage = "An unexpected error has occurred. Please try again later";
                 return RedirectToPage("/Error", new { message = ErrorMessage });
@@ -157,6 +157,12 @@ namespace WebApplication1MusicCollectionAppReal.Pages
                 LoadUserPlaylists();
                 return Page();
             }
+            catch (InvalidOperationException ex) 
+            {
+				ErrorMessage = ex.Message;
+				LoadUserPlaylists();
+				return Page();
+			}
             catch (Exception ex) 
             {
 				ErrorMessage = "An unexpected error has occurred. Please try again later";

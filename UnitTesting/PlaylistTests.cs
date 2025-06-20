@@ -5,8 +5,8 @@ namespace UnitTesting
     [TestClass]
     public class PlaylistTests
     {
-        private PlaylistFactory _playlistService;
-        private SongFactory _songService;
+        private PlaylistFactory _playlistFactory;
+        private SongFactory _songFactory;
 
         private Playlist playlistObject;
         private Song songObject;
@@ -20,14 +20,14 @@ namespace UnitTesting
             var songRepoMock = new SongRepositoryMock();
 
             // Services
-            _playlistService = new PlaylistFactory(playlistRepoMock, userRepoMock, songRepoMock);
-            _songService = new SongFactory(songRepoMock, userRepoMock, playlistRepoMock);
+            _playlistFactory = new PlaylistFactory(playlistRepoMock, userRepoMock, songRepoMock);
+            _songFactory = new SongFactory(songRepoMock, userRepoMock, playlistRepoMock);
 
             // Get a specific playlist (ensure ID exists in your mock)
-            playlistObject = (Playlist)_playlistService.GetPlaylistById(1)!;
+            playlistObject = (Playlist)_playlistFactory.GetPlaylistById(1)!;
 
             // Get a single song from that playlist
-            songObject = _songService.GetAllSongs(playlistObject.ID).First();
+            songObject = _songFactory.GetAllSongs(playlistObject.ID).First();
         }
         [TestMethod]
         public void TestChangePlaylistPicture() 
@@ -35,7 +35,7 @@ namespace UnitTesting
             //Arrange
             byte[] newpicture = { 1, 2, 3, 4 };
             //Act
-            playlistObject.ChangePlaylistPicture(newpicture);
+            playlistObject.ChangePlaylistPhoto(newpicture);
             //Assert
             Assert.AreEqual(newpicture, playlistObject.Photo);
         }

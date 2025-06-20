@@ -61,7 +61,7 @@ namespace UnitTesting
 
         public void UpdateUsername(int userId, string newName)
         {
-            throw new NotImplementedException();
+            return;
         }
 
         public Task<int?> VerifyLoginAndReturnUserId(string email, string password)

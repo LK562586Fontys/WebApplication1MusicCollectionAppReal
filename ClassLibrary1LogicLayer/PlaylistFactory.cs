@@ -22,23 +22,6 @@ namespace LogicLayer
             _playlistMapper = new PlaylistMapper();
         }
 
-        public List<Playlist> GetAllPlaylists()
-        {
-            var playlistDtos = _playlistRepo.GetAllPlaylists().ToList();
-			var users = _userRepo.GetAllUsers()
-					.Select(u => new User(
-						id: u.ID,
-						name: u.Name,
-						emailAddress: u.EmailAddress,
-						passwordHash: u.PasswordHash,
-						joinDate: u.JoinDate,
-						profilePhoto: u.ProfilePhoto
-					)).ToList();
-
-			var playlists = playlistDtos.Select(dto => _playlistMapper.FromDataModel(dto, users)).ToList();
-            return playlists;
-        }
-
         public Playlist? GetPlaylistById(int id)
         {
             var dto = _playlistRepo.GetPlaylistById(id);

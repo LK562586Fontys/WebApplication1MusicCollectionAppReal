@@ -91,7 +91,8 @@ namespace DataAccessLayer
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                string query = @"UPDATE [Playlist] SET creator = NULL WHERE creator = @ID;
+                string query = @" DELETE FROM [Playlist_Song] WHERE playlist_ID IN (SELECT ID FROM [Playlist] WHERE creator = @ID);
+                DELETE FROM [Playlist] WHERE creator = @ID;
                 DELETE FROM [User] WHERE ID = @ID";
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {

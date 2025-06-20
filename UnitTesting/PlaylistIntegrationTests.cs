@@ -8,8 +8,8 @@ namespace UnitTesting
     public class PlaylistIntegrationTests
     {
         private Playlist playlistObject;
-        private PlaylistFactory _playlistService;
-        private SongFactory _songService;
+        private PlaylistFactory _playlistFactory;
+        private SongFactory _songFactory;
         private SongRepository _songRepository;
         private UserRepository _userRepository;
         private PlaylistRepository _playlistRepository;
@@ -22,11 +22,11 @@ namespace UnitTesting
             var userRepo = new UserRepository("Server=mssqlstud.fhict.local;Database=dbi562586_i562586;User Id=dbi562586_i562586;Password=Wpb3grVisq;TrustServerCertificate=True;");
             var songRepo = new SongRepository("Server=mssqlstud.fhict.local;Database=dbi562586_i562586;User Id=dbi562586_i562586;Password=Wpb3grVisq;TrustServerCertificate=True;");
 
-            _playlistService = new PlaylistFactory(playlistRepo, userRepo, songRepo);
-            _songService = new SongFactory(songRepo, userRepo, playlistRepo);
+            _playlistFactory = new PlaylistFactory(playlistRepo, userRepo, songRepo);
+            _songFactory = new SongFactory(songRepo, userRepo, playlistRepo);
 
-            playlistObject = (Playlist)_playlistService.GetPlaylistById(1004)!;
-            playlistSongObject = (Song)_songService.GetSongById(10)!;
+            playlistObject = _playlistFactory.GetPlaylistById(1035)!;
+            playlistSongObject = _songFactory.GetSongById(10)!;
         }
         [TestMethod]
         public void IntegrationTestChangePlaylistPicture()
@@ -34,7 +34,7 @@ namespace UnitTesting
             //Arrange
             byte[] newpicture = { 1, 2, 3, 4 };
             //Act
-            playlistObject.ChangePlaylistPicture(newpicture);
+            playlistObject.ChangePlaylistPhoto(newpicture);
             //Assert
             Assert.AreEqual(newpicture, playlistObject.Photo);
             var playlistfromdatabase = playlistObject.GetSpecificPlaylist(playlistObject.ID);

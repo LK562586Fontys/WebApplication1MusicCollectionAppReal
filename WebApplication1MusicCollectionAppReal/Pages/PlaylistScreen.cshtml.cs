@@ -9,8 +9,8 @@ namespace WebApplication1MusicCollectionAppReal.Pages
 {
     public class PlaylistScreen : PageModel
     {
-        private readonly UserFactory _userService;
-        private readonly PlaylistFactory _playlistService;
+        private readonly UserFactory _userFactory;
+        private readonly PlaylistFactory _playlistFactory;
         private readonly IUserRepository _userRepository;
         private UserMapper _userMapper;
         public PlaylistViewModel viewModel { get; set; }
@@ -23,10 +23,10 @@ namespace WebApplication1MusicCollectionAppReal.Pages
         public IFormFile NewPhoto { get; set; }
         public List<LogicLayer.Song> Songs { get; set; }
 
-        public PlaylistScreen(UserFactory userService, PlaylistFactory playlistService, IUserRepository userRepository) 
+        public PlaylistScreen(UserFactory userFactory, PlaylistFactory playlistFactory, IUserRepository userRepository) 
         {
-            _userService = userService;
-            _playlistService = playlistService;
+            _userFactory = userFactory;
+            _playlistFactory = playlistFactory;
             _userRepository = userRepository;
             _userMapper = new UserMapper();
         }
@@ -41,8 +41,8 @@ namespace WebApplication1MusicCollectionAppReal.Pages
             }
 
             // Set the current user
-			CurrentUser = _userService.GetUserById((int)userId);
-            CurrentPlaylist = _playlistService.GetPlaylistById(id);
+			CurrentUser = _userFactory.GetUserById((int)userId);
+            CurrentPlaylist = _playlistFactory.GetPlaylistById(id);
             if (CurrentPlaylist == null)
             {
                 return RedirectToPage("/Error", new { message = "Playlist not found" });
@@ -102,7 +102,7 @@ namespace WebApplication1MusicCollectionAppReal.Pages
             byte[] imageBytes = memoryStream.ToArray();
             try
             {
-                CurrentPlaylist.ChangePlaylistPicture(imageBytes);
+                CurrentPlaylist.ChangePlaylistPhoto(imageBytes);
                 return RedirectToPage(new { id = CurrentPlaylist.ID });
             }
             catch (Exception) 

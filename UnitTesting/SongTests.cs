@@ -6,7 +6,7 @@ namespace UnitTesting
     [TestClass]
     public class SongTests
     {
-        private SongFactory _songService;
+        private SongFactory _songFactory;
         private Song songObject;
         private List<Song> _playlistSongs;
         private List<Song> _searchedSongs;
@@ -18,10 +18,10 @@ namespace UnitTesting
             var userRepoMock = new UserRepositoryMock();
             var playlistRepoMock = new PlaylistRepositoryMock();
 
-            _songService = new SongFactory(songRepoMock, userRepoMock, playlistRepoMock);
+            _songFactory = new SongFactory(songRepoMock, userRepoMock, playlistRepoMock);
 
-            songObject = (Song)_songService.GetSongById(1)!;
-            _playlistSongs = _songService.GetAllSongs(1);
+            songObject = (Song)_songFactory.GetSongById(1)!;
+            _playlistSongs = _songFactory.GetAllSongs(1);
         }
         [TestMethod]
         public void TestChangeSongWeight()

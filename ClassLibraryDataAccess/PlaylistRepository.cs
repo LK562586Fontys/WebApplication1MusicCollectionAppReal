@@ -150,8 +150,8 @@ namespace DataAccessLayer
 							Name = reader["Name"].ToString(),
                             DateAdded = (DateTime)reader["dateAdded"],
                             Photo = reader["picture"] != DBNull.Value ? (byte[])reader["picture"] : null,
-                            Creator = new UserDataModel { ID = (int)reader["creator"] }
-                        };
+							Creator = new UserDataModel { ID = (int)reader["creator"] }
+						};
 					}
 				}
 			}

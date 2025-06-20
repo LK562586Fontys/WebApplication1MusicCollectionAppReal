@@ -7,7 +7,7 @@ namespace WebApplication1MusicCollectionAppReal.Pages
 {
     public class Login : PageModel
     {
-		private readonly UserFactory _userService;
+		private readonly UserFactory _userFactory;
 		private static User CurrentUser { get; set; }
 		public string ErrorMessage { get; private set; }
 		[BindProperty]
@@ -16,10 +16,11 @@ namespace WebApplication1MusicCollectionAppReal.Pages
         public string Password { get; set; }
         public void OnGet()
         {
-        }
-        public Login(UserFactory userService)
+			HttpContext.Session.Clear();
+		}
+        public Login(UserFactory userFactory)
         {
-            _userService = userService;
+            _userFactory = userFactory;
         }
         public async Task<IActionResult> OnPostAsync()
 		{
@@ -29,7 +30,7 @@ namespace WebApplication1MusicCollectionAppReal.Pages
 			}
 
 			
-			int? userId = await _userService.VerifyLoginAndReturnUserId(EmailAddress, Password);
+			int? userId = await _userFactory.VerifyLoginAndReturnUserId(EmailAddress, Password);
 
 			if (userId == null)
 			{

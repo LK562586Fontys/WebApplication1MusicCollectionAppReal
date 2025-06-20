@@ -3,8 +3,47 @@
 @{
     ViewData["Title"] = "Home page";
 }
+<body>
+    <link rel="stylesheet" href="~/css/HomeScreen.css" asp-append-version="true" />
+</body>
+<div class="searchscreen">
+<form method="get">
+    <input type="text" name="SearchTerm" class="input" value="@Model.SearchTerm" placeholder="Search songs..." />
+    <button type="submit" class="button" >Search</button>
+</form>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+@if (Model.Songs != null && Model.Songs.Any())
+{
+    <table class="searchresults">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Artist</th>
+                <th>Album</th>
+                <th>Release Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var song in Model.Songs)
+            {
+                <tr>
+                    <td> <a asp-page="/Song" asp-route-id="@song.ID">@song.Name </a>
+
+                </td>
+                    <td> <a asp-page="/Account" asp-route-id="@song.Artist.ID">@song.Artist?.Name</a>
+
+                </td>
+                    <td> <a asp-page="/PlaylistScreen" asp-route-id="@song.Album.ID">@song.Album?.Name</a>
+
+                </td>
+                    <td>@song.DateReleased.ToShortDateString()</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else if (!string.IsNullOrWhiteSpace(Model.SearchTerm))
+{
+    <p>No songs found matching "@Model.SearchTerm".</p>
+}
 </div>

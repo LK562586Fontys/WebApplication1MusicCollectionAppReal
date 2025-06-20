@@ -8,7 +8,7 @@ namespace UnitTesting
     public class UserIntegrationTests
     {
         private User userObject;
-        private UserFactory _userService;
+        private UserFactory _userFactory;
         private UserRepository _userRepository;
         private PlaylistRepository _playlistRepository;
         private SongRepository _songRepository;
@@ -19,8 +19,8 @@ namespace UnitTesting
 
             _playlistRepository = new PlaylistRepository("Server=mssqlstud.fhict.local;Database=dbi562586_i562586;User Id=dbi562586_i562586;Password=Wpb3grVisq;TrustServerCertificate=True;");
             _songRepository = new SongRepository("Server=mssqlstud.fhict.local;Database=dbi562586_i562586;User Id=dbi562586_i562586;Password=Wpb3grVisq;TrustServerCertificate=True;");
-			_userService = new UserFactory(_userRepository, _playlistRepository, _songRepository);
-			userObject = _userService.GetUserById(8)!;
+			_userFactory = new UserFactory(_userRepository, _playlistRepository, _songRepository);
+			userObject = _userFactory.GetUserById(8)!;
         }
 
         [TestMethod]

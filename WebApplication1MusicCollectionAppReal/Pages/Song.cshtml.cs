@@ -10,9 +10,9 @@ namespace WebApplication1MusicCollectionAppReal.Pages
 {
     public class Song : PageModel
     {
-        private readonly UserFactory _userService;
-        private readonly PlaylistFactory _playlistService;
-        private readonly SongFactory _songService;
+        private readonly UserFactory _userFactory;
+        private readonly PlaylistFactory _playlistFactory;
+        private readonly SongFactory _songFactory;
         private readonly ISongRepository _songRepository;
         private readonly IPlaylistRepository _playlistRepository;
         public SongViewModel viewModel { get; set; }
@@ -22,11 +22,11 @@ namespace WebApplication1MusicCollectionAppReal.Pages
         public static LogicLayer.Playlist CurrentPlaylist { get; set; }
         private static User CurrentUser { get; set; }
         public List<Playlist> Playlists { get; set; }
-        public Song(UserFactory userService, PlaylistFactory playlistService, SongFactory songService, IPlaylistRepository playlistRepository, ISongRepository songRepository) 
+        public Song(UserFactory userFactory, PlaylistFactory playlistFactory, SongFactory songFactory, IPlaylistRepository playlistRepository, ISongRepository songRepository) 
         {
-            _userService = userService;
-            _playlistService = playlistService;
-            _songService = songService;
+            _userFactory = userFactory;
+            _playlistFactory = playlistFactory;
+            _songFactory = songFactory;
             _playlistRepository = playlistRepository;
             _songRepository = songRepository;
         }
@@ -41,8 +41,8 @@ namespace WebApplication1MusicCollectionAppReal.Pages
             }
 
             // Set the current user
-            CurrentUser = _userService.GetUserById((int)userId);
-            CurrentSong = (LogicLayer.Song)_songService.GetSongById(id);
+            CurrentUser = _userFactory.GetUserById((int)userId);
+            CurrentSong = (LogicLayer.Song)_songFactory.GetSongById(id);
             if (CurrentSong == null) 
             {
                 return RedirectToPage("/Error", new {message = "Song Not Found"});
@@ -76,13 +76,13 @@ namespace WebApplication1MusicCollectionAppReal.Pages
 
         public IActionResult OnPostAddSongToPlaylist(int playlistid) 
         {
-            CurrentPlaylist = (LogicLayer.Playlist)_playlistService.GetPlaylistById(playlistid);
+            CurrentPlaylist = (LogicLayer.Playlist)_playlistFactory.GetPlaylistById(playlistid);
             try
             {
                 CurrentPlaylist.AddSong(CurrentSong.ID);
                 return RedirectToPage(new { id = CurrentSong.ID });
             }
-            catch (ArgumentException ex)
+            catch (InvalidOperationException ex)
             {
                 ErrorMessage = ex.Message;
                 LoadSongData();
@@ -117,13 +117,13 @@ namespace WebApplication1MusicCollectionAppReal.Pages
 		}
         public IActionResult OnPostRemoveSongFromPlaylist(int playlistid)
         {
-            CurrentPlaylist = (LogicLayer.Playlist)_playlistService.GetPlaylistById(playlistid);
+            CurrentPlaylist = (LogicLayer.Playlist)_playlistFactory.GetPlaylistById(playlistid);
             try 
             {
                 CurrentPlaylist.RemoveSong(CurrentSong.ID);
                 return RedirectToPage(new { id = CurrentSong.ID });
             }
-            catch (ArgumentException ex)
+            catch (InvalidOperationException ex)
             {
                 ErrorMessage = ex.Message;
                 LoadSongData();
